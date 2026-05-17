@@ -1,0 +1,62 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# ── Environment & secrets ─────────────────────────────────────────────────────
+.env
+*.env.*
+!.env.example
+
+# ── FastAPI / API ─────────────────────────────────────────────────────────────
+mlharum-api/storage/images/
+mlharum-api/weights/*.pt
+
+# ── Model training ────────────────────────────────────────────────────────────
+mlharum-model/datasets/raw/
+mlharum-model/datasets/labeled/
+mlharum-model/datasets/augmented/
+mlharum-model/weights/*.pt
+mlharum-model/weights/mango_yolov8/
+.ipynb_checkpoints/
+
+# ── Flutter ───────────────────────────────────────────────────────────────────
+mlharum-app/.dart_tool/
+mlharum-app/.flutter-plugins
+mlharum-app/.flutter-plugins-dependencies
+mlharum-app/build/
+mlharum-app/.packages
+mlharum-app/pubspec.lock
+mlharum-app/android/.gradle/
+mlharum-app/android/local.properties
+mlharum-app/android/key.properties
+mlharum-app/ios/Pods/
+mlharum-app/ios/.symlinks/
+mlharum-app/ios/Flutter/flutter_export_environment.sh
+mlharum-app/ios/Runner/GeneratedPluginRegistrant.*
+*.keystore
+*.jks
+
+# ── Claude Code ──────────────────────────────────────────────────────────────
+.claude/
+
+# ── General ───────────────────────────────────────────────────────────────────
+*.png
+*.jpg
+!mlharum-app/assets/images/
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+*.swo
+.idea/
+.vscode/
+*.orig

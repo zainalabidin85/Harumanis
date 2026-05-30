@@ -65,7 +65,7 @@ async def run_detection(
     best = max(mango_detections, key=lambda d: d.confidence)
 
     size_cm = estimate_size(best, knuckle_width_px)
-    harvest_date, days_to_harvest, resolved_stage = predict_harvest(size_cm, best.growth_stage, db)
+    harvest_date, days_to_harvest, resolved_stage = predict_harvest(size_cm, db)
 
     image_path = _save_image(image_bgr, tree_id)
 

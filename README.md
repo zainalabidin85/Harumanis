@@ -1,6 +1,6 @@
-# MLharum — AI Harumanis Mango Management System
+# AI Harumanis Mango Management System
 
-MLharum is an end-to-end AI system for Harumanis mango farms. It estimates fruit yield, predicts harvest dates, assesses pulp ripeness, and connects farmers directly to buyers — all from a smartphone.
+This repo is an end-to-end AI system for Harumanis mango farms. It estimates fruit yield, predicts harvest dates, assesses pulp ripeness, and connects farmers directly to buyers — all from a smartphone.
 
 ## Downloads
 
@@ -24,8 +24,8 @@ MLharum is an end-to-end AI system for Harumanis mango farms. It estimates fruit
 └────────────┬──────────────┬──────────────┬──────────────────┘
              │              │              │
      ┌───────┴──────┐ ┌─────┴──────┐ ┌────┴────────┐
-     │  MLharum App │ │Harumanis   │ │ Admin Panel │
-     │  (Farmer)    │ │App (Buyer) │ │             │
+     │ Ai-Harumanis │ │  Harumanis │ │ Admin Panel │
+     │ App (Farmer) │ │App (Buyer) │ │             │
      └──────────────┘ └────────────┘ └─────────────┘
              │
      ┌───────┴──────┐
@@ -56,7 +56,7 @@ Results saved to database, each fruit labelled (e.g. T01-001)
 
 ## The Four Apps
 
-### 1. MLharum App — For Farmers
+### 1. Ai-Harumanis App — For Farmers
 
 The main field app. Farmers use this to scan their mango trees, monitor growth, and manage their farm.
 

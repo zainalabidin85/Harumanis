@@ -38,6 +38,7 @@ mlharum-app/pubspec.lock
 mlharum-app/android/.gradle/
 mlharum-app/android/local.properties
 mlharum-app/android/key.properties
+mlharum-app/android/app/src/main/AndroidManifest.xml
 mlharum-app/ios/Pods/
 mlharum-app/ios/.symlinks/
 mlharum-app/ios/Flutter/flutter_export_environment.sh
@@ -47,6 +48,11 @@ mlharum-app/ios/Runner/GeneratedPluginRegistrant.*
 
 # ── Claude Code ──────────────────────────────────────────────────────────────
 .claude/
+
+# ── Release artifacts ─────────────────────────────────────────────────────────
+*.apk
+*.pdf
+*.pptx
 
 # ── General ───────────────────────────────────────────────────────────────────
 *.png

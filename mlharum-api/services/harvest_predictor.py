@@ -9,14 +9,16 @@ def predict_harvest(size_cm: float, growth_stage: int, db: Session) -> tuple[dat
     Looks up days_to_harvest from the growth_phases table.
     Falls back to size-based lookup if stage match returns no result.
     """
-    phase = db.query(GrowthPhase).filter(GrowthPhase.stage == growth_stage).first()
+    # Size is the measured value — use it as the primary signal.
+    # YOLO stage is a visual estimate and is only used as fallback when size is out of range.
+    phase = (
+        db.query(GrowthPhase)
+        .filter(GrowthPhase.size_min_cm <= size_cm, GrowthPhase.size_max_cm > size_cm)
+        .first()
+    )
 
     if phase is None:
-        phase = (
-            db.query(GrowthPhase)
-            .filter(GrowthPhase.size_min_cm <= size_cm, GrowthPhase.size_max_cm > size_cm)
-            .first()
-        )
+        phase = db.query(GrowthPhase).filter(GrowthPhase.stage == growth_stage).first()
 
     if phase is None:
         # Size is beyond all known phases — treat as pre-harvest

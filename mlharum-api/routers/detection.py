@@ -59,62 +59,90 @@ async def run_detection(
 
     mango_detections = detect_mangoes(image_bgr)
     if not mango_detections:
-        raise HTTPException(status_code=422, detail="No mangoes detected in the image.")
+        raise HTTPException(status_code=422, detail="No mango detected. Point at one mango and try again.")
+
+    # One mango per photo — pick highest confidence detection
+    best = max(mango_detections, key=lambda d: d.confidence)
+
+    size_cm = estimate_size(best, knuckle_width_px)
+    harvest_date, days_to_harvest = predict_harvest(size_cm, best.growth_stage, db)
 
     image_path = _save_image(image_bgr, tree_id)
 
     detection_record = Detection(
         tree_id=tree_id,
         image_path=image_path,
-        mango_count=len(mango_detections),
+        mango_count=1,
         knuckle_width_px=knuckle_width_px,
     )
     db.add(detection_record)
     db.flush()
 
-    fruit_results = []
-    sequence = 1
+    min_size = settings.bagging_min_size_cm
+    max_size = settings.bagging_max_size_cm
 
-    for det in mango_detections:
-        size_cm = estimate_size(det, knuckle_width_px)
-        harvest_date, days_to_harvest = predict_harvest(size_cm, det.growth_stage, db)
-        label = f"{tree.tree_number}-{sequence:03d}"
-
-        fruit = Fruit(
-            detection_id=detection_record.id,
+    if size_cm < min_size:
+        db.commit()
+        return DetectionResponse(
             tree_id=tree_id,
-            label=label,
-            size_cm=size_cm,
-            growth_stage=det.growth_stage,
-            harvest_date=harvest_date,
-            bbox_x=det.bbox_x,
-            bbox_y=det.bbox_y,
-            bbox_w=det.bbox_w,
-            bbox_h=det.bbox_h,
+            tree_number=tree.tree_number,
+            detection_date=detection_record.detected_at,
+            mango_count=1,
+            ready_for_bagging=False,
+            message=f"This mango is {size_cm:.1f} cm — still developing. Scan again when it reaches {min_size} cm to begin bagging.",
+            fruits=[],
         )
-        db.add(fruit)
 
-        fruit_results.append(FruitResult(
-            label=label,
-            size_cm=size_cm,
-            growth_stage=det.growth_stage,
-            harvest_date=harvest_date,
-            days_to_harvest=days_to_harvest,
-            bbox_x=det.bbox_x,
-            bbox_y=det.bbox_y,
-            bbox_w=det.bbox_w,
-            bbox_h=det.bbox_h,
-        ))
-        sequence += 1
+    existing_count = db.query(Fruit).filter(Fruit.tree_id == tree_id).count()
+    label = f"{tree.tree_number}-{existing_count + 1:03d}"
 
+    fruit = Fruit(
+        detection_id=detection_record.id,
+        tree_id=tree_id,
+        label=label,
+        size_cm=size_cm,
+        growth_stage=best.growth_stage,
+        harvest_date=harvest_date,
+        bbox_x=best.bbox_x,
+        bbox_y=best.bbox_y,
+        bbox_w=best.bbox_w,
+        bbox_h=best.bbox_h,
+    )
+    db.add(fruit)
     db.commit()
+
+    fruit_result = FruitResult(
+        id=fruit.id,
+        label=label,
+        size_cm=size_cm,
+        growth_stage=best.growth_stage,
+        harvest_date=harvest_date,
+        days_to_harvest=days_to_harvest,
+        bbox_x=best.bbox_x,
+        bbox_y=best.bbox_y,
+        bbox_w=best.bbox_w,
+        bbox_h=best.bbox_h,
+    )
+
+    if size_cm > max_size:
+        return DetectionResponse(
+            tree_id=tree_id,
+            tree_number=tree.tree_number,
+            detection_date=detection_record.detected_at,
+            mango_count=1,
+            ready_for_bagging=False,
+            message=f"This mango ({size_cm:.1f} cm) has been recorded as {label}. Estimated harvest in {days_to_harvest} days.",
+            fruits=[fruit_result],
+        )
 
     return DetectionResponse(
         tree_id=tree_id,
         tree_number=tree.tree_number,
         detection_date=detection_record.detected_at,
-        mango_count=len(mango_detections),
-        fruits=fruit_results,
+        mango_count=1,
+        ready_for_bagging=True,
+        message=f"Ready for bagging — {size_cm:.1f} cm. Estimated harvest in {days_to_harvest} days.",
+        fruits=[fruit_result],
     )
 
 

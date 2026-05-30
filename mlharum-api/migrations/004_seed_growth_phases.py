@@ -28,7 +28,7 @@ def upgrade() -> None:
         growth_phases,
         [
             {"stage": 1, "label": "Early",       "size_min_cm": 1.0, "size_max_cm": 2.5,  "days_to_harvest": 90},
-            {"stage": 2, "label": "Mid",          "size_min_cm": 2.5, "size_max_cm": 5.0,  "days_to_harvest": 60},
+            {"stage": 2, "label": "Mid",          "size_min_cm": 2.5, "size_max_cm": 5.0,  "days_to_harvest": 56},  # Nasir et al. (2021)
             {"stage": 3, "label": "Late",         "size_min_cm": 5.0, "size_max_cm": 8.0,  "days_to_harvest": 30},
             {"stage": 4, "label": "Pre-harvest",  "size_min_cm": 8.0, "size_max_cm": 12.0, "days_to_harvest": 14},
         ],

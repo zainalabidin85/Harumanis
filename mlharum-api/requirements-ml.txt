@@ -1,0 +1,4 @@
+# Install after model training is ready
+# Requires ~4GB disk space
+mediapipe==0.10.14
+ultralytics==8.2.0

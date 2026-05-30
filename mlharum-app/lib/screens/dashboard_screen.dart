@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../models/tree.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
+import '../theme.dart';
 import '../widgets/tree_marker.dart';
 import '../widgets/harvest_badge.dart';
 
@@ -34,7 +36,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       final dashboard = await ApiService.getDashboard(farmId);
       setState(() { _dashboard = dashboard; _loading = false; });
-    } catch (e) {
+    } catch (_) {
       setState(() { _error = 'Failed to load dashboard.'; _loading = false; });
     }
   }
@@ -51,10 +53,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   LatLng get _farmCenter {
-    final trees = _dashboard!.trees.where((t) => t.gpsLat != null).toList();
-    if (trees.isEmpty) return const LatLng(6.4414, 100.1986); // Perlis default
-    final avgLat = trees.map((t) => t.gpsLat!).reduce((a, b) => a + b) / trees.length;
-    final avgLng = trees.map((t) => t.gpsLng!).reduce((a, b) => a + b) / trees.length;
+    final trees =
+        _dashboard!.trees.where((t) => t.gpsLat != null).toList();
+    if (trees.isEmpty) return const LatLng(6.4414, 100.1986);
+    final avgLat = trees.map((t) => t.gpsLat!).reduce((a, b) => a + b) /
+        trees.length;
+    final avgLng = trees.map((t) => t.gpsLng!).reduce((a, b) => a + b) /
+        trees.length;
     return LatLng(avgLat, avgLng);
   }
 
@@ -63,27 +68,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_dashboard?.farmName ?? 'Farm Dashboard'),
-        backgroundColor: Colors.blue.shade700,
-        foregroundColor: Colors.white,
+        backgroundColor: const Color(0xFF0369A1),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+                  color: Color(0xFF0369A1)))
           : _error != null
-              ? Center(child: Text(_error!, style: const TextStyle(color: Colors.red)))
+              ? Center(
+                  child: Text(_error!,
+                      style: GoogleFonts.poppins(
+                          color: kText2, fontSize: 14)))
               : Stack(
                   children: [
                     GoogleMap(
                       mapType: MapType.satellite,
-                      initialCameraPosition: CameraPosition(target: _farmCenter, zoom: 17),
+                      initialCameraPosition: CameraPosition(
+                          target: _farmCenter, zoom: 17),
                       markers: _buildMarkers(),
-                      onTap: (_) => setState(() => _selectedTree = null),
+                      onTap: (_) =>
+                          setState(() => _selectedTree = null),
                     ),
+
+                    // ── Summary pill ────────────────────────────────
                     Positioned(
                       top: 12,
-                      left: 12,
-                      right: 12,
+                      left: 16,
+                      right: 16,
                       child: _FarmSummaryBar(dashboard: _dashboard!),
                     ),
+
+                    // ── Tree detail sheet ───────────────────────────
                     if (_selectedTree != null)
                       Positioned(
                         bottom: 0,
@@ -91,7 +110,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         right: 0,
                         child: _TreeBottomSheet(
                           tree: _selectedTree!,
-                          onClose: () => setState(() => _selectedTree = null),
+                          onClose: () =>
+                              setState(() => _selectedTree = null),
                         ),
                       ),
                   ],
@@ -107,17 +127,28 @@ class _FarmSummaryBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6)],
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: kElevatedShadow,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _Stat(label: 'Trees', value: '${dashboard.totalTrees}', icon: Icons.forest),
-          _Stat(label: 'Active Fruits', value: '${dashboard.totalActiveFruits}', icon: Icons.eco),
+          _Stat(
+            label: 'Trees',
+            value: '${dashboard.totalTrees}',
+            icon: Icons.forest_rounded,
+            color: kGreenPrimary,
+          ),
+          Container(width: 1, height: 32, color: kDivider),
+          _Stat(
+            label: 'Active Fruits',
+            value: '${dashboard.totalActiveFruits}',
+            icon: Icons.eco_rounded,
+            color: kGreenMid,
+          ),
         ],
       ),
     );
@@ -128,19 +159,40 @@ class _Stat extends StatelessWidget {
   final String label;
   final String value;
   final IconData icon;
-  const _Stat({required this.label, required this.value, required this.icon});
+  final Color color;
+
+  const _Stat({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: Colors.green.shade700, size: 20),
-        const SizedBox(width: 6),
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: color, size: 18),
+        ),
+        const SizedBox(width: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
+            Text(value,
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: kText1)),
+            Text(label,
+                style: GoogleFonts.poppins(
+                    color: kText2, fontSize: 11)),
           ],
         ),
       ],
@@ -151,35 +203,80 @@ class _Stat extends StatelessWidget {
 class _TreeBottomSheet extends StatelessWidget {
   final TreeDashboard tree;
   final VoidCallback onClose;
-  const _TreeBottomSheet({required this.tree, required this.onClose});
+
+  const _TreeBottomSheet(
+      {required this.tree, required this.onClose});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10)],
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        boxShadow: kElevatedShadow,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Handle
+          Center(
+            child: Container(
+              width: 36,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: kDivider,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(tree.treeNumber, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              IconButton(icon: const Icon(Icons.close), onPressed: onClose),
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: kGreenLight,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.forest_rounded,
+                    color: kGreenPrimary, size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      tree.treeNumber,
+                      style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: kText1),
+                    ),
+                    Text(
+                      '${tree.fruitCount} active fruits',
+                      style: GoogleFonts.poppins(
+                          color: kText2, fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close_rounded, color: kText3),
+                onPressed: onClose,
+              ),
             ],
           ),
-          Text('${tree.fruitCount} active fruits', style: TextStyle(color: Colors.grey.shade600)),
-          const SizedBox(height: 10),
-          if (tree.earliestHarvestDate != null)
+          if (tree.earliestHarvestDate != null) ...[
+            const SizedBox(height: 12),
             HarvestBadge(
               harvestDate: tree.earliestHarvestDate!,
               daysToHarvest: tree.daysToHarvest,
             ),
+          ],
         ],
       ),
     );

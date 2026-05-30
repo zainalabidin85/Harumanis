@@ -1,6 +1,5 @@
 import numpy as np
 from dataclasses import dataclass
-from ultralytics import YOLO
 from config import settings
 
 _model = None
@@ -18,17 +17,16 @@ class MangoDetection:
 
 def load_model():
     global _model
-    _model = YOLO(settings.yolo_model_path)
+    try:
+        from ultralytics import YOLO
+        _model = YOLO(settings.yolo_model_path)
+    except (ImportError, FileNotFoundError):
+        pass  # ultralytics not installed or model weights missing — detection endpoint will be unavailable
 
 
 def detect_mangoes(image_bgr: np.ndarray) -> list[MangoDetection]:
-    """
-    Runs YOLOv8 on the image and returns a list of detected mangoes.
-    Each detection includes bounding box, growth stage class, and confidence.
-    Growth stage classes must match training labels: 0=Early, 1=Mid, 2=Late, 3=Pre-harvest.
-    """
     if _model is None:
-        raise RuntimeError("YOLO model not loaded. Call load_model() first.")
+        raise RuntimeError("YOLO model not available. Install requirements-ml.txt and place model weights.")
 
     results = _model.predict(image_bgr, verbose=False)[0]
     detections = []
@@ -41,7 +39,7 @@ def detect_mangoes(image_bgr: np.ndarray) -> list[MangoDetection]:
                 bbox_y=y1,
                 bbox_w=x2 - x1,
                 bbox_h=y2 - y1,
-                growth_stage=int(box.cls[0].item()) + 1,  # shift to 1-indexed stages
+                growth_stage=int(box.cls[0].item()) + 1,
                 confidence=float(box.conf[0].item()),
             )
         )

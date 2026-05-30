@@ -19,6 +19,7 @@ build/
 # ── FastAPI / API ─────────────────────────────────────────────────────────────
 mlharum-api/storage/images/
 mlharum-api/weights/*.pt
+mlharum-api/weights/*.task
 
 # ── Model training ────────────────────────────────────────────────────────────
 mlharum-model/datasets/raw/

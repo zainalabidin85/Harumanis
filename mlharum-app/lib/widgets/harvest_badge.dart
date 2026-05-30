@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import '../theme.dart';
 
 class HarvestBadge extends StatelessWidget {
   final DateTime harvestDate;
@@ -12,23 +14,40 @@ class HarvestBadge extends StatelessWidget {
   });
 
   Color get _color {
-    if (daysToHarvest <= 14) return Colors.red.shade600;
-    if (daysToHarvest <= 30) return Colors.orange.shade600;
-    return Colors.green.shade600;
+    if (daysToHarvest <= 14) return kRed;
+    if (daysToHarvest <= 30) return kAmber;
+    return kGreenMid;
+  }
+
+  IconData get _icon {
+    if (daysToHarvest <= 14) return Icons.agriculture_rounded;
+    if (daysToHarvest <= 30) return Icons.schedule_rounded;
+    return Icons.calendar_today_rounded;
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: _color.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _color),
+        color: _color.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(100),
+        border: Border.all(color: _color.withValues(alpha: 0.35)),
       ),
-      child: Text(
-        '${DateFormat('d MMM yyyy').format(harvestDate)} · $daysToHarvest days',
-        style: TextStyle(color: _color, fontWeight: FontWeight.w600, fontSize: 12),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(_icon, color: _color, size: 12),
+          const SizedBox(width: 5),
+          Text(
+            '${DateFormat('d MMM yyyy').format(harvestDate)} · $daysToHarvest d',
+            style: GoogleFonts.poppins(
+              color: _color,
+              fontWeight: FontWeight.w600,
+              fontSize: 11,
+            ),
+          ),
+        ],
       ),
     );
   }

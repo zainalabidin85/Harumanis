@@ -1,41 +1,49 @@
-import cv2
-import mediapipe as mp
 import numpy as np
+from config import settings
 
-_hands = None
+_detector = None
+
+_INDEX_MCP = 5
+_PINKY_MCP = 17
 
 
 def load_model():
-    global _hands
-    _hands = mp.solutions.hands.Hands(
-        static_image_mode=True,
-        max_num_hands=1,
-        min_detection_confidence=0.7,
-    )
+    global _detector
+    try:
+        import mediapipe as mp
+        from mediapipe.tasks import python
+        from mediapipe.tasks.python import vision
+
+        base_options = python.BaseOptions(model_asset_path=settings.hand_landmarker_path)
+        options = vision.HandLandmarkerOptions(
+            base_options=base_options,
+            num_hands=1,
+            min_hand_detection_confidence=0.7,
+            min_hand_presence_confidence=0.7,
+        )
+        _detector = vision.HandLandmarker.create_from_options(options)
+    except Exception:
+        pass  # mediapipe not available — detection endpoint will be unavailable
 
 
 def detect_knuckle_width(image_bgr: np.ndarray) -> float | None:
-    """
-    Returns the pixel width between the index and pinky MCP knuckles.
-    Returns None if no hand is detected.
-    """
-    if _hands is None:
-        raise RuntimeError("MediaPipe model not loaded. Call load_model() first.")
+    if _detector is None:
+        raise RuntimeError("MediaPipe not available.")
+
+    import cv2
+    import mediapipe as mp
 
     image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
-    results = _hands.process(image_rgb)
+    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image_rgb)
+    result = _detector.detect(mp_image)
 
-    if not results.multi_hand_landmarks:
+    if not result.hand_landmarks:
         return None
 
-    landmarks = results.multi_hand_landmarks[0].landmark
+    landmarks = result.hand_landmarks[0]
     h, w = image_bgr.shape[:2]
 
-    # MCP joints: index finger = 5, pinky = 17
-    index_mcp = landmarks[mp.solutions.hands.HandLandmark.INDEX_FINGER_MCP]
-    pinky_mcp = landmarks[mp.solutions.hands.HandLandmark.PINKY_MCP]
-
-    index_x = index_mcp.x * w
-    pinky_x = pinky_mcp.x * w
+    index_x = landmarks[_INDEX_MCP].x * w
+    pinky_x = landmarks[_PINKY_MCP].x * w
 
     return abs(index_x - pinky_x)

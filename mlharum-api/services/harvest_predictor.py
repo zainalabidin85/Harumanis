@@ -3,11 +3,10 @@ from sqlalchemy.orm import Session
 from models.farm import GrowthPhase
 
 
-def predict_harvest(size_cm: float, growth_stage: int, db: Session) -> tuple[date, int]:
+def predict_harvest(size_cm: float, growth_stage: int, db: Session) -> tuple[date, int, int]:
     """
-    Returns (estimated_harvest_date, days_to_harvest) based on size and growth stage.
-    Looks up days_to_harvest from the growth_phases table.
-    Falls back to size-based lookup if stage match returns no result.
+    Returns (estimated_harvest_date, days_to_harvest, resolved_stage).
+    Size is the primary signal; YOLO growth_stage is a fallback only.
     """
     # Size is the measured value — use it as the primary signal.
     # YOLO stage is a visual estimate and is only used as fallback when size is out of range.
@@ -23,8 +22,10 @@ def predict_harvest(size_cm: float, growth_stage: int, db: Session) -> tuple[dat
     if phase is None:
         # Size is beyond all known phases — treat as pre-harvest
         days = 14
+        resolved_stage = 4
     else:
         days = phase.days_to_harvest
+        resolved_stage = phase.stage
 
     harvest_date = date.today() + timedelta(days=days)
-    return harvest_date, days
+    return harvest_date, days, resolved_stage

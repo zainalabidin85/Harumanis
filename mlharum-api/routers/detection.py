@@ -65,7 +65,7 @@ async def run_detection(
     best = max(mango_detections, key=lambda d: d.confidence)
 
     size_cm = estimate_size(best, knuckle_width_px)
-    harvest_date, days_to_harvest = predict_harvest(size_cm, best.growth_stage, db)
+    harvest_date, days_to_harvest, resolved_stage = predict_harvest(size_cm, best.growth_stage, db)
 
     image_path = _save_image(image_bgr, tree_id)
 
@@ -101,7 +101,7 @@ async def run_detection(
         tree_id=tree_id,
         label=label,
         size_cm=size_cm,
-        growth_stage=best.growth_stage,
+        growth_stage=resolved_stage,
         harvest_date=harvest_date,
         bbox_x=best.bbox_x,
         bbox_y=best.bbox_y,
@@ -115,7 +115,7 @@ async def run_detection(
         id=fruit.id,
         label=label,
         size_cm=size_cm,
-        growth_stage=best.growth_stage,
+        growth_stage=resolved_stage,
         harvest_date=harvest_date,
         days_to_harvest=days_to_harvest,
         bbox_x=best.bbox_x,

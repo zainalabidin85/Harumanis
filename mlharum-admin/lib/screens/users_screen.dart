@@ -95,6 +95,8 @@ class _FilterBar extends StatelessWidget {
           _Chip('Buyers',  'buyer',    roleFilter, onRoleChanged),
           const SizedBox(width: 8),
           _Chip('Admins',  'admin',    roleFilter, onRoleChanged),
+          const SizedBox(width: 8),
+          _Chip('DOA',     'doa',      roleFilter, onRoleChanged),
           const SizedBox(width: 16),
           FilterChip(
             label: const Text('Suspended only'),
@@ -131,7 +133,13 @@ class _UserTile extends StatelessWidget {
     final role = user['role'] as String;
     final suspended = user['is_suspended'] as bool? ?? false;
     final verified = user['is_verified'] as bool? ?? false;
-    final roleColor = role == 'admin' ? kIndigo700 : role == 'farmer' ? kGreen : kOrange;
+    final roleColor = role == 'admin'
+        ? kIndigo700
+        : role == 'doa'
+            ? kDoaBlue
+            : role == 'farmer'
+                ? kGreen
+                : kOrange;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
@@ -268,6 +276,10 @@ class _UserSheetState extends State<_UserSheet> {
               _ActionButton('Make Buyer', kOrange, Icons.shopping_bag_outlined, () => _update(role: 'buyer')),
             if (role == 'buyer')
               _ActionButton('Make Farmer', kGreen, Icons.agriculture_outlined, () => _update(role: 'farmer')),
+            if (role == 'farmer' || role == 'buyer')
+              _ActionButton('Make DOA', kDoaBlue, Icons.assessment_outlined, () => _update(role: 'doa')),
+            if (role == 'doa')
+              _ActionButton('Remove DOA', kText2, Icons.assessment_outlined, () => _update(role: 'farmer')),
           ]),
       ]),
     );

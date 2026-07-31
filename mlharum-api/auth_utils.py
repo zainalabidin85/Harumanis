@@ -92,3 +92,9 @@ def require_admin(user: User = Depends(get_current_user)) -> User:
     if user.role != "admin":
         raise HTTPException(status_code=403, detail="Admin account required")
     return user
+
+
+def require_doa(user: User = Depends(get_current_user)) -> User:
+    if user.role not in ("doa", "admin"):
+        raise HTTPException(status_code=403, detail="DOA account required")
+    return user

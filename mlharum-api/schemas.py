@@ -96,6 +96,7 @@ class FarmUpdate(BaseModel):
     total_trees: Optional[int] = None
     is_public: Optional[bool] = None
     price_per_kg: Optional[float] = None
+    ready_in_days: Optional[int] = None
 
 
 class FarmResponse(BaseModel):
@@ -107,6 +108,7 @@ class FarmResponse(BaseModel):
     total_trees: int
     is_public: bool
     price_per_kg: Optional[float]
+    ready_in_days: int = 4
 
     class Config:
         from_attributes = True
@@ -145,6 +147,7 @@ class FruitResult(BaseModel):
     growth_stage: int
     harvest_date: date
     days_to_harvest: int
+    flush_color: Optional[str] = None
     bbox_x: float
     bbox_y: float
     bbox_w: float
@@ -161,6 +164,7 @@ class ActiveFruitResponse(BaseModel):
     is_harvested: bool
     is_aborted: bool
     abort_reason: Optional[str] = None
+    flush_color: Optional[str] = None
     created_at: datetime
 
     class Config:
@@ -171,6 +175,20 @@ class FruitAbortRequest(BaseModel):
     reason: Optional[str] = None
 
 
+FLUSH_COLORS = ("red", "yellow", "blue", "green", "orange", "purple")
+
+
+class FruitFlushColorUpdate(BaseModel):
+    color: str
+
+    @field_validator('color')
+    @classmethod
+    def color_valid(cls, v: str) -> str:
+        if v not in FLUSH_COLORS:
+            raise ValueError(f'color must be one of {FLUSH_COLORS}')
+        return v
+
+
 class DetectionResponse(BaseModel):
     tree_id: int
     tree_number: str
@@ -179,6 +197,10 @@ class DetectionResponse(BaseModel):
     ready_for_bagging: bool
     message: str
     fruits: list[FruitResult] = []
+    hand_index_x: Optional[float] = None
+    hand_index_y: Optional[float] = None
+    hand_pinky_x: Optional[float] = None
+    hand_pinky_y: Optional[float] = None
 
 
 # ── Dashboard ─────────────────────────────────────────────────────────────────
@@ -195,9 +217,51 @@ class TreeDashboard(BaseModel):
 class FarmDashboard(BaseModel):
     farm_id: int
     farm_name: str
+    current_season: int
     total_trees: int
     total_active_fruits: int
+    total_harvested_fruits: int
+    total_aborted_fruits: int
     trees: list[TreeDashboard]
+
+
+# ── DOA yield report ──────────────────────────────────────────────────────
+
+class DoaStageCount(BaseModel):
+    stage: int
+    label: str
+    count: int
+
+
+class DoaFarmSummary(BaseModel):
+    farm_id: int
+    farm_name: str
+    location: Optional[str]
+    owner_id: int
+    owner_name: str
+    owner_phone: Optional[str]
+    is_verified: bool
+    total_trees: int
+    active_fruits: int
+    harvested_fruits: int
+    aborted_fruits: int
+    stage_counts: list[DoaStageCount]
+
+
+class DoaYieldReport(BaseModel):
+    current_season: int
+    available_seasons: list[int]
+    total_farms: int
+    total_trees: int
+    total_active_fruits: int
+    total_harvested_fruits: int
+    total_aborted_fruits: int
+    stage_summary: list[DoaStageCount]
+    farms: list[DoaFarmSummary]
+
+
+class DoaVerifyOwnerRequest(BaseModel):
+    is_verified: bool
 
 
 # ── Farm Images ───────────────────────────────────────────────────────────
@@ -253,6 +317,35 @@ class TestimonialResponse(BaseModel):
         from_attributes = True
 
 
+# ── Announcements ─────────────────────────────────────────────────────────────
+
+class AnnouncementCreate(BaseModel):
+    title: str
+    body: str
+    event_date: Optional[datetime] = None
+    location: Optional[str] = None
+
+
+class AnnouncementUpdate(BaseModel):
+    title: Optional[str] = None
+    body: Optional[str] = None
+    event_date: Optional[datetime] = None
+    location: Optional[str] = None
+
+
+class AnnouncementResponse(BaseModel):
+    id: int
+    title: str
+    body: str
+    image_url: Optional[str]
+    event_date: Optional[datetime]
+    location: Optional[str]
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
 # ── Marketplace ───────────────────────────────────────────────────────────────
 
 class MarketplaceFarmSummary(BaseModel):
@@ -264,12 +357,12 @@ class MarketplaceFarmSummary(BaseModel):
     farmer_name: str
     farmer_verified: bool
     price_per_kg: Optional[float]
+    ready_in_days: int = 4
     thumbnail_url: Optional[str]
     total_active_fruits: int
     stage_1_count: int
     stage_2_count: int
     stage_3_count: int
-    stage_4_count: int
     earliest_harvest_date: Optional[date]
     avg_rating: Optional[float] = None
     review_count: int = 0
@@ -381,8 +474,8 @@ class AdminUserUpdate(BaseModel):
     @field_validator('role')
     @classmethod
     def role_valid(cls, v: Optional[str]) -> Optional[str]:
-        if v is not None and v not in ("farmer", "buyer", "admin"):
-            raise ValueError('role must be farmer, buyer, or admin')
+        if v is not None and v not in ("farmer", "buyer", "admin", "doa"):
+            raise ValueError('role must be farmer, buyer, admin, or doa')
         return v
 
 

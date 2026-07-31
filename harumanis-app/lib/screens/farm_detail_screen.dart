@@ -7,6 +7,7 @@ import '../models/farm.dart';
 import '../models/farm_image.dart';
 import '../models/testimonial.dart';
 import '../services/api_service.dart';
+import '../services/notification_service.dart';
 import '../theme.dart';
 import '../widgets/page_route.dart';
 import '../widgets/stage_badge.dart';
@@ -165,7 +166,7 @@ class _FarmDetailScreenState extends State<FarmDetailScreen> {
                               Row(children: [
                                 _StatBox(value: '${_farm!.totalActiveFruits}', label: 'Total'),
                                 const SizedBox(width: 10),
-                                _StatBox(value: '${_farm!.stage3Count + _farm!.stage4Count}',
+                                _StatBox(value: '${_farm!.stage3Count}',
                                     label: 'Near harvest', highlight: true),
                                 const SizedBox(width: 10),
                                 if (_farm!.earliestHarvestDate != null)
@@ -180,8 +181,6 @@ class _FarmDetailScreenState extends State<FarmDetailScreen> {
                                 Expanded(child: _StageChip(stage: 2, count: _farm!.stage2Count)),
                                 const SizedBox(width: 8),
                                 Expanded(child: _StageChip(stage: 3, count: _farm!.stage3Count)),
-                                const SizedBox(width: 8),
-                                Expanded(child: _StageChip(stage: 4, count: _farm!.stage4Count)),
                               ]),
                             ]),
                           ),
@@ -243,10 +242,37 @@ class _FarmDetailScreenState extends State<FarmDetailScreen> {
           : SafeArea(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.shopping_bag_outlined),
-                  label: const Text('Place an Order'),
-                  onPressed: _placeOrder,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        icon: const Icon(Icons.alarm_add_rounded),
+                        label: const Text('Remind Me'),
+                        onPressed: () => showReminderSheet(
+                          context,
+                          farmId: widget.farmId,
+                          farmName: _farm!.farmName,
+                          ripeDays: _farm!.readyInDays,
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: kAmberPrimary,
+                          side: const BorderSide(color: kAmberPrimary, width: 1.5),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.shopping_bag_outlined),
+                        label: const Text('Place an Order'),
+                        onPressed: _placeOrder,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

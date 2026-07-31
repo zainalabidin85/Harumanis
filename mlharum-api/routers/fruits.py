@@ -6,7 +6,8 @@ from models.user import User
 from models.tree import Tree
 from models.fruit import Fruit
 from auth_utils import get_current_user
-from schemas import ActiveFruitResponse, FruitAbortRequest
+from schemas import ActiveFruitResponse, FruitAbortRequest, FruitFlushColorUpdate
+from services.fruit_lifecycle import auto_abort_stale_fruits
 
 router = APIRouter()
 
@@ -23,6 +24,7 @@ def _to_response(fruit: Fruit) -> ActiveFruitResponse:
         is_harvested=fruit.is_harvested,
         is_aborted=fruit.is_aborted,
         abort_reason=fruit.abort_reason,
+        flush_color=fruit.flush_color,
         created_at=fruit.created_at,
     )
 
@@ -59,6 +61,7 @@ def list_active_fruits(
     db: Session = Depends(get_db),
 ):
     _get_owned_tree(tree_id, current_user, db)
+    auto_abort_stale_fruits(db)
     fruits = (
         db.query(Fruit)
         .filter(
@@ -105,6 +108,20 @@ def mark_aborted(
     fruit.is_aborted = True
     fruit.abort_reason = payload.reason
     fruit.aborted_at = datetime.utcnow()
+    db.commit()
+    db.refresh(fruit)
+    return _to_response(fruit)
+
+
+@router.patch("/{fruit_id}/flush-color", response_model=ActiveFruitResponse)
+def set_flush_color(
+    fruit_id: int,
+    payload: FruitFlushColorUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    fruit = _get_owned_fruit(fruit_id, current_user, db)
+    fruit.flush_color = payload.color
     db.commit()
     db.refresh(fruit)
     return _to_response(fruit)

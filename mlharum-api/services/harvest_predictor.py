@@ -7,25 +7,25 @@ def predict_harvest(size_cm: float, db: Session) -> tuple[date, int, int]:
     """
     Returns (estimated_harvest_date, days_to_harvest, resolved_stage).
     Size is the primary signal; YOLO growth_stage is a fallback only.
+
+    Resolves to the highest-numbered stage whose size_min_cm the fruit has
+    reached. This naturally supports an open-ended top stage (no size_max_cm
+    needed) and stays correct if stage boundaries change.
     """
     phase = (
         db.query(GrowthPhase)
-        .filter(GrowthPhase.size_min_cm <= size_cm, GrowthPhase.size_max_cm > size_cm)
+        .filter(GrowthPhase.size_min_cm <= size_cm)
+        .order_by(GrowthPhase.stage.desc())
         .first()
     )
 
     if phase is None:
-        # Size is outside all defined ranges — clamp to nearest boundary stage.
-        if size_cm >= 8.0:
-            # Larger than expected — treat as pre-harvest
-            phase = db.query(GrowthPhase).filter(GrowthPhase.stage == 4).first()
-        else:
-            # Smaller than expected — treat as earliest stage
-            phase = db.query(GrowthPhase).filter(GrowthPhase.stage == 1).first()
+        # Smaller than every defined stage's minimum — clamp to the earliest stage.
+        phase = db.query(GrowthPhase).order_by(GrowthPhase.stage.asc()).first()
 
     if phase is None:
-        days = 14
-        resolved_stage = 4
+        days = 49
+        resolved_stage = 3
     else:
         days = phase.days_to_harvest
         resolved_stage = phase.stage

@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import '../models/tree.dart';
 import '../models/fruit.dart';
 import '../models/farm_order.dart';
+import '../models/doa_report.dart';
+import '../models/announcement.dart';
 import 'auth_service.dart';
 
 class ApiService {
@@ -92,13 +94,14 @@ class ApiService {
   }
 
   static Future<void> updateFarm(int farmId,
-      {bool? isPublic, double? pricePerKg, String? name, String? location}) async {
+      {bool? isPublic, double? pricePerKg, String? name, String? location, int? readyInDays}) async {
     final dio = await _authDio();
     await dio.patch('/farms/$farmId', data: {
       if (isPublic != null) 'is_public': isPublic,
       if (pricePerKg != null) 'price_per_kg': pricePerKg,
       if (name != null) 'name': name,
       if (location != null) 'location': location,
+      if (readyInDays != null) 'ready_in_days': readyInDays,
     });
   }
 
@@ -215,6 +218,14 @@ class ApiService {
     return ActiveFruit.fromJson(res.data);
   }
 
+  static Future<ActiveFruit> setFruitFlushColor(int fruitId, String color) async {
+    final dio = await _authDio();
+    final res = await dio.patch('/trees/$fruitId/flush-color', data: {
+      'color': color,
+    });
+    return ActiveFruit.fromJson(res.data);
+  }
+
   // ── Dashboard ───────────────────────────────────────────────────────────────
 
   static Future<FarmDashboard> getDashboard(int farmId) async {
@@ -236,6 +247,70 @@ class ApiService {
       options: Options(contentType: 'multipart/form-data'),
     );
     return PulpAnalysisResult.fromJson(res.data as Map<String, dynamic>);
+  }
+
+  // ── DOA ─────────────────────────────────────────────────────────────────────
+
+  static Future<DoaYieldReport> getDoaYieldReport({int? season}) async {
+    final dio = await _authDio();
+    final res = await dio.get(
+      '/doa/yield-report',
+      queryParameters: season != null ? {'season': season} : null,
+    );
+    return DoaYieldReport.fromJson(res.data as Map<String, dynamic>);
+  }
+
+  static Future<void> setOwnerVerified(int ownerId, bool isVerified) async {
+    final dio = await _authDio();
+    await dio.patch(
+      '/doa/owners/$ownerId/verify',
+      data: {'is_verified': isVerified},
+    );
+  }
+
+  // ── Announcements ───────────────────────────────────────────────────────────
+
+  static Future<List<Announcement>> getAnnouncements({bool upcoming = false}) async {
+    final dio = await _authDio();
+    final res = await dio.get('/announcements', queryParameters: {'upcoming': upcoming});
+    return (res.data as List)
+        .map((a) => Announcement.fromJson(a as Map<String, dynamic>))
+        .toList();
+  }
+
+  static Future<Announcement> getAnnouncement(int id) async {
+    final dio = await _authDio();
+    final res = await dio.get('/announcements/$id');
+    return Announcement.fromJson(res.data as Map<String, dynamic>);
+  }
+
+  static Future<Announcement> createAnnouncement({
+    required String title,
+    required String body,
+    DateTime? eventDate,
+    String? location,
+    String? imagePath,
+  }) async {
+    final dio = await _authDio();
+    final formData = FormData.fromMap({
+      'title': title,
+      'body': body,
+      if (eventDate != null) 'event_date': eventDate.toIso8601String(),
+      if (location != null && location.isNotEmpty) 'location': location,
+      if (imagePath != null)
+        'file': await MultipartFile.fromFile(imagePath, filename: 'announcement.jpg'),
+    });
+    final res = await dio.post(
+      '/announcements',
+      data: formData,
+      options: Options(contentType: 'multipart/form-data'),
+    );
+    return Announcement.fromJson(res.data as Map<String, dynamic>);
+  }
+
+  static Future<void> deleteAnnouncement(int id) async {
+    final dio = await _authDio();
+    await dio.delete('/announcements/$id');
   }
 }
 

@@ -5,6 +5,7 @@ class FruitResult {
   final int growthStage;
   final DateTime harvestDate;
   final int daysToHarvest;
+  final String? flushColor;
   final double bboxX;
   final double bboxY;
   final double bboxW;
@@ -17,6 +18,7 @@ class FruitResult {
     required this.growthStage,
     required this.harvestDate,
     required this.daysToHarvest,
+    this.flushColor,
     required this.bboxX,
     required this.bboxY,
     required this.bboxW,
@@ -30,6 +32,7 @@ class FruitResult {
         growthStage: json['growth_stage'],
         harvestDate: DateTime.parse(json['harvest_date']),
         daysToHarvest: json['days_to_harvest'],
+        flushColor: json['flush_color'] as String?,
         bboxX: (json['bbox_x'] as num).toDouble(),
         bboxY: (json['bbox_y'] as num).toDouble(),
         bboxW: (json['bbox_w'] as num).toDouble(),
@@ -37,7 +40,7 @@ class FruitResult {
       );
 
   String get stageName {
-    const names = {1: 'Early', 2: 'Mid', 3: 'Late', 4: 'Pre-harvest'};
+    const names = {1: 'Early', 2: 'Bagging', 3: 'Pre-harvest'};
     return names[growthStage] ?? 'Unknown';
   }
 }
@@ -52,6 +55,7 @@ class ActiveFruit {
   final bool isHarvested;
   final bool isAborted;
   final String? abortReason;
+  final String? flushColor;
 
   ActiveFruit({
     required this.id,
@@ -63,6 +67,7 @@ class ActiveFruit {
     required this.isHarvested,
     required this.isAborted,
     this.abortReason,
+    this.flushColor,
   });
 
   factory ActiveFruit.fromJson(Map<String, dynamic> json) => ActiveFruit(
@@ -75,10 +80,11 @@ class ActiveFruit {
         isHarvested: json['is_harvested'] as bool,
         isAborted: json['is_aborted'] as bool,
         abortReason: json['abort_reason'] as String?,
+        flushColor: json['flush_color'] as String?,
       );
 
   String get stageName {
-    const names = {1: 'Early', 2: 'Mid', 3: 'Late', 4: 'Pre-harvest'};
+    const names = {1: 'Early', 2: 'Bagging', 3: 'Pre-harvest'};
     return names[growthStage] ?? 'Unknown';
   }
 }
@@ -92,6 +98,10 @@ class DetectionResponse {
   final bool readyForBagging;
   final String message;
   final List<FruitResult> fruits;
+  final double? handIndexX;
+  final double? handIndexY;
+  final double? handPinkyX;
+  final double? handPinkyY;
 
   DetectionResponse({
     required this.treeId,
@@ -101,6 +111,10 @@ class DetectionResponse {
     required this.readyForBagging,
     required this.message,
     required this.fruits,
+    this.handIndexX,
+    this.handIndexY,
+    this.handPinkyX,
+    this.handPinkyY,
   });
 
   factory DetectionResponse.fromJson(Map<String, dynamic> json) =>
@@ -114,5 +128,9 @@ class DetectionResponse {
         fruits: (json['fruits'] as List)
             .map((f) => FruitResult.fromJson(f))
             .toList(),
+        handIndexX: (json['hand_index_x'] as num?)?.toDouble(),
+        handIndexY: (json['hand_index_y'] as num?)?.toDouble(),
+        handPinkyX: (json['hand_pinky_x'] as num?)?.toDouble(),
+        handPinkyY: (json['hand_pinky_y'] as num?)?.toDouble(),
       );
 }

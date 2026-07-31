@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
 import '../theme.dart';
@@ -33,6 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int? _farmId;
   String? _error;
   String? _success;
+  String _version     = '';
 
   @override
   void initState() {
@@ -56,6 +58,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _load() async {
     setState(() { _loading = true; _error = null; });
+    final info = await PackageInfo.fromPlatform();
+    _version = info.version;
     try {
       final me = await ApiService.getMe();
       _nameCtrl.text             = me['name']                as String? ?? '';
@@ -278,8 +282,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             labelText: 'WhatsApp number',
                             prefixIcon: const Icon(Icons.chat_outlined),
                             hintText: 'e.g. 60123456789',
-                            helperText:
-                                'Buyers contact you here after placing an order',
+                            helperText: 'Visible to buyers',
                             helperStyle:
                                 GoogleFonts.poppins(fontSize: 11, color: kText3),
                             suffixIcon: _whatsappCtrl.text.isNotEmpty
@@ -371,7 +374,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Marketplace',
+                          Text('Beli Harumanis',
                               style: GoogleFonts.poppins(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
@@ -399,7 +402,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('List on Harumanis',
+                                  Text('List on Beli Harumanis',
                                       style: GoogleFonts.poppins(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
@@ -472,31 +475,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 14),
                   ],
 
-                  // ── WhatsApp info card ───────────────────────────────────
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: kGreenLight,
-                      borderRadius: BorderRadius.circular(14),
-                      border:
-                          Border.all(color: kGreenMid.withValues(alpha: 0.25)),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.info_outline_rounded,
-                            color: kGreenPrimary, size: 18),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            'Your WhatsApp number is shown to buyers in the Harumanis app so they can contact you directly after placing an order.',
-                            style: GoogleFonts.poppins(
-                                fontSize: 12, color: kGreenPrimary),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   const SizedBox(height: 20),
 
                   // ── Bank Details ─────────────────────────────────────────
@@ -596,7 +574,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 8),
                   Center(
                     child: Text(
-                      'Ai-Harumanis v1.5.1',
+                      'Ai-Harumanis v$_version',
                       style: GoogleFonts.poppins(fontSize: 12, color: kText3),
                     ),
                   ),

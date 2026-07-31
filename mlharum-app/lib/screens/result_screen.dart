@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/fruit.dart';
+import '../services/api_service.dart';
 import '../theme.dart';
 import '../widgets/harvest_badge.dart';
 
@@ -93,7 +94,7 @@ class _ReadyView extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
               child: AspectRatio(
                 aspectRatio: 4 / 3,
-                child: _BboxImageView(imagePath: imagePath!, fruit: fruit),
+                child: _BboxImageView(imagePath: imagePath!, fruit: fruit, result: result),
               ),
             ),
           ),
@@ -102,7 +103,11 @@ class _ReadyView extends StatelessWidget {
           child: ListView(
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
-            children: [_FruitDetailCard(fruit: fruit)],
+            children: [
+              _FruitDetailCard(fruit: fruit),
+              const SizedBox(height: 14),
+              _FlushColorSection(fruit: fruit),
+            ],
           ),
         ),
         Padding(
@@ -119,6 +124,132 @@ class _ReadyView extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+// ── Flush color section ───────────────────────────────────────────────────────
+// Wraps the picker with its save-to-API state. Shown on both the "ready for
+// bagging" and "recorded but past bagging window" result views — a late-bagged
+// fruit still gets a physical color tag, so the farmer still needs to set it.
+class _FlushColorSection extends StatefulWidget {
+  final FruitResult fruit;
+  const _FlushColorSection({required this.fruit});
+
+  @override
+  State<_FlushColorSection> createState() => _FlushColorSectionState();
+}
+
+class _FlushColorSectionState extends State<_FlushColorSection> {
+  String? _selectedColor;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedColor = widget.fruit.flushColor;
+  }
+
+  Future<void> _pickColor(String color) async {
+    setState(() {
+      _selectedColor = color;
+      _saving = true;
+    });
+    try {
+      await ApiService.setFruitFlushColor(widget.fruit.id, color);
+    } catch (_) {
+      // Non-critical — farmer can still bag the fruit even if tagging fails.
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _FlushColorPicker(
+      selected: _selectedColor,
+      saving: _saving,
+      onPick: _pickColor,
+    );
+  }
+}
+
+// ── Flush color picker ────────────────────────────────────────────────────────
+// Lets the farmer tag this fruit with the same color they tie on the bagging
+// paper for this blooming flush — an easier visual cue in the field than the
+// numeric label. Purely additive; the numeric label remains the source of
+// truth for yield counting.
+class _FlushColorPicker extends StatelessWidget {
+  static const colors = {
+    'red': Color(0xFFEF4444),
+    'yellow': Color(0xFFF59E0B),
+    'blue': Color(0xFF0369A1),
+    'green': Color(0xFF16A34A),
+    'orange': Color(0xFFEA580C),
+    'purple': Color(0xFF7C3AED),
+  };
+
+  final String? selected;
+  final bool saving;
+  final ValueChanged<String> onPick;
+  const _FlushColorPicker({
+    required this.selected,
+    required this.saving,
+    required this.onPick,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: kCard,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: kCardShadow,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Tag bagging color (optional)',
+            style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600, fontSize: 14, color: kText1),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Match the color you tie on the bagging paper for this flush',
+            style: GoogleFonts.poppins(fontSize: 12, color: kText2),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: colors.entries.map((entry) {
+              final isSelected = selected == entry.key;
+              return GestureDetector(
+                onTap: saving ? null : () {
+                  HapticFeedback.lightImpact();
+                  onPick(entry.key);
+                },
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: entry.value,
+                    shape: BoxShape.circle,
+                    border: isSelected
+                        ? Border.all(color: kText1, width: 2.5)
+                        : null,
+                  ),
+                  child: isSelected
+                      ? const Icon(Icons.check_rounded,
+                          color: Colors.white, size: 18)
+                      : null,
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -203,7 +334,7 @@ class _RecordedView extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
               child: AspectRatio(
                 aspectRatio: 4 / 3,
-                child: _BboxImageView(imagePath: imagePath!, fruit: fruit),
+                child: _BboxImageView(imagePath: imagePath!, fruit: fruit, result: result),
               ),
             ),
           ),
@@ -212,7 +343,11 @@ class _RecordedView extends StatelessWidget {
           child: ListView(
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
-            children: [_FruitDetailCard(fruit: fruit)],
+            children: [
+              _FruitDetailCard(fruit: fruit),
+              const SizedBox(height: 14),
+              _FlushColorSection(fruit: fruit),
+            ],
           ),
         ),
         Padding(
@@ -251,7 +386,7 @@ class _StillDevelopingView extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
               child: AspectRatio(
                 aspectRatio: 4 / 3,
-                child: Image.file(File(imagePath!), fit: BoxFit.cover),
+                child: _BboxImageView(imagePath: imagePath!, fruit: null, result: result),
               ),
             ),
           ),
@@ -331,8 +466,9 @@ class _StillDevelopingView extends StatelessWidget {
 // ── Image with bounding box overlay ──────────────────────────────────────────
 class _BboxImageView extends StatefulWidget {
   final String imagePath;
-  final FruitResult fruit;
-  const _BboxImageView({required this.imagePath, required this.fruit});
+  final FruitResult? fruit;
+  final DetectionResponse result;
+  const _BboxImageView({required this.imagePath, required this.fruit, required this.result});
 
   @override
   State<_BboxImageView> createState() => _BboxImageViewState();
@@ -369,7 +505,11 @@ class _BboxImageViewState extends State<_BboxImageView> {
         Image.file(File(widget.imagePath), fit: BoxFit.cover),
         if (_imageSize != null)
           CustomPaint(
-            painter: _BboxPainter(fruit: widget.fruit, imageSize: _imageSize!),
+            painter: _BboxPainter(
+              fruit: widget.fruit,
+              result: widget.result,
+              imageSize: _imageSize!,
+            ),
           ),
       ],
     );
@@ -377,9 +517,10 @@ class _BboxImageViewState extends State<_BboxImageView> {
 }
 
 class _BboxPainter extends CustomPainter {
-  final FruitResult fruit;
+  final FruitResult? fruit;
+  final DetectionResponse result;
   final Size imageSize;
-  _BboxPainter({required this.fruit, required this.imageSize});
+  _BboxPainter({required this.fruit, required this.result, required this.imageSize});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -389,56 +530,84 @@ class _BboxPainter extends CustomPainter {
     final scale = max(scaleX, scaleY);
     final offsetX = (size.width - imageSize.width * scale) / 2;
     final offsetY = (size.height - imageSize.height * scale) / 2;
+    Offset toCanvas(double x, double y) =>
+        Offset(offsetX + x * scale, offsetY + y * scale);
 
-    final rect = Rect.fromLTWH(
-      offsetX + fruit.bboxX * scale,
-      offsetY + fruit.bboxY * scale,
-      fruit.bboxW * scale,
-      fruit.bboxH * scale,
-    );
+    final fruit = this.fruit;
+    if (fruit != null) {
+      final rect = Rect.fromLTWH(
+        offsetX + fruit.bboxX * scale,
+        offsetY + fruit.bboxY * scale,
+        fruit.bboxW * scale,
+        fruit.bboxH * scale,
+      );
 
-    // Bounding box
-    canvas.drawRect(
-      rect,
-      Paint()
-        ..color = Colors.greenAccent
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 3,
-    );
+      // Bounding box
+      canvas.drawRect(
+        rect,
+        Paint()
+          ..color = Colors.greenAccent
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3,
+      );
 
-    // Corner fill to make it pop
-    canvas.drawRect(
-      rect,
-      Paint()
-        ..color = Colors.greenAccent.withOpacity(0.08)
-        ..style = PaintingStyle.fill,
-    );
+      // Corner fill to make it pop
+      canvas.drawRect(
+        rect,
+        Paint()
+          ..color = Colors.greenAccent.withOpacity(0.08)
+          ..style = PaintingStyle.fill,
+      );
 
-    // Size label pill above the box
-    final label = '${fruit.sizeCm.toStringAsFixed(1)} cm';
-    final tp = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: const TextStyle(
-          color: Colors.black,
-          fontSize: 13,
-          fontWeight: FontWeight.bold,
+      // Size label pill above the box
+      final label = '${fruit.sizeCm.toStringAsFixed(1)} cm';
+      final tp = TextPainter(
+        text: TextSpan(
+          text: label,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
+        textDirection: TextDirection.ltr,
+      )..layout();
 
-    final pillW = tp.width + 16;
-    final pillH = tp.height + 8;
-    final pillLeft = rect.left;
-    final pillTop = max(0.0, rect.top - pillH - 4);
+      final pillW = tp.width + 16;
+      final pillH = tp.height + 8;
+      final pillLeft = rect.left;
+      final pillTop = max(0.0, rect.top - pillH - 4);
 
-    final pillRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(pillLeft, pillTop, pillW, pillH),
-      const Radius.circular(6),
-    );
-    canvas.drawRRect(pillRect, Paint()..color = Colors.greenAccent);
-    tp.paint(canvas, Offset(pillLeft + 8, pillTop + 4));
+      final pillRect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(pillLeft, pillTop, pillW, pillH),
+        const Radius.circular(6),
+      );
+      canvas.drawRRect(pillRect, Paint()..color = Colors.greenAccent);
+      tp.paint(canvas, Offset(pillLeft + 8, pillTop + 4));
+    }
+
+    // Hand knuckle reference markers (index & pinky MCP joints used for scale)
+    final ix = result.handIndexX;
+    final iy = result.handIndexY;
+    final px = result.handPinkyX;
+    final py = result.handPinkyY;
+    if (ix != null && iy != null && px != null && py != null) {
+      final indexPt = toCanvas(ix, iy);
+      final pinkyPt = toCanvas(px, py);
+
+      canvas.drawLine(
+        indexPt,
+        pinkyPt,
+        Paint()
+          ..color = Colors.amberAccent
+          ..strokeWidth = 3
+          ..strokeCap = StrokeCap.round,
+      );
+
+      final dotPaint = Paint()..color = Colors.amberAccent;
+      canvas.drawCircle(indexPt, 5, dotPaint);
+      canvas.drawCircle(pinkyPt, 5, dotPaint);
+    }
   }
 
   @override

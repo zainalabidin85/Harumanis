@@ -10,11 +10,11 @@ class FarmSummary {
   final bool farmerVerified;
   final String? farmerWhatsapp;
   final double? pricePerKg;
+  final int readyInDays;
   final int totalActiveFruits;
   final int stage1Count;
   final int stage2Count;
   final int stage3Count;
-  final int stage4Count;
   final DateTime? earliestHarvestDate;
   final String? thumbnailUrl;
   final double? avgRating;
@@ -30,11 +30,11 @@ class FarmSummary {
     required this.farmerVerified,
     this.farmerWhatsapp,
     this.pricePerKg,
+    this.readyInDays = 4,
     required this.totalActiveFruits,
     required this.stage1Count,
     required this.stage2Count,
     required this.stage3Count,
-    required this.stage4Count,
     this.earliestHarvestDate,
     this.thumbnailUrl,
     this.avgRating,
@@ -51,11 +51,11 @@ class FarmSummary {
         farmerVerified: j['farmer_verified'] as bool? ?? false,
         farmerWhatsapp: j['farmer_whatsapp'] as String?,
         pricePerKg: (j['price_per_kg'] as num?)?.toDouble(),
+        readyInDays: j['ready_in_days'] as int? ?? 4,
         totalActiveFruits: j['total_active_fruits'] as int,
         stage1Count: j['stage_1_count'] as int,
         stage2Count: j['stage_2_count'] as int,
         stage3Count: j['stage_3_count'] as int,
-        stage4Count: j['stage_4_count'] as int,
         earliestHarvestDate: j['earliest_harvest_date'] != null
             ? DateTime.tryParse(j['earliest_harvest_date'] as String)
             : null,
@@ -102,11 +102,11 @@ class FarmDetail extends FarmSummary {
     required super.farmerVerified,
     super.farmerWhatsapp,
     super.pricePerKg,
+    super.readyInDays,
     required super.totalActiveFruits,
     required super.stage1Count,
     required super.stage2Count,
     required super.stage3Count,
-    required super.stage4Count,
     super.earliestHarvestDate,
     super.thumbnailUrl,
     super.avgRating,
@@ -127,11 +127,11 @@ class FarmDetail extends FarmSummary {
       farmerVerified: base.farmerVerified,
       farmerWhatsapp: base.farmerWhatsapp,
       pricePerKg: base.pricePerKg,
+      readyInDays: base.readyInDays,
       totalActiveFruits: base.totalActiveFruits,
       stage1Count: base.stage1Count,
       stage2Count: base.stage2Count,
       stage3Count: base.stage3Count,
-      stage4Count: base.stage4Count,
       earliestHarvestDate: base.earliestHarvestDate,
       thumbnailUrl: base.thumbnailUrl,
       avgRating: base.avgRating,

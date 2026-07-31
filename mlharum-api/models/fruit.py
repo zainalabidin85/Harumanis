@@ -31,6 +31,8 @@ class Fruit(Base):
     bbox_y       = Column(Numeric(6, 2))
     bbox_w       = Column(Numeric(6, 2))
     bbox_h       = Column(Numeric(6, 2))
+    season        = Column(Integer, nullable=False)
+    flush_color   = Column(String(20), nullable=True)
     is_harvested  = Column(Boolean, default=False)
     harvested_at  = Column(DateTime)
     is_aborted    = Column(Boolean, default=False, nullable=False, server_default='false')

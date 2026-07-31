@@ -5,3 +5,4 @@ from models.fruit import Detection, Fruit
 from models.order import Order
 from models.farm_image import FarmImage
 from models.testimonial import Testimonial
+from models.announcement import Announcement

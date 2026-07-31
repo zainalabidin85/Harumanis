@@ -6,8 +6,8 @@ This repo is an end-to-end AI system for Harumanis mango farms. It estimates fru
 
 | App | For | Download |
 |---|---|---|
-| Ai-Harumanis | Farmers | [Ai-Harumanis-v1.5.2.apk](https://github.com/zainalabidin85/Harumanis/releases/download/v1.0.0/Ai-Harumanis-v1.5.2.apk) |
-| BeliHarumanis | Buyers | [BeliHarumanis-v1.7.0.apk](https://github.com/zainalabidin85/Harumanis/releases/download/v1.0.0/BeliHarumanis-v1.7.0.apk) |
+| Ai-Harumanis | Farmers | [Ai-Harumanis-v1.6.1.apk](https://mlharum.unitani.com/storage/apk/AiHarumanis.apk) |
+| Beli Harumanis | Buyers | [BeliHarumanis-v1.9.4.apk](https://mlharum.unitani.com/storage/apk/BeliHarumanis.apk) |
 
 > Android only. Enable **Install from unknown sources** in your device settings before installing.
 

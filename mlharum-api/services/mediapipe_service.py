@@ -1,10 +1,20 @@
 import numpy as np
+from dataclasses import dataclass
 from config import settings
 
 _detector = None
 
 _INDEX_MCP = 5
 _PINKY_MCP = 17
+
+
+@dataclass
+class HandMarker:
+    knuckle_width_px: float
+    index_x: float
+    index_y: float
+    pinky_x: float
+    pinky_y: float
 
 
 def load_model():
@@ -26,7 +36,7 @@ def load_model():
         pass  # mediapipe not available — detection endpoint will be unavailable
 
 
-def detect_knuckle_width(image_bgr: np.ndarray) -> float | None:
+def detect_knuckle_width(image_bgr: np.ndarray) -> HandMarker | None:
     if _detector is None:
         raise RuntimeError("MediaPipe not available.")
 
@@ -44,6 +54,16 @@ def detect_knuckle_width(image_bgr: np.ndarray) -> float | None:
     h, w = image_bgr.shape[:2]
 
     index_x = landmarks[_INDEX_MCP].x * w
+    index_y = landmarks[_INDEX_MCP].y * h
     pinky_x = landmarks[_PINKY_MCP].x * w
+    pinky_y = landmarks[_PINKY_MCP].y * h
 
-    return abs(index_x - pinky_x)
+    knuckle_width_px = float(np.sqrt((index_x - pinky_x) ** 2 + (index_y - pinky_y) ** 2))
+
+    return HandMarker(
+        knuckle_width_px=knuckle_width_px,
+        index_x=index_x,
+        index_y=index_y,
+        pinky_x=pinky_x,
+        pinky_y=pinky_y,
+    )

@@ -10,9 +10,8 @@ class StageBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final (label, color, bg) = switch (stage) {
       1 => ('Early', kText2, const Color(0xFFF3F4F6)),
-      2 => ('Mid', const Color(0xFF0369A1), const Color(0xFFE0F2FE)),
-      3 => ('Late', kAmberPrimary, kAmberLight),
-      4 => ('Ready', kGreen, const Color(0xFFDCFCE7)),
+      2 => ('Bagging', const Color(0xFF0369A1), const Color(0xFFE0F2FE)),
+      3 => ('Pre-harvest', kGreen, const Color(0xFFDCFCE7)),
       _ => ('Unknown', kText3, const Color(0xFFF3F4F6)),
     };
     return Container(

@@ -14,6 +14,7 @@ const kText3      = Color(0xFF9CA3AF);
 const kRed        = Color(0xFFEF4444);
 const kGreen      = Color(0xFF16A34A);
 const kOrange     = Color(0xFFF59E0B);
+const kDoaBlue    = Color(0xFF0369A1);
 
 const kCardShadow = [BoxShadow(color: Color(0x0A000000), blurRadius: 12, offset: Offset(0, 2))];
 

@@ -67,11 +67,12 @@ class _LoginScreenState extends State<LoginScreen>
       await AuthService.saveToken(token);
       final me = await ApiService.getMe();
       final role = me['role'] as String?;
-      if (role != 'farmer' && role != 'admin') {
+      if (role != 'farmer' && role != 'admin' && role != 'doa') {
         await AuthService.logout();
         setState(() => _error = 'This account is registered as a buyer. Please use the Beli Harumanis app.');
         return;
       }
+      await AuthService.saveRole(role!);
       final farmId = me['farm_id'] as int?;
       if (farmId != null) await AuthService.saveFarmId(farmId);
       if (mounted) {

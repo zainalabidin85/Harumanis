@@ -133,7 +133,20 @@ class _FarmSummaryBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: kElevatedShadow,
       ),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Season ${dashboard.currentSeason}',
+            style: GoogleFonts.poppins(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: kGreenPrimary,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _Stat(
@@ -144,10 +157,26 @@ class _FarmSummaryBar extends StatelessWidget {
           ),
           Container(width: 1, height: 32, color: kDivider),
           _Stat(
-            label: 'Active Fruits',
+            label: 'Active',
             value: '${dashboard.totalActiveFruits}',
             icon: Icons.eco_rounded,
             color: kGreenMid,
+          ),
+          Container(width: 1, height: 32, color: kDivider),
+          _Stat(
+            label: 'Harvested',
+            value: '${dashboard.totalHarvestedFruits}',
+            icon: Icons.shopping_basket_rounded,
+            color: const Color(0xFF0369A1),
+          ),
+          Container(width: 1, height: 32, color: kDivider),
+          _Stat(
+            label: 'Aborted',
+            value: '${dashboard.totalAbortedFruits}',
+            icon: Icons.cancel_outlined,
+            color: const Color(0xFFDC2626),
+          ),
+        ],
           ),
         ],
       ),
@@ -170,31 +199,27 @@ class _Stat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 36,
-          height: 36,
+          width: 32,
+          height: 32,
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: color, size: 18),
+          child: Icon(icon, color: color, size: 16),
         ),
-        const SizedBox(width: 10),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(value,
-                style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: kText1)),
-            Text(label,
-                style: GoogleFonts.poppins(
-                    color: kText2, fontSize: 11)),
-          ],
-        ),
+        const SizedBox(height: 4),
+        Text(value,
+            style: GoogleFonts.poppins(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: kText1)),
+        Text(label,
+            style: GoogleFonts.poppins(
+                color: kText2, fontSize: 10)),
       ],
     );
   }

@@ -19,7 +19,7 @@ def load_model():
     global _model
     try:
         from ultralytics import YOLO
-        _model = YOLO(settings.yolo_model_path)
+        _model = YOLO(settings.yolo_model_path).to("cuda")
     except (ImportError, FileNotFoundError):
         pass  # ultralytics not installed or model weights missing — detection endpoint will be unavailable
 

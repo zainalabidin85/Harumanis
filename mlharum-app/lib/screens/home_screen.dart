@@ -12,6 +12,9 @@ import 'tree_list_screen.dart';
 import 'dashboard_screen.dart';
 import 'pulp_camera_screen.dart';
 import 'farm_photos_screen.dart';
+import 'qr_screen.dart';
+import 'doa_report_screen.dart';
+import 'announcements_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,13 +29,16 @@ class _HomeScreenState extends State<HomeScreen>
   late List<Animation<double>> _cardAnims;
   int _pendingOrders = 0;
   String _farmName = '';
+  int? _farmId;
+  int _readyInDays = 4;
+  bool _showDoaCard = false;
 
   @override
   void initState() {
     super.initState();
     _ctrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 900));
-    _cardAnims = List.generate(5, (i) {
+    _cardAnims = List.generate(8, (i) {
       final start = 0.1 + i * 0.12;
       return CurvedAnimation(
         parent: _ctrl,
@@ -43,6 +49,12 @@ class _HomeScreenState extends State<HomeScreen>
     _ctrl.forward();
     _loadPendingOrders();
     _loadFarmName();
+    _loadRole();
+  }
+
+  Future<void> _loadRole() async {
+    final role = await AuthService.getRole();
+    if (mounted) setState(() => _showDoaCard = role == 'doa' || role == 'admin');
   }
 
   Future<void> _loadFarmName() async {
@@ -51,7 +63,11 @@ class _HomeScreenState extends State<HomeScreen>
       if (farmId == null) return;
       final farm = await ApiService.getFarm(farmId);
       if (mounted) {
-        setState(() => _farmName = farm['name'] ?? '');
+        setState(() {
+          _farmName = farm['name'] ?? '';
+          _farmId = farmId;
+          _readyInDays = (farm['ready_in_days'] as int?) ?? 4;
+        });
       }
     } catch (_) {}
   }
@@ -276,11 +292,69 @@ class _HomeScreenState extends State<HomeScreen>
                       },
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  _AnimatedCard(
+                    animation: _cardAnims[5],
+                    child: _FeatureCard(
+                      icon: Icons.qr_code_rounded,
+                      iconColor: const Color(0xFF0369A1),
+                      iconBg: const Color(0xFFE0F2FE),
+                      label: 'Buyer QR Code',
+                      subtitle: 'Let street buyers set a ripeness reminder',
+                      onTap: () {
+                        if (_farmId == null) return;
+                        Navigator.push(
+                          context,
+                          FadeSlideRoute(
+                            page: QrScreen(
+                              farmId: _farmId!,
+                              farmName: _farmName.isNotEmpty
+                                  ? _farmName
+                                  : 'My Farm',
+                              initialReadyInDays: _readyInDays,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _AnimatedCard(
+                    animation: _cardAnims[6],
+                    child: _FeatureCard(
+                      icon: Icons.campaign_rounded,
+                      iconColor: const Color(0xFF0891B2),
+                      iconBg: const Color(0xFFCFFAFE),
+                      label: 'Announcements',
+                      subtitle: 'Courses, workshops & DOA notices',
+                      onTap: () => Navigator.push(
+                        context,
+                        FadeSlideRoute(page: const AnnouncementsScreen()),
+                      ),
+                    ),
+                  ),
+                  if (_showDoaCard) ...[
+                    const SizedBox(height: 16),
+                    _AnimatedCard(
+                      animation: _cardAnims[7],
+                      child: _FeatureCard(
+                        icon: Icons.assessment_rounded,
+                        iconColor: const Color(0xFF166534),
+                        iconBg: kGreenLight,
+                        label: 'DOA Monitor',
+                        subtitle: 'Cross-farm yield by growth stage',
+                        onTap: () => Navigator.push(
+                          context,
+                          FadeSlideRoute(page: const DoaReportScreen()),
+                        ),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 32),
                   // ── Partnership footer ────────────────────────────────
                   Center(
                     child: Text(
-                      'UniMAP × (Collaborator Here)',
+                      'UniMAP × DOA Perlis',
                       style: GoogleFonts.poppins(
                           fontSize: 11, color: kText3),
                     ),

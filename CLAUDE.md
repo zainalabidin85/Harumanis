@@ -78,16 +78,20 @@ POST /detect/{tree_id}  (image upload)
   ↓
 MediaPipe Hands → knuckle_width_px  (services/mediapipe_service.py)
   ↓
-YOLOv8 → mango bounding boxes + growth_stage 1–4  (services/yolo_service.py)
+YOLOv8 → mango bounding box only, class 0  (services/yolo_service.py)
   ↓
 size_estimator → size_cm = (mango_px / knuckle_px) × HAND_SPAN_CM  (services/size_estimator.py)
   ↓
-harvest_predictor → harvest_date from growth_phases table  (services/harvest_predictor.py)
+harvest_predictor → size_cm lookup → growth_phases table → resolved_stage + days_to_harvest  (services/harvest_predictor.py)
   ↓
 Saved to DB: Detection → Fruit records with labels e.g. "T01-001"
 ```
 
 Both ML models are loaded at startup (`@app.on_event("startup")`) and held in memory — do not reload per request.
+
+**Important — stage classification design:** YOLO is trained as single-class (`nc: 1`, class 0 = mango). It only detects the fruit bounding box. Growth stage is never classified by YOLO — it is determined purely from the measured `size_cm` via the `growth_phases` DB lookup. Do not add stage classes to YOLO; Harumanis mango shape does not change between stages, only size does, so visual stage classification would not be reliable.
+
+**Flush color tag (farmer-facing, additive only):** Farmers physically color-tag bagging paper per blooming flush (a tree blooms ~3–4 times/season). `Fruit.flush_color` mirrors this in-app so farmers can recognize a fruit's cohort at a glance, set via `PATCH /trees/{fruit_id}/flush-color` (mlharum-app only, right after a fruit enters the Bagging stage). It is purely a display convenience layered on top of the numeric `T01-001` label — DOA's yield counts still rely on the numeric label/season counter, not on color, since color isn't unique across trees/seasons.
 
 ### Pulp Ripeness Analysis (V1 addition)
 
@@ -135,14 +139,35 @@ Rate limiting is applied via `slowapi` (configured in `limiter.py`).
 
 ## Growth Stages Reference
 
-| Stage | Size | Days to Harvest |
-|---|---|---|
-| 1 (Early) | 1.0–2.5 cm | 90 days |
-| 2 (Mid) | 2.5–5.0 cm | 56 days |
-| 3 (Late) | 5.0–8.0 cm | 30 days |
-| 4 (Pre-harvest) | 8.0–12.0 cm | 14 days |
+Aligned with the Department of Agriculture Perlis (DOA)'s 3-stage field classification (as of 2026-07):
 
-> Stage 2 (56 days) sourced from Nasir et al. (2021), AAFRJ. Stages 1, 3, 4 are field estimates — verify against literature if publishing.
+| Stage | Size | Days to Harvest | Notes |
+|---|---|---|---|
+| 1 (Early) | < 40 mm (< 4.0 cm) | ~90 days | **Not persisted to the DB.** High natural fruit-abortion (drop) rate before the stem hardens — DOA doesn't treat this as a reliably countable stage. Detection returns a note to the farmer instead of creating a Fruit record. |
+| 2 (Bagging) | 40–45 mm (4.0–4.5 cm) | ~56 days | Stem is firm enough to reliably hold the fruit — this is when farmers physically bag it. First stage persisted as a Fruit record. |
+| 3 (Pre-harvest / late bagging) | > 45 mm (> 4.5 cm) | ~49 days | Open-ended upper bound — do not clamp to an old size cap. |
+
+> Stage 2's 56-day figure originally sourced from Nasir et al. (2021), AAFRJ, for the old 4-stage model; DOA's mm boundaries and the 49-day Pre-harvest estimate are field figures from the 2026-07 DOA Perlis meeting — verify against literature if publishing.
+
+## Model Retraining Plan (Next Season)
+
+The current YOLO model has ~23 training images and produces loose bounding boxes, which slightly overestimates fruit size. Retraining is planned for the next Harumanis season.
+
+### Goal
+Tighter bounding boxes → more accurate `size_cm` measurement. Stage classification is **not** a goal — stage is determined by size, not by YOLO.
+
+### What to do
+1. Use the **Collector app** to photograph fruit across the full size range (small to near-harvest)
+2. Annotate with **tight boxes** — hug the fruit edge closely, no extra padding
+3. Target **100–200 images** total (more variety = better generalisation)
+4. Keep `nc: 1`, `names: ['mango']` in `data.yaml` — do not add stage classes
+5. Retrain: `python scripts/train.py --model yolov8n.pt --epochs 100`
+6. Deploy new weights to server: `mlharum-api/weights/mango_yolov8.pt` and restart uvicorn
+
+### What not to change
+- Do not add growth stage classes to YOLO
+- Do not change the size estimation formula or `AVG_KNUCKLE_WIDTH_CM` unless field-validated
+- The `growth_phases` table is the source of truth for stage → days mapping
 
 ## Versioning Context
 

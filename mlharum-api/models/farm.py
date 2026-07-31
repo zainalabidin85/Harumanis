@@ -13,9 +13,10 @@ class Farm(Base):
     gps_lat     = Column(Numeric(9, 6))
     gps_lng     = Column(Numeric(9, 6))
     total_trees = Column(Integer, default=0)
-    is_public    = Column(Boolean, default=False, nullable=False)
-    price_per_kg = Column(Numeric(10, 2), nullable=True)
-    created_at   = Column(DateTime, server_default=func.now())
+    is_public     = Column(Boolean, default=False, nullable=False)
+    price_per_kg  = Column(Numeric(10, 2), nullable=True)
+    ready_in_days = Column(Integer, default=4, nullable=False)
+    created_at    = Column(DateTime, server_default=func.now())
 
     owner  = relationship("User", back_populates="farms")
     trees  = relationship("Tree", back_populates="farm", cascade="all, delete-orphan")

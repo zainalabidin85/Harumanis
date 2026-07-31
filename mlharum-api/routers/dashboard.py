@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -8,6 +9,7 @@ from models.tree import Tree
 from models.fruit import Fruit
 from schemas import FarmDashboard, TreeDashboard
 from auth_utils import get_current_user
+from services.fruit_lifecycle import auto_abort_stale_fruits
 
 router = APIRouter()
 
@@ -22,20 +24,40 @@ def get_dashboard(
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found")
 
+    auto_abort_stale_fruits(db)
     trees = db.query(Tree).filter(Tree.farm_id == farm_id).all()
 
+    current_season = datetime.now().year
     tree_summaries = []
     total_active_fruits = 0
+    total_harvested_fruits = 0
+    total_aborted_fruits = 0
 
     for tree in trees:
         active_fruits = (
             db.query(Fruit)
-            .filter(Fruit.tree_id == tree.id, Fruit.is_harvested == False)
+            .filter(
+                Fruit.tree_id == tree.id,
+                Fruit.season == current_season,
+                Fruit.is_harvested == False,
+                Fruit.is_aborted == False,
+            )
             .all()
         )
 
         fruit_count = len(active_fruits)
         total_active_fruits += fruit_count
+
+        total_harvested_fruits += (
+            db.query(func.count(Fruit.id))
+            .filter(Fruit.tree_id == tree.id, Fruit.season == current_season, Fruit.is_harvested == True)
+            .scalar()
+        )
+        total_aborted_fruits += (
+            db.query(func.count(Fruit.id))
+            .filter(Fruit.tree_id == tree.id, Fruit.season == current_season, Fruit.is_aborted == True)
+            .scalar()
+        )
 
         earliest_harvest = (
             min((f.harvest_date for f in active_fruits), default=None)
@@ -60,7 +82,10 @@ def get_dashboard(
     return FarmDashboard(
         farm_id=farm.id,
         farm_name=farm.name,
+        current_season=current_season,
         total_trees=len(trees),
         total_active_fruits=total_active_fruits,
+        total_harvested_fruits=total_harvested_fruits,
+        total_aborted_fruits=total_aborted_fruits,
         trees=tree_summaries,
     )

@@ -92,12 +92,9 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
   }
 
   void _showFruitActions(ActiveFruit fruit) {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-      builder: (_) => _FruitActionSheet(
+      builder: (_) => _FruitActionDialog(
         fruit: fruit,
         onDone: _load,
       ),
@@ -178,7 +175,7 @@ class _SummaryBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stages = {1: 0, 2: 0, 3: 0, 4: 0};
+    final stages = {1: 0, 2: 0, 3: 0};
     for (final f in fruits) {
       stages[f.growthStage] = (stages[f.growthStage] ?? 0) + 1;
     }
@@ -238,11 +235,19 @@ class _ActiveFruitCard extends StatelessWidget {
     const colors = {
       1: Color(0xFF16A34A),
       2: Color(0xFF0D9488),
-      3: Color(0xFFF59E0B),
-      4: Color(0xFFEF4444),
+      3: Color(0xFFEF4444),
     };
     return colors[fruit.growthStage] ?? kGreenPrimary;
   }
+
+  static const _flushColors = {
+    'red': Color(0xFFEF4444),
+    'yellow': Color(0xFFF59E0B),
+    'blue': Color(0xFF0369A1),
+    'green': Color(0xFF16A34A),
+    'orange': Color(0xFFEA580C),
+    'purple': Color(0xFF7C3AED),
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -281,11 +286,24 @@ class _ActiveFruitCard extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(fruit.label,
-                  style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: kText1)),
+              Row(children: [
+                Text(fruit.label,
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: kText1)),
+                if (fruit.flushColor != null) ...[
+                  const SizedBox(width: 6),
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: _flushColors[fruit.flushColor] ?? kText3,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ],
+              ]),
               const SizedBox(height: 2),
               Text(
                 '${fruit.sizeCm.toStringAsFixed(1)} cm · ${fruit.stageName} · $harvestStr',
@@ -313,18 +331,18 @@ class _ActiveFruitCard extends StatelessWidget {
   }
 }
 
-// ── Action bottom sheet ───────────────────────────────────────────────────────
+// ── Action dialog ─────────────────────────────────────────────────────────
 
-class _FruitActionSheet extends StatefulWidget {
+class _FruitActionDialog extends StatefulWidget {
   final ActiveFruit fruit;
   final VoidCallback onDone;
-  const _FruitActionSheet({required this.fruit, required this.onDone});
+  const _FruitActionDialog({required this.fruit, required this.onDone});
 
   @override
-  State<_FruitActionSheet> createState() => _FruitActionSheetState();
+  State<_FruitActionDialog> createState() => _FruitActionDialogState();
 }
 
-class _FruitActionSheetState extends State<_FruitActionSheet> {
+class _FruitActionDialogState extends State<_FruitActionDialog> {
   final _reasonCtrl = TextEditingController();
   bool _showAbortReason = false;
   bool _loading = false;
@@ -376,99 +394,107 @@ class _FruitActionSheetState extends State<_FruitActionSheet> {
   @override
   Widget build(BuildContext context) {
     final fruit = widget.fruit;
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-          20, 20, 20, MediaQuery.of(context).viewInsets.bottom + 28),
-      child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(fruit.label,
               style: GoogleFonts.poppins(
                   fontSize: 16, fontWeight: FontWeight.w600, color: kText1)),
-          const Spacer(),
-          IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => Navigator.pop(context)),
-        ]),
-        Text(
-          '${fruit.sizeCm.toStringAsFixed(1)} cm · ${fruit.stageName} · ${fruit.daysToHarvest} days to harvest',
-          style: GoogleFonts.poppins(fontSize: 13, color: kText3),
-        ),
-        const SizedBox(height: 20),
-
-        if (_error != null)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Text(_error!,
-                style: GoogleFonts.poppins(fontSize: 13, color: kRed)),
+          const SizedBox(height: 6),
+          Text(
+            '${fruit.sizeCm.toStringAsFixed(1)} cm · ${fruit.stageName} · ${fruit.daysToHarvest} days to harvest',
+            style: GoogleFonts.poppins(fontSize: 12, color: kText3),
           ),
-
-        if (_loading)
-          const Center(child: CircularProgressIndicator(color: kGreenPrimary))
-        else ...[
-          // ── Harvest ──────────────────────────────────────────────────────
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _harvest,
-              icon: const Icon(Icons.check_circle_outline_rounded),
-              label: const Text('Mark as Harvested'),
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: kGreenPrimary,
-                  padding: const EdgeInsets.symmetric(vertical: 14)),
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // ── Abort ─────────────────────────────────────────────────────────
-          if (!_showAbortReason)
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () => setState(() => _showAbortReason = true),
-                icon: const Icon(Icons.cancel_outlined, color: kRed),
-                label: Text('Mark as Fallen / Aborted',
-                    style: GoogleFonts.poppins(color: kRed)),
-                style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: kRed),
-                    padding: const EdgeInsets.symmetric(vertical: 14)),
-              ),
-            )
-          else ...[
-            TextField(
-              controller: _reasonCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Reason (optional)',
-                hintText: 'e.g. Fell from tree, pest damage, thinned',
-                prefixIcon: Icon(Icons.notes_rounded),
-              ),
-              textCapitalization: TextCapitalization.sentences,
-              textInputAction: TextInputAction.done,
-              onSubmitted: (_) => _abort(),
-              autofocus: true,
-            ),
-            const SizedBox(height: 10),
-            Row(children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () => setState(() => _showAbortReason = false),
-                  child: Text('Cancel',
-                      style: GoogleFonts.poppins(color: kText2)),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _abort,
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: kRed,
-                      padding: const EdgeInsets.symmetric(vertical: 14)),
-                  child: const Text('Confirm Abort'),
-                ),
-              ),
-            ]),
-          ],
         ],
-      ]),
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_error != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(_error!,
+                    style: GoogleFonts.poppins(fontSize: 13, color: kRed)),
+              ),
+
+            if (_loading)
+              const Center(child: CircularProgressIndicator(color: kGreenPrimary))
+            else ...[
+              // ── Harvest ──────────────────────────────────────────────────────
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _harvest,
+                  icon: const Icon(Icons.check_circle_outline_rounded),
+                  label: const Text('Mark as Harvested'),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: kGreenPrimary,
+                      padding: const EdgeInsets.symmetric(vertical: 14)),
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // ── Abort ─────────────────────────────────────────────────────────
+              if (!_showAbortReason)
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => setState(() => _showAbortReason = true),
+                    icon: const Icon(Icons.cancel_outlined, color: kRed),
+                    label: Text('Mark as Fallen / Aborted',
+                        style: GoogleFonts.poppins(color: kRed)),
+                    style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: kRed),
+                        padding: const EdgeInsets.symmetric(vertical: 14)),
+                  ),
+                )
+              else ...[
+                TextField(
+                  controller: _reasonCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Reason (optional)',
+                    hintText: 'e.g. Fell from tree, pest damage, thinned',
+                    prefixIcon: Icon(Icons.notes_rounded),
+                  ),
+                  textCapitalization: TextCapitalization.sentences,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) => _abort(),
+                  autofocus: true,
+                ),
+                const SizedBox(height: 10),
+                Row(children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => setState(() => _showAbortReason = false),
+                      child: Text('Cancel',
+                          style: GoogleFonts.poppins(color: kText2)),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _abort,
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: kRed,
+                          padding: const EdgeInsets.symmetric(vertical: 14)),
+                      child: const Text('Confirm Abort'),
+                    ),
+                  ),
+                ]),
+              ],
+            ],
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _loading ? null : () => Navigator.pop(context),
+          child: Text('Close', style: GoogleFonts.poppins(color: kText2)),
+        ),
+      ],
     );
   }
 }

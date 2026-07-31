@@ -527,8 +527,7 @@ class _StageBar extends StatelessWidget {
           child: Row(children: [
             _Bar(count: farm.stage1Count, total: total, color: const Color(0xFFD1D5DB)),
             _Bar(count: farm.stage2Count, total: total, color: const Color(0xFF38BDF8)),
-            _Bar(count: farm.stage3Count, total: total, color: kAmberMid),
-            _Bar(count: farm.stage4Count, total: total, color: kGreen),
+            _Bar(count: farm.stage3Count, total: total, color: kGreen),
           ]),
         ),
       ),
@@ -537,11 +536,9 @@ class _StageBar extends StatelessWidget {
         if (farm.stage1Count > 0)
           _LegendDot(color: const Color(0xFFD1D5DB), label: 'Early ${farm.stage1Count}'),
         if (farm.stage2Count > 0)
-          _LegendDot(color: const Color(0xFF38BDF8), label: 'Mid ${farm.stage2Count}'),
+          _LegendDot(color: const Color(0xFF38BDF8), label: 'Bagging ${farm.stage2Count}'),
         if (farm.stage3Count > 0)
-          _LegendDot(color: kAmberMid, label: 'Late ${farm.stage3Count}'),
-        if (farm.stage4Count > 0)
-          _LegendDot(color: kGreen, label: 'Pre-harvest ${farm.stage4Count}'),
+          _LegendDot(color: kGreen, label: 'Pre-harvest ${farm.stage3Count}'),
       ]),
     ]);
   }

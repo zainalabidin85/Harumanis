@@ -361,7 +361,8 @@ class _OrderTimeline extends StatelessWidget {
               icon: Icons.check_circle_rounded,
               label: 'Confirmed by Farmer',
               timestamp: order.confirmedAt,
-              done: order.confirmedAt != null,
+              done: order.confirmedAt != null ||
+                  ['confirmed', 'harvested', 'delivered'].contains(order.status),
             ),
             _TimelineStep(
               icon: Icons.payment_rounded,
@@ -373,13 +374,14 @@ class _OrderTimeline extends StatelessWidget {
               icon: Icons.agriculture_rounded,
               label: 'Harvested',
               timestamp: order.harvestedAt,
-              done: order.harvestedAt != null,
+              done: order.harvestedAt != null ||
+                  ['harvested', 'delivered'].contains(order.status),
             ),
             _TimelineStep(
               icon: Icons.local_shipping_rounded,
               label: 'Delivered',
               timestamp: order.deliveredAt,
-              done: order.deliveredAt != null,
+              done: order.deliveredAt != null || order.status == 'delivered',
             ),
           ];
 

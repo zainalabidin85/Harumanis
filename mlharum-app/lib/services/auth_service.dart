@@ -4,6 +4,7 @@ class AuthService {
   static const _storage = FlutterSecureStorage();
   static const _tokenKey = 'access_token';
   static const _farmIdKey = 'farm_id';
+  static const _roleKey = 'role';
 
   static Future<void> saveToken(String token) =>
       _storage.write(key: _tokenKey, value: token);
@@ -17,6 +18,11 @@ class AuthService {
     final value = await _storage.read(key: _farmIdKey);
     return value != null ? int.tryParse(value) : null;
   }
+
+  static Future<void> saveRole(String role) =>
+      _storage.write(key: _roleKey, value: role);
+
+  static Future<String?> getRole() => _storage.read(key: _roleKey);
 
   static Future<bool> isLoggedIn() async {
     final token = await getToken();

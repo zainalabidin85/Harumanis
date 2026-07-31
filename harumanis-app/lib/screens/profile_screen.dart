@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
 import '../theme.dart';
@@ -21,11 +22,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _phoneCtrl    = TextEditingController();
   final _whatsappCtrl = TextEditingController();
 
-  bool _loading = true;
-  bool _saving  = false;
+  bool _loading    = true;
+  bool _saving     = false;
   String? _email;
   String? _error;
   String? _success;
+  String _version  = '';
 
   @override
   void initState() {
@@ -44,6 +46,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _load() async {
     setState(() { _loading = true; _error = null; });
+    final info = await PackageInfo.fromPlatform();
+    _version = info.version;
     try {
       final me = await ApiService.getMe();
       _nameCtrl.text     = me['name']     as String? ?? '';
@@ -265,7 +269,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _InfoTile(
                     icon: Icons.info_outline_rounded,
                     label: 'App Version',
-                    value: '1.6.0',
+                    value: _version,
                   ),
                   const SizedBox(height: 10),
                   _InfoTile(

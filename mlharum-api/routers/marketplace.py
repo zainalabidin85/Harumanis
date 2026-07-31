@@ -19,11 +19,11 @@ def _build_farm_summary(farm: Farm, db: Session) -> dict:
     fruits = (
         db.query(Fruit)
         .join(Tree, Fruit.tree_id == Tree.id)
-        .filter(Tree.farm_id == farm.id, Fruit.is_harvested == False)
+        .filter(Tree.farm_id == farm.id, Fruit.is_harvested == False, Fruit.is_aborted == False)
         .all()
     )
 
-    stage_counts = {1: 0, 2: 0, 3: 0, 4: 0}
+    stage_counts = {1: 0, 2: 0, 3: 0}
     earliest: date | None = None
     for f in fruits:
         if f.growth_stage in stage_counts:
@@ -46,12 +46,12 @@ def _build_farm_summary(farm: Farm, db: Session) -> dict:
         "farmer_name": farm.owner.name,
         "farmer_verified": farm.owner.is_verified,
         "price_per_kg": float(farm.price_per_kg) if farm.price_per_kg else None,
+        "ready_in_days": farm.ready_in_days if farm.ready_in_days is not None else 4,
         "thumbnail_url": _image_url(farm.images[0].filename) if farm.images else None,
         "total_active_fruits": len(fruits),
         "stage_1_count": stage_counts[1],
         "stage_2_count": stage_counts[2],
         "stage_3_count": stage_counts[3],
-        "stage_4_count": stage_counts[4],
         "earliest_harvest_date": earliest,
         "avg_rating": round(float(review_stats.avg_rating), 1) if review_stats.avg_rating else None,
         "review_count": review_stats.review_count or 0,
@@ -75,7 +75,7 @@ def get_public_farm(farm_id: int, db: Session = Depends(get_db), _: User = Depen
     trees = db.query(Tree).filter(Tree.farm_id == farm_id).all()
     tree_data = []
     for tree in trees:
-        active_fruits = [f for f in tree.fruits if not f.is_harvested]
+        active_fruits = [f for f in tree.fruits if not f.is_harvested and not f.is_aborted]
         harvest_dates = [f.harvest_date for f in active_fruits if f.harvest_date]
         stages = [f.growth_stage for f in active_fruits if f.growth_stage]
         tree_data.append(TreeDashboard(

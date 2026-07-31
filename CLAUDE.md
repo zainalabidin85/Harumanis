@@ -4,10 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-MLharum is an AI-based yield estimation, ripeness prediction, and fruit management system for Harumanis mango. It consists of four components:
+Ai-Harumanis is an AI-based yield estimation, ripeness prediction, and fruit management system for Harumanis mango. It consists of four components (directory names are unchanged from the project's former "MLharum" name):
 
 - **`mlharum-api/`** — FastAPI backend (Python); runs all AI server-side
-- **`mlharum-app/`** — Flutter mobile app (Android-first); camera capture + results + satellite dashboard
+- **`mlharum-app/`** — Ai-Harumanis Flutter mobile app (Android-first, farmer-facing); camera capture + results + satellite dashboard
 - **`mlharum-collector/`** — Standalone Flutter app for collecting training images on-device
 - **`mlharum-model/`** — YOLOv8 training pipeline (Jupyter notebooks + scripts)
 
@@ -151,7 +151,7 @@ Aligned with the Department of Agriculture Perlis (DOA)'s 3-stage field classifi
 
 ## Model Retraining Plan (Next Season)
 
-The current YOLO model has ~23 training images and produces loose bounding boxes, which slightly overestimates fruit size. Retraining is planned for the next Harumanis season.
+The current YOLO model has ~23 training images and produces loose bounding boxes, which slightly overestimates fruit size. Retraining is planned for the next Ai-Harumanis season.
 
 ### Goal
 Tighter bounding boxes → more accurate `size_cm` measurement. Stage classification is **not** a goal — stage is determined by size, not by YOLO.

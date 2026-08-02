@@ -101,7 +101,7 @@ def health():
 @app.get("/version")
 def version():
     return {
-        "ai_harumanis":   {"latest": "1.7.2", "min_required": "1.6.1"},
+        "ai_harumanis":   {"latest": "1.8.0", "min_required": "1.6.1"},
         "beli_harumanis": {"latest": "1.9.5", "min_required": "1.9.5"},
     }
 

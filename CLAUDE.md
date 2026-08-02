@@ -111,7 +111,7 @@ users → farms → trees → detections → fruits
 
 Additional table: `growth_phases` — seeded lookup (migration 004) mapping growth stage + size range to `days_to_harvest`.
 
-Migrations are plain Python scripts in `migrations/` (not standard Alembic versions). Run sequentially via `alembic upgrade head` using the custom `env.py`.
+Migrations live in `migrations/versions/` as standard Alembic revision scripts. Run via `alembic upgrade head`. (`migrations/` itself only holds `env.py`/`script.py.mako` — a stray duplicate set of top-level scripts that predated `versions/` was cleaned up 2026-08-03; if you ever see loose `.py` files directly under `migrations/` again, Alembic won't load them — move them into `versions/` or delete.)
 
 ### Flutter App Structure
 

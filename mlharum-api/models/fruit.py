@@ -39,6 +39,7 @@ class Fruit(Base):
     abort_reason  = Column(String(200), nullable=True)
     aborted_at    = Column(DateTime, nullable=True)
     created_at    = Column(DateTime, server_default=func.now())
+    harvest_reminder_sent_at = Column(DateTime, nullable=True)
 
     detection = relationship("Detection", back_populates="fruits")
     tree      = relationship("Tree", back_populates="fruits")

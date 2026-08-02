@@ -9,10 +9,14 @@ from routers import auth, farms, detection, dashboard, training, analyze, market
 from routers import farm_images, testimonials, doa, announcements
 from services.yolo_service import load_model as load_yolo
 from services.mediapipe_service import load_model as load_mediapipe
+from services import push_service
+from services.harvest_reminder_job import run_harvest_reminder_check
+from apscheduler.schedulers.background import BackgroundScheduler
 from limiter import limiter
-from database import get_db
+from database import get_db, SessionLocal
 from models.farm import Farm
 from sqlalchemy.orm import Session
+import fcntl
 import os
 
 app = FastAPI(title="MLharum API", version="2.0.0")
@@ -42,12 +46,48 @@ app.include_router(doa.router, prefix="/doa", tags=["doa"])
 app.include_router(announcements.router, prefix="/announcements", tags=["announcements"])
 
 
+def _harvest_reminder_tick():
+    db = SessionLocal()
+    try:
+        run_harvest_reminder_check(db)
+    finally:
+        db.close()
+
+
+# Held open for the lifetime of the process (never closed/released) so the
+# flock survives as the single way to pick one scheduler owner among
+# multiple uvicorn workers on this host.
+_scheduler_lock_file = None
+
+
+def _acquire_scheduler_lock() -> bool:
+    global _scheduler_lock_file
+    lock_path = os.path.join(os.path.dirname(__file__), ".harvest_reminder_scheduler.lock")
+    f = open(lock_path, "w")
+    try:
+        fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        f.close()
+        return False
+    _scheduler_lock_file = f  # keep a reference so the lock isn't released on GC
+    return True
+
+
 @app.on_event("startup")
 async def startup():
     load_yolo()
     load_mediapipe()
     os.makedirs("./storage/images/farms", exist_ok=True)
     os.makedirs("./storage/images/announcements", exist_ok=True)
+
+    push_service.init_firebase()
+
+    # Multiple uvicorn workers run on this host; only the worker that wins
+    # the flock runs the scheduler, so the daily job fires exactly once.
+    if _acquire_scheduler_lock():
+        scheduler = BackgroundScheduler()
+        scheduler.add_job(_harvest_reminder_tick, "cron", hour=8, minute=0)
+        scheduler.start()
 
 os.makedirs("./storage", exist_ok=True)
 app.mount("/storage", StaticFiles(directory="./storage"), name="storage")
@@ -61,7 +101,7 @@ def health():
 @app.get("/version")
 def version():
     return {
-        "ai_harumanis":   {"latest": "1.7.0", "min_required": "1.6.1"},
+        "ai_harumanis":   {"latest": "1.7.2", "min_required": "1.6.1"},
         "beli_harumanis": {"latest": "1.9.5", "min_required": "1.9.5"},
     }
 

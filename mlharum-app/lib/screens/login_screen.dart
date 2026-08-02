@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
+import '../services/push_notification_service.dart';
 import '../theme.dart';
 import '../widgets/page_route.dart';
 import 'home_screen.dart';
@@ -75,6 +76,9 @@ class _LoginScreenState extends State<LoginScreen>
       await AuthService.saveRole(role!);
       final farmId = me['farm_id'] as int?;
       if (farmId != null) await AuthService.saveFarmId(farmId);
+      if (await PushNotificationService.requestPermission()) {
+        await PushNotificationService.registerToken();
+      }
       if (mounted) {
         Navigator.pushReplacement(
             context, FadeSlideRoute(page: const HomeScreen()));

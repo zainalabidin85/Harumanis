@@ -152,10 +152,13 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                 padding: const EdgeInsets.only(bottom: 14),
                 child: _AnnouncementCard(
                   announcement: a,
-                  onTap: () => Navigator.push(
-                    context,
-                    FadeSlideRoute(page: AnnouncementDetailScreen(announcement: a)),
-                  ),
+                  onTap: () async {
+                    final changed = await Navigator.push<bool>(
+                      context,
+                      FadeSlideRoute(page: AnnouncementDetailScreen(announcement: a)),
+                    );
+                    if (changed == true) _load();
+                  },
                 ),
               )),
       ],

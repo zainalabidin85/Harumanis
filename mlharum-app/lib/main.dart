@@ -1,11 +1,16 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'services/auth_service.dart';
+import 'services/push_notification_service.dart';
 import 'services/version_service.dart';
 import 'theme.dart';
+
+final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +19,9 @@ void main() async {
     statusBarIconBrightness: Brightness.light,
     statusBarBrightness: Brightness.dark,
   ));
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  await PushNotificationService.init(navigatorKey);
   final loggedIn = await AuthService.isLoggedIn();
   runApp(AiHarumApp(loggedIn: loggedIn));
 }
@@ -28,6 +36,7 @@ class AiHarumApp extends StatelessWidget {
       title: 'Ai-Harumanis',
       debugShowCheckedModeBanner: false,
       theme: buildTheme(),
+      navigatorKey: navigatorKey,
       home: VersionGate(
         child: loggedIn ? const HomeScreen() : const LoginScreen(),
       ),

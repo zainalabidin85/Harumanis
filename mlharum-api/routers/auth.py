@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 from database import get_db
 from models.user import User
-from schemas import UserRegister, UserLogin, TokenResponse, ForgotPasswordRequest, ResetPasswordRequest, UserProfileResponse, UserProfileUpdate
+from schemas import UserRegister, UserLogin, TokenResponse, ForgotPasswordRequest, ResetPasswordRequest, UserProfileResponse, UserProfileUpdate, DeviceTokenRegister
 from auth_utils import hash_password, verify_password, create_access_token, generate_otp, send_reset_email, get_current_user
+from models.device_token import DeviceToken
 from limiter import limiter
 
 logger = logging.getLogger(__name__)
@@ -90,6 +91,22 @@ def update_me(
     db.commit()
     db.refresh(current_user)
     return current_user
+
+
+@router.post("/me/device-token", status_code=200)
+def register_device_token(
+    payload: DeviceTokenRegister,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    existing = db.query(DeviceToken).filter(DeviceToken.token == payload.device_token).first()
+    if existing:
+        existing.user_id = current_user.id
+        existing.platform = payload.platform
+    else:
+        db.add(DeviceToken(user_id=current_user.id, token=payload.device_token, platform=payload.platform))
+    db.commit()
+    return {"message": "Device token registered"}
 
 
 @router.post("/reset-password", status_code=200)

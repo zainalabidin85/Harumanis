@@ -3,15 +3,83 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../models/announcement.dart';
+import '../services/api_service.dart';
+import '../services/auth_service.dart';
 import '../theme.dart';
+import '../widgets/page_route.dart';
+import 'announcement_editor_screen.dart';
 
-class AnnouncementDetailScreen extends StatelessWidget {
+class AnnouncementDetailScreen extends StatefulWidget {
   final Announcement announcement;
 
   const AnnouncementDetailScreen({super.key, required this.announcement});
 
   @override
+  State<AnnouncementDetailScreen> createState() => _AnnouncementDetailScreenState();
+}
+
+class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
+  late Announcement _announcement;
+  bool _canManage = false;
+  bool _deleting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _announcement = widget.announcement;
+    _loadRole();
+  }
+
+  Future<void> _loadRole() async {
+    final role = await AuthService.getRole();
+    if (mounted) setState(() => _canManage = role == 'doa' || role == 'admin');
+  }
+
+  Future<void> _edit() async {
+    final updated = await Navigator.push<bool>(
+      context,
+      FadeSlideRoute(page: AnnouncementEditorScreen(existing: _announcement)),
+    );
+    if (updated == true && mounted) {
+      final refreshed = await ApiService.getAnnouncement(_announcement.id);
+      if (mounted) setState(() => _announcement = refreshed);
+    }
+  }
+
+  Future<void> _delete() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Delete announcement?', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+        content: Text('This can\'t be undone.', style: GoogleFonts.poppins()),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text('Delete', style: GoogleFonts.poppins(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    setState(() => _deleting = true);
+    try {
+      await ApiService.deleteAnnouncement(_announcement.id);
+      if (mounted) Navigator.pop(context, true);
+    } catch (e) {
+      if (mounted) {
+        setState(() => _deleting = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete. Please try again.', style: GoogleFonts.poppins())),
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final announcement = _announcement;
     return Scaffold(
       backgroundColor: kBg,
       body: CustomScrollView(
@@ -20,6 +88,25 @@ class AnnouncementDetailScreen extends StatelessWidget {
             pinned: true,
             expandedHeight: announcement.imageUrl != null ? 220 : 0,
             backgroundColor: kGreenPrimary,
+            actions: [
+              if (_canManage)
+                IconButton(
+                  icon: const Icon(Icons.edit_outlined),
+                  tooltip: 'Edit',
+                  onPressed: _deleting ? null : _edit,
+                ),
+              if (_canManage)
+                IconButton(
+                  icon: _deleting
+                      ? const SizedBox(
+                          width: 18, height: 18,
+                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        )
+                      : const Icon(Icons.delete_outline),
+                  tooltip: 'Delete',
+                  onPressed: _deleting ? null : _delete,
+                ),
+            ],
             flexibleSpace: announcement.imageUrl != null
                 ? FlexibleSpaceBar(
                     background: CachedNetworkImage(

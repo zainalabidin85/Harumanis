@@ -20,6 +20,9 @@ build/
 mlharum-api/storage/images/
 mlharum-api/weights/*.pt
 mlharum-api/weights/*.task
+mlharum-api/firebase-service-account.json
+mlharum-api/.harvest_reminder_scheduler.lock
+mlharum-app/android/app/google-services.json
 
 # ── Model training ────────────────────────────────────────────────────────────
 mlharum-model/datasets/raw/

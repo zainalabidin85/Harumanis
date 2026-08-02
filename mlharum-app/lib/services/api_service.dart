@@ -76,6 +76,13 @@ class ApiService {
     });
   }
 
+  // ── Push Notifications ──────────────────────────────────────────────────────
+
+  static Future<void> registerDeviceToken(String token) async {
+    final dio = await _authDio();
+    await dio.post('/auth/me/device-token', data: {'device_token': token});
+  }
+
   // ── Farms & Trees ───────────────────────────────────────────────────────────
 
   static Future<int> createFarm(String name, String location) async {
@@ -304,6 +311,26 @@ class ApiService {
       '/announcements',
       data: formData,
       options: Options(contentType: 'multipart/form-data'),
+    );
+    return Announcement.fromJson(res.data as Map<String, dynamic>);
+  }
+
+  static Future<Announcement> updateAnnouncement({
+    required int id,
+    String? title,
+    String? body,
+    DateTime? eventDate,
+    String? location,
+  }) async {
+    final dio = await _authDio();
+    final res = await dio.patch(
+      '/announcements/$id',
+      data: {
+        if (title != null) 'title': title,
+        if (body != null) 'body': body,
+        if (eventDate != null) 'event_date': eventDate.toIso8601String(),
+        if (location != null) 'location': location,
+      },
     );
     return Announcement.fromJson(res.data as Map<String, dynamic>);
   }

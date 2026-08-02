@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
+import '../services/push_notification_service.dart';
 import '../theme.dart';
 import '../widgets/page_route.dart';
 import 'login_screen.dart';
@@ -50,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen>
     _loadPendingOrders();
     _loadFarmName();
     _loadRole();
+    PushNotificationService.registerToken();
   }
 
   Future<void> _loadRole() async {

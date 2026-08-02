@@ -3,11 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import '../models/announcement.dart';
 import '../services/api_service.dart';
 import '../theme.dart';
 
 class AnnouncementEditorScreen extends StatefulWidget {
-  const AnnouncementEditorScreen({super.key});
+  final Announcement? existing;
+
+  const AnnouncementEditorScreen({super.key, this.existing});
+
+  bool get isEditing => existing != null;
 
   @override
   State<AnnouncementEditorScreen> createState() => _AnnouncementEditorScreenState();
@@ -20,6 +25,18 @@ class _AnnouncementEditorScreenState extends State<AnnouncementEditorScreen> {
   DateTime? _eventDate;
   String? _imagePath;
   bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final existing = widget.existing;
+    if (existing != null) {
+      _titleCtrl.text = existing.title;
+      _bodyCtrl.text = existing.body;
+      _locationCtrl.text = existing.location ?? '';
+      _eventDate = existing.eventDate;
+    }
+  }
 
   @override
   void dispose() {
@@ -69,18 +86,32 @@ class _AnnouncementEditorScreenState extends State<AnnouncementEditorScreen> {
 
     setState(() => _saving = true);
     try {
-      await ApiService.createAnnouncement(
-        title: title,
-        body: body,
-        eventDate: _eventDate,
-        location: _locationCtrl.text.trim().isEmpty ? null : _locationCtrl.text.trim(),
-        imagePath: _imagePath,
-      );
+      if (widget.isEditing) {
+        await ApiService.updateAnnouncement(
+          id: widget.existing!.id,
+          title: title,
+          body: body,
+          eventDate: _eventDate,
+          location: _locationCtrl.text.trim(),
+        );
+      } else {
+        await ApiService.createAnnouncement(
+          title: title,
+          body: body,
+          eventDate: _eventDate,
+          location: _locationCtrl.text.trim().isEmpty ? null : _locationCtrl.text.trim(),
+          imagePath: _imagePath,
+        );
+      }
       if (mounted) Navigator.pop(context, true);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to post announcement. Please try again.', style: GoogleFonts.poppins())),
+          SnackBar(content: Text(
+              widget.isEditing
+                  ? 'Failed to save changes. Please try again.'
+                  : 'Failed to post announcement. Please try again.',
+              style: GoogleFonts.poppins())),
         );
       }
     } finally {
@@ -93,39 +124,47 @@ class _AnnouncementEditorScreenState extends State<AnnouncementEditorScreen> {
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
-        title: Text('Post Announcement', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+        title: Text(widget.isEditing ? 'Edit Announcement' : 'Post Announcement',
+            style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
         children: [
-          GestureDetector(
-            onTap: _pickImage,
-            child: Container(
-              height: 160,
-              decoration: BoxDecoration(
-                color: kCard,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: kDivider),
-                image: _imagePath != null
-                    ? DecorationImage(image: FileImage(File(_imagePath!)), fit: BoxFit.cover)
+          if (!widget.isEditing)
+            GestureDetector(
+              onTap: _pickImage,
+              child: Container(
+                height: 160,
+                decoration: BoxDecoration(
+                  color: kCard,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: kDivider),
+                  image: _imagePath != null
+                      ? DecorationImage(image: FileImage(File(_imagePath!)), fit: BoxFit.cover)
+                      : null,
+                ),
+                child: _imagePath == null
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.add_photo_alternate_outlined, size: 32, color: kText3),
+                            const SizedBox(height: 8),
+                            Text('Add banner image (optional)',
+                                style: GoogleFonts.poppins(fontSize: 13, color: kText3)),
+                          ],
+                        ),
+                      )
                     : null,
               ),
-              child: _imagePath == null
-                  ? Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.add_photo_alternate_outlined, size: 32, color: kText3),
-                          const SizedBox(height: 8),
-                          Text('Add banner image (optional)',
-                              style: GoogleFonts.poppins(fontSize: 13, color: kText3)),
-                        ],
-                      ),
-                    )
-                  : null,
             ),
-          ),
-          const SizedBox(height: 20),
+          if (widget.isEditing && widget.existing!.imageUrl != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text('Banner image can\'t be changed here — delete and repost to change it.',
+                  style: GoogleFonts.poppins(fontSize: 12, color: kText3)),
+            ),
+          if (!widget.isEditing || widget.existing!.imageUrl != null) const SizedBox(height: 20),
           TextField(
             controller: _titleCtrl,
             maxLength: 150,
@@ -172,7 +211,7 @@ class _AnnouncementEditorScreenState extends State<AnnouncementEditorScreen> {
                     width: 22, height: 22,
                     child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                   )
-                : const Text('Post Announcement'),
+                : Text(widget.isEditing ? 'Save Changes' : 'Post Announcement'),
           ),
         ],
       ),

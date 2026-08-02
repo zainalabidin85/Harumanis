@@ -76,6 +76,11 @@ class UserProfileUpdate(BaseModel):
     bank_account_name: Optional[str] = None
 
 
+class DeviceTokenRegister(BaseModel):
+    device_token: str
+    platform: str = "android"
+
+
 # ── Farm ──────────────────────────────────────────────────────────────────────
 
 class FarmCreate(BaseModel):

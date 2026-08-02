@@ -11,6 +11,7 @@ from models.user import User
 from auth_utils import get_current_user, require_doa
 from schemas import AnnouncementUpdate, AnnouncementResponse
 from config import settings
+from services import push_service
 
 router = APIRouter()
 
@@ -97,6 +98,15 @@ async def create_announcement(
     db.add(a)
     db.commit()
     db.refresh(a)
+
+    push_service.send_to_farmers(
+        db,
+        title=a.title,
+        body=a.body[:120],
+        data={"type": "announcement", "announcement_id": str(a.id)},
+        exclude_user_id=current_user.id,
+    )
+
     return _to_response(a)
 
 

@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     billplz_sandbox: bool = True
     api_base_url: str = "https://mlharum.unitani.com"
 
+    # Firebase Cloud Messaging (push notifications)
+    firebase_credentials_path: str = "./firebase-service-account.json"
+
     class Config:
         env_file = ".env"
 

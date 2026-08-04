@@ -20,7 +20,7 @@ class PushNotificationService {
     navigatorKey = key;
     if (_initialized) return;
 
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const android = AndroidInitializationSettings('ic_stat_notify');
     const settings = InitializationSettings(android: android);
     await _plugin.initialize(settings);
 
@@ -89,7 +89,8 @@ class PushNotificationService {
           channelDescription: 'Announcements and harvest reminders',
           importance: Importance.high,
           priority: Priority.high,
-          icon: '@mipmap/ic_launcher',
+          icon: 'ic_stat_notify',
+          color: Color(0xFF16A34A),
         ),
       ),
       payload: message.data['type'],

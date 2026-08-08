@@ -67,14 +67,6 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
       backgroundColor: kBg,
       appBar: AppBar(
         title: const Text('Announcements'),
-        actions: [
-          if (_canPost)
-            IconButton(
-              icon: const Icon(Icons.add_rounded),
-              tooltip: 'Post announcement',
-              onPressed: _openEditor,
-            ),
-        ],
       ),
       body: RefreshIndicator(
         onRefresh: _load,
@@ -96,6 +88,10 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
       children: [
+        if (_canPost) ...[
+          _PostAnnouncementCard(onTap: _openEditor),
+          const SizedBox(height: 16),
+        ],
         SizedBox(
           height: 36,
           child: ListView(
@@ -162,6 +158,67 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                 ),
               )),
       ],
+    );
+  }
+}
+
+class _PostAnnouncementCard extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _PostAnnouncementCard({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: kCard,
+      borderRadius: BorderRadius.circular(20),
+      clipBehavior: Clip.antiAlias,
+      elevation: 0,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: kCardShadow,
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: kGreenLight,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(Icons.add_rounded, color: kGreenPrimary, size: 26),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Post Announcement',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: kText1,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      'Share news, workshops or notices',
+                      style: GoogleFonts.poppins(fontSize: 13, color: kText2),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, color: kText3, size: 22),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

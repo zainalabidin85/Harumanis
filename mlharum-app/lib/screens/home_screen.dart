@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen>
     super.initState();
     _ctrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 900));
-    _cardAnims = List.generate(8, (i) {
+    _cardAnims = List.generate(5, (i) {
       final start = 0.1 + i * 0.12;
       return CurvedAnimation(
         parent: _ctrl,
@@ -90,6 +90,21 @@ class _HomeScreenState extends State<HomeScreen>
   void dispose() {
     _ctrl.dispose();
     super.dispose();
+  }
+
+  void _openBuyerTools() {
+    HapticFeedback.lightImpact();
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) => _BuyerToolsSheet(
+        pendingOrders: _pendingOrders,
+        farmId: _farmId,
+        farmName: _farmName,
+        readyInDays: _readyInDays,
+        onOrdersViewed: _loadPendingOrders,
+      ),
+    );
   }
 
   Future<void> _logout() async {
@@ -248,81 +263,18 @@ class _HomeScreenState extends State<HomeScreen>
                   _AnimatedCard(
                     animation: _cardAnims[2],
                     child: _FeatureCard(
-                      icon: Icons.colorize_rounded,
-                      iconColor: kOrange,
-                      iconBg: const Color(0xFFFFEDD5),
-                      label: 'Check Pulp Ripeness',
-                      subtitle: 'Predict Brix & sweetness from pulp colour',
-                      citation: 'Based on Nasir et al. (2021) · UniMAP',
-                      onTap: () => Navigator.push(
-                        context,
-                        FadeSlideRoute(page: const PulpCameraScreen()),
-                      ),
+                      icon: Icons.storefront_rounded,
+                      iconColor: const Color(0xFF7C3AED),
+                      iconBg: const Color(0xFFEDE9FE),
+                      label: 'Jual Harumanis',
+                      subtitle: 'Farm photos, orders & QR code',
+                      badge: _pendingOrders > 0 ? '$_pendingOrders new' : null,
+                      onTap: _openBuyerTools,
                     ),
                   ),
                   const SizedBox(height: 16),
                   _AnimatedCard(
                     animation: _cardAnims[3],
-                    child: _FeatureCard(
-                      icon: Icons.photo_library_rounded,
-                      iconColor: const Color(0xFF7C3AED),
-                      iconBg: const Color(0xFFEDE9FE),
-                      label: 'Farm Photos',
-                      subtitle: 'Add photos to attract buyers',
-                      onTap: () => Navigator.push(
-                        context,
-                        FadeSlideRoute(page: const FarmPhotosScreen()),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  _AnimatedCard(
-                    animation: _cardAnims[4],
-                    child: _FeatureCard(
-                      icon: Icons.receipt_long_rounded,
-                      iconColor: const Color(0xFFB45309),
-                      iconBg: const Color(0xFFFEF3C7),
-                      label: 'Incoming Orders',
-                      subtitle: 'Manage buyer orders from Harumanis',
-                      badge: _pendingOrders > 0 ? '$_pendingOrders new' : null,
-                      onTap: () async {
-                        await Navigator.push(
-                          context,
-                          FadeSlideRoute(page: const OrdersScreen()),
-                        );
-                        _loadPendingOrders();
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  _AnimatedCard(
-                    animation: _cardAnims[5],
-                    child: _FeatureCard(
-                      icon: Icons.qr_code_rounded,
-                      iconColor: const Color(0xFF0369A1),
-                      iconBg: const Color(0xFFE0F2FE),
-                      label: 'Buyer QR Code',
-                      subtitle: 'Let street buyers set a ripeness reminder',
-                      onTap: () {
-                        if (_farmId == null) return;
-                        Navigator.push(
-                          context,
-                          FadeSlideRoute(
-                            page: QrScreen(
-                              farmId: _farmId!,
-                              farmName: _farmName.isNotEmpty
-                                  ? _farmName
-                                  : 'My Farm',
-                              initialReadyInDays: _readyInDays,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  _AnimatedCard(
-                    animation: _cardAnims[6],
                     child: _FeatureCard(
                       icon: Icons.campaign_rounded,
                       iconColor: const Color(0xFF0891B2),
@@ -338,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen>
                   if (_showDoaCard) ...[
                     const SizedBox(height: 16),
                     _AnimatedCard(
-                      animation: _cardAnims[7],
+                      animation: _cardAnims[4],
                       child: _FeatureCard(
                         icon: Icons.assessment_rounded,
                         iconColor: const Color(0xFF166534),
@@ -393,6 +345,205 @@ class _AnimatedCard extends StatelessWidget {
   }
 }
 
+// ── Buyer Tools sheet ────────────────────────────────────────────────────────
+class _BuyerToolsSheet extends StatelessWidget {
+  final int pendingOrders;
+  final int? farmId;
+  final String farmName;
+  final int readyInDays;
+  final VoidCallback onOrdersViewed;
+
+  const _BuyerToolsSheet({
+    required this.pendingOrders,
+    required this.farmId,
+    required this.farmName,
+    required this.readyInDays,
+    required this.onOrdersViewed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: kCard,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Jual Harumanis',
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: kText1,
+              ),
+            ),
+            const SizedBox(height: 16),
+            _BuyerToolRow(
+              icon: Icons.photo_library_rounded,
+              iconColor: const Color(0xFF7C3AED),
+              iconBg: const Color(0xFFEDE9FE),
+              label: 'Farm Photos',
+              subtitle: 'Add photos to attract buyers',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  FadeSlideRoute(page: const FarmPhotosScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 10),
+            _BuyerToolRow(
+              icon: Icons.receipt_long_rounded,
+              iconColor: const Color(0xFFB45309),
+              iconBg: const Color(0xFFFEF3C7),
+              label: 'Incoming Orders',
+              subtitle: 'Manage buyer orders from Harumanis',
+              badge: pendingOrders > 0 ? '$pendingOrders new' : null,
+              onTap: () async {
+                Navigator.pop(context);
+                await Navigator.push(
+                  context,
+                  FadeSlideRoute(page: const OrdersScreen()),
+                );
+                onOrdersViewed();
+              },
+            ),
+            const SizedBox(height: 10),
+            _BuyerToolRow(
+              icon: Icons.colorize_rounded,
+              iconColor: kOrange,
+              iconBg: const Color(0xFFFFEDD5),
+              label: 'Check Pulp Ripeness',
+              subtitle: 'Predict Brix & sweetness from pulp colour',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  FadeSlideRoute(page: const PulpCameraScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 10),
+            _BuyerToolRow(
+              icon: Icons.qr_code_rounded,
+              iconColor: const Color(0xFF0369A1),
+              iconBg: const Color(0xFFE0F2FE),
+              label: 'Reminder QR',
+              subtitle: 'Let street buyers set a ripeness reminder',
+              onTap: () {
+                if (farmId == null) return;
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  FadeSlideRoute(
+                    page: QrScreen(
+                      farmId: farmId!,
+                      farmName: farmName.isNotEmpty ? farmName : 'My Farm',
+                      initialReadyInDays: readyInDays,
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BuyerToolRow extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBg;
+  final String label;
+  final String subtitle;
+  final String? badge;
+  final VoidCallback onTap;
+
+  const _BuyerToolRow({
+    required this.icon,
+    required this.iconColor,
+    required this.iconBg,
+    required this.label,
+    required this.subtitle,
+    required this.onTap,
+    this.badge,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Pressable(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: iconBg,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: iconColor, size: 22),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(children: [
+                    Text(
+                      label,
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: kText1,
+                      ),
+                    ),
+                    if (badge != null) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: kAmber,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(badge!,
+                            style: GoogleFonts.poppins(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white)),
+                      ),
+                    ],
+                  ]),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.poppins(fontSize: 12, color: kText2),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: kText3, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 // ── Feature card ─────────────────────────────────────────────────────────────
 class _FeatureCard extends StatelessWidget {
   final IconData icon;
@@ -400,7 +551,6 @@ class _FeatureCard extends StatelessWidget {
   final Color iconBg;
   final String label;
   final String subtitle;
-  final String? citation;
   final String? badge;
   final VoidCallback onTap;
 
@@ -411,7 +561,6 @@ class _FeatureCard extends StatelessWidget {
     required this.label,
     required this.subtitle,
     required this.onTap,
-    this.citation,
     this.badge,
   });
 
@@ -477,14 +626,6 @@ class _FeatureCard extends StatelessWidget {
                     style: GoogleFonts.poppins(
                         fontSize: 13, color: kText2),
                   ),
-                  if (citation != null) ...[
-                    const SizedBox(height: 3),
-                    Text(
-                      citation!,
-                      style: GoogleFonts.poppins(
-                          fontSize: 10, color: kText3),
-                    ),
-                  ],
                 ],
               ),
             ),

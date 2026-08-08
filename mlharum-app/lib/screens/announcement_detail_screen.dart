@@ -77,80 +77,158 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
     }
   }
 
+  void _openImage() {
+    final url = _announcement.imageUrl;
+    if (url == null) return;
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        opaque: false,
+        barrierColor: Colors.black,
+        pageBuilder: (_, __, ___) => _FullScreenImageViewer(imageUrl: url, heroTag: 'announcement-${_announcement.id}'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final announcement = _announcement;
     return Scaffold(
       backgroundColor: kBg,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            expandedHeight: announcement.imageUrl != null ? 220 : 0,
-            backgroundColor: kGreenPrimary,
-            actions: [
-              if (_canManage)
-                IconButton(
-                  icon: const Icon(Icons.edit_outlined),
-                  tooltip: 'Edit',
-                  onPressed: _deleting ? null : _edit,
-                ),
-              if (_canManage)
-                IconButton(
-                  icon: _deleting
-                      ? const SizedBox(
-                          width: 18, height: 18,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                        )
-                      : const Icon(Icons.delete_outline),
-                  tooltip: 'Delete',
-                  onPressed: _deleting ? null : _delete,
-                ),
-            ],
-            flexibleSpace: announcement.imageUrl != null
-                ? FlexibleSpaceBar(
-                    background: CachedNetworkImage(
-                      imageUrl: announcement.imageUrl!,
-                      fit: BoxFit.cover,
-                      errorWidget: (_, __, ___) => Container(color: kGreenLight),
-                    ),
-                  )
-                : null,
+      appBar: AppBar(
+        backgroundColor: kBg,
+        elevation: 0,
+        foregroundColor: kText1,
+        actions: [
+          if (_canManage)
+            IconButton(
+              icon: const Icon(Icons.edit_outlined),
+              tooltip: 'Edit',
+              onPressed: _deleting ? null : _edit,
+            ),
+          if (_canManage)
+            IconButton(
+              icon: _deleting
+                  ? const SizedBox(
+                      width: 18, height: 18,
+                      child: CircularProgressIndicator(color: kText1, strokeWidth: 2),
+                    )
+                  : const Icon(Icons.delete_outline),
+              tooltip: 'Delete',
+              onPressed: _deleting ? null : _delete,
+            ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
+        children: [
+          Text(
+            announcement.title,
+            style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w700, color: kText1),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                Text(
-                  announcement.title,
-                  style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w700, color: kText1),
-                ),
-                const SizedBox(height: 12),
-                if (announcement.eventDate != null || announcement.location != null)
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 8,
+          const SizedBox(height: 12),
+          if (announcement.eventDate != null || announcement.location != null)
+            Wrap(
+              spacing: 10,
+              runSpacing: 8,
+              children: [
+                if (announcement.eventDate != null)
+                  _MetaChip(
+                    icon: Icons.event_rounded,
+                    text: DateFormat('EEEE, d MMM y · h:mm a').format(announcement.eventDate!),
+                  ),
+                if (announcement.location != null)
+                  _MetaChip(icon: Icons.place_rounded, text: announcement.location!),
+              ],
+            ),
+          const SizedBox(height: 20),
+          Text(
+            announcement.body,
+            style: GoogleFonts.poppins(fontSize: 14, height: 1.6, color: kText1),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'Posted ${DateFormat('d MMM y').format(announcement.createdAt)} · DOA Perlis',
+            style: GoogleFonts.poppins(fontSize: 11, color: kText3),
+          ),
+          if (announcement.imageUrl != null) ...[
+            const SizedBox(height: 20),
+            GestureDetector(
+              onTap: _openImage,
+              child: Hero(
+                tag: 'announcement-${announcement.id}',
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Stack(
+                    alignment: Alignment.bottomRight,
                     children: [
-                      if (announcement.eventDate != null)
-                        _MetaChip(
-                          icon: Icons.event_rounded,
-                          text: DateFormat('EEEE, d MMM y · h:mm a').format(announcement.eventDate!),
+                      CachedNetworkImage(
+                        imageUrl: announcement.imageUrl!,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorWidget: (_, __, ___) => Container(height: 200, color: kGreenLight),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.45),
+                          shape: BoxShape.circle,
                         ),
-                      if (announcement.location != null)
-                        _MetaChip(icon: Icons.place_rounded, text: announcement.location!),
+                        child: const Icon(Icons.zoom_in_rounded, color: Colors.white, size: 18),
+                      ),
                     ],
                   ),
-                const SizedBox(height: 20),
-                Text(
-                  announcement.body,
-                  style: GoogleFonts.poppins(fontSize: 14, height: 1.6, color: kText1),
                 ),
-                const SizedBox(height: 20),
-                Text(
-                  'Posted ${DateFormat('d MMM y').format(announcement.createdAt)} · DOA Perlis',
-                  style: GoogleFonts.poppins(fontSize: 11, color: kText3),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _FullScreenImageViewer extends StatelessWidget {
+  final String imageUrl;
+  final String heroTag;
+
+  const _FullScreenImageViewer({required this.imageUrl, required this.heroTag});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: InteractiveViewer(
+                minScale: 1,
+                maxScale: 5,
+                child: Center(
+                  child: Hero(
+                    tag: heroTag,
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 ),
-              ]),
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: const Icon(Icons.close_rounded, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
             ),
           ),
         ],

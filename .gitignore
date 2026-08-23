@@ -52,6 +52,7 @@ mlharum-app/ios/Runner/GeneratedPluginRegistrant.*
 
 # ── Claude Code ──────────────────────────────────────────────────────────────
 .claude/
+CLAUDE.md
 
 # ── Release artifacts ─────────────────────────────────────────────────────────
 *.apk

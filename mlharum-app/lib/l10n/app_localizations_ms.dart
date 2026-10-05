@@ -564,11 +564,11 @@ class AppLocalizationsMs extends AppLocalizations {
   String get commonDone => 'Selesai';
 
   @override
-  String get resultFlushColorTitle => 'Tanda warna pembalut (pilihan)';
+  String get resultFlushColorTitle => 'Tanda warna (pilihan)';
 
   @override
   String get resultFlushColorBody =>
-      'Padankan dengan warna yang anda ikat pada kertas pembalut untuk pusingan ini';
+      'Padankan dengan warna yang anda ikat pada kertas pembalut';
 
   @override
   String get resultFruitRecorded => 'Buah Direkodkan';

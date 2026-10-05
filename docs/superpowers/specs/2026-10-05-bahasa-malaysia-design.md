@@ -218,7 +218,7 @@ what Perlis farmers and DOA actually say; corrections here are applied everywher
 | Tree | Pokok | |
 | Fruit | Buah | |
 | Scan | Imbas | |
-| Flush color | Warna pusingan | Unsure of the field term for a blooming flush |
+| Flush color | Warna |  |
 | Season | Musim | |
 | Yield | Hasil | |
 | Pulp ripeness | Kematangan isi | |

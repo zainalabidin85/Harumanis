@@ -188,7 +188,7 @@ class _TreeListScreenState extends State<TreeListScreen>
                   controller: treeNumCtrl,
                   decoration: InputDecoration(
                     labelText: context.l10n.treeListTreeNumberLabel,
-                    hintText: 'e.g. T01',
+                    hintText: context.l10n.treeListTreeNumberHint,
                     prefixIcon: Icon(Icons.forest_rounded),
                   ),
                   textCapitalization: TextCapitalization.characters,

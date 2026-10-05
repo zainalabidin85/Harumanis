@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../models/farm_order.dart';
 import '../services/api_service.dart';
 import '../theme.dart';
+import '../l10n/l10n.dart';
 
 class OrderDetailScreen extends StatefulWidget {
   final FarmOrder order;
@@ -41,7 +42,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child:
-                Text('Cancel', style: GoogleFonts.poppins(color: kText2)),
+                Text(context.l10n.commonCancel, style: GoogleFonts.poppins(color: kText2)),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
@@ -66,7 +67,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       widget.onStatusChanged?.call(updated);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Order ${_actionLabel(newStatus).toLowerCase()}.',
+          content: Text(context.l10n.orderDetailStatusUpdated(orderStatusLabel(context.l10n, newStatus).toLowerCase()),
               style: GoogleFonts.poppins()),
           backgroundColor: newStatus == 'cancelled' ? kRed : kGreenMid,
           behavior: SnackBarBehavior.floating,
@@ -77,7 +78,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Failed to update: $e',
+          content: Text(context.l10n.orderDetailErrorUpdate(e.toString()),
               style: GoogleFonts.poppins()),
           backgroundColor: kRed,
           behavior: SnackBarBehavior.floating,
@@ -91,34 +92,34 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   }
 
   String _actionLabel(String status) => switch (status) {
-        'confirmed' => 'Confirm Order',
-        'harvested' => 'Mark Harvested',
-        'delivered' => 'Mark Delivered',
-        'cancelled' => 'Cancel Order',
+        'confirmed' => context.l10n.orderDetailConfirmOrder,
+        'harvested' => context.l10n.orderDetailMarkHarvested,
+        'delivered' => context.l10n.orderDetailMarkDelivered,
+        'cancelled' => context.l10n.orderDetailCancelOrder,
         _ => status,
       };
 
   String _confirmMessage(String status) => switch (status) {
         'confirmed' =>
-          'Confirm this order? The buyer will be notified to proceed with payment.',
+          context.l10n.orderDetailConfirmMsgConfirmed,
         'harvested' =>
-          'Mark this order as harvested? This means the mangoes are ready.',
+          context.l10n.orderDetailConfirmMsgHarvested,
         'delivered' =>
-          'Mark as delivered? This closes the order.',
+          context.l10n.orderDetailConfirmMsgDelivered,
         'cancelled' =>
-          'Cancel this order? This cannot be undone.',
-        _ => 'Update order status to $status?',
+          context.l10n.orderDetailConfirmMsgCancelled,
+        _ => context.l10n.orderDetailConfirmMsgOther(status),
       };
 
   @override
   Widget build(BuildContext context) {
-    final fmt = DateFormat('d MMM yyyy, h:mm a');
-    final dateFmt = DateFormat('d MMM yyyy');
+    final fmt = DateFormat('d MMM yyyy, h:mm a', Localizations.localeOf(context).languageCode);
+    final dateFmt = DateFormat('d MMM yyyy', Localizations.localeOf(context).languageCode);
 
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
-        title: Text('Order #${_order.id}'),
+        title: Text(context.l10n.orderDetailTitle('${_order.id}')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => Navigator.pop(context, _order),
@@ -134,7 +135,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                Text('Status',
+                Text(context.l10n.orderDetailStatus,
                     style:
                         GoogleFonts.poppins(fontSize: 14, color: kText2)),
                 _StatusBadge(status: _order.status),
@@ -147,7 +148,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                Text('Buyer',
+                Text(context.l10n.orderDetailBuyer,
                     style: GoogleFonts.poppins(
                         fontSize: 12, color: kText3)),
                 const SizedBox(height: 4),
@@ -172,14 +173,14 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Delivery Address',
+                        Text(context.l10n.orderDetailDeliveryAddress,
                             style: GoogleFonts.poppins(
                                 fontSize: 12, color: kText3)),
                         const SizedBox(height: 2),
                         Text(
                           _order.buyerAddress?.isNotEmpty == true
                               ? _order.buyerAddress!
-                              : 'No address provided — contact buyer via WhatsApp.',
+                              : context.l10n.orderDetailNoAddress,
                           style: GoogleFonts.poppins(
                               fontSize: 14,
                               color: _order.buyerAddress?.isNotEmpty == true
@@ -197,38 +198,38 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             // ── Order details ───────────────────────────────────────────
             _Card(
               child: Column(children: [
-                _Row(label: 'Quantity', value: '${_order.quantityKg} kg'),
+                _Row(label: context.l10n.orderDetailQuantity, value: '${_order.quantityKg} kg'),
                 _Row(
-                    label: 'Price per kg',
+                    label: context.l10n.orderDetailPricePerKg,
                     value: 'RM ${_order.pricePerKg.toStringAsFixed(2)}'),
                 const Divider(height: 20),
                 _Row(
-                  label: 'Total',
+                  label: context.l10n.orderDetailTotal,
                   value: 'RM ${_order.totalPrice.toStringAsFixed(2)}',
                   bold: true,
                 ),
                 _Row(
-                  label: 'Payment',
-                  value: _order.billplzPaid ? 'Paid ✓' : 'Awaiting payment',
+                  label: context.l10n.orderDetailPayment,
+                  value: _order.billplzPaid ? context.l10n.orderDetailPaidTick : context.l10n.orderDetailAwaitingPayment,
                   valueColor: _order.billplzPaid ? kGreenMid : kAmber,
                 ),
                 if (_order.paidAt != null)
                   _Row(
-                      label: 'Paid at',
+                      label: context.l10n.orderDetailPaidAt,
                       value: dateFmt.format(_order.paidAt!)),
                 if (_order.targetHarvestDate != null)
                   _Row(
-                      label: 'Target date',
+                      label: context.l10n.orderDetailTargetDate,
                       value: dateFmt.format(_order.targetHarvestDate!)),
                 _Row(
-                    label: 'Ordered on',
+                    label: context.l10n.orderDetailOrderedOn,
                     value: fmt.format(_order.createdAt)),
                 if (_order.notes != null && _order.notes!.isNotEmpty) ...[
                   const Divider(height: 20),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Notes: ${_order.notes}',
+                      context.l10n.orderDetailNotes(_order.notes!),
                       style: GoogleFonts.poppins(
                           fontSize: 13, color: kText2),
                     ),
@@ -246,13 +247,13 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               if (_order.status == 'pending') ...[
                 ElevatedButton.icon(
                   icon: const Icon(Icons.check_rounded),
-                  label: const Text('Confirm Order'),
+                  label: Text(context.l10n.orderDetailConfirmOrder),
                   onPressed: () => _updateStatus('confirmed'),
                 ),
                 const SizedBox(height: 10),
                 OutlinedButton.icon(
                   icon: const Icon(Icons.close_rounded),
-                  label: const Text('Cancel Order'),
+                  label: Text(context.l10n.orderDetailCancelOrder),
                   onPressed: () => _updateStatus('cancelled'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: kRed,
@@ -266,13 +267,13 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               if (_order.status == 'confirmed') ...[
                 ElevatedButton.icon(
                   icon: const Icon(Icons.agriculture_rounded),
-                  label: const Text('Mark as Harvested'),
+                  label: Text(context.l10n.orderDetailMarkAsHarvested),
                   onPressed: () => _updateStatus('harvested'),
                 ),
                 const SizedBox(height: 10),
                 OutlinedButton.icon(
                   icon: const Icon(Icons.close_rounded),
-                  label: const Text('Cancel Order'),
+                  label: Text(context.l10n.orderDetailCancelOrder),
                   onPressed: () => _updateStatus('cancelled'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: kRed,
@@ -286,7 +287,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               if (_order.status == 'harvested')
                 ElevatedButton.icon(
                   icon: const Icon(Icons.local_shipping_rounded),
-                  label: const Text('Mark as Delivered'),
+                  label: Text(context.l10n.orderDetailMarkAsDelivered),
                   onPressed: () => _updateStatus('delivered'),
                 ),
               if (_order.status == 'delivered')
@@ -302,7 +303,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     const Icon(Icons.check_circle_rounded,
                         color: kGreenMid, size: 20),
                     const SizedBox(width: 10),
-                    Text('Order completed.',
+                    Text(context.l10n.orderDetailCompleted,
                         style: GoogleFonts.poppins(
                             fontSize: 13, color: kGreenPrimary)),
                   ]),
@@ -320,7 +321,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     const Icon(Icons.cancel_rounded,
                         color: kRed, size: 20),
                     const SizedBox(width: 10),
-                    Text('Order cancelled.',
+                    Text(context.l10n.orderDetailCancelled,
                         style: GoogleFonts.poppins(
                             fontSize: 13, color: kRed)),
                   ]),
@@ -389,11 +390,11 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (label, color, bg) = switch (status) {
-      'pending'   => ('Pending', kAmber, const Color(0xFFFEF3C7)),
-      'confirmed' => ('Confirmed', const Color(0xFF0369A1), const Color(0xFFE0F2FE)),
-      'harvested' => ('Harvested', kGreenMid, kGreenLight),
-      'delivered' => ('Delivered', const Color(0xFF7C3AED), const Color(0xFFEDE9FE)),
-      'cancelled' => ('Cancelled', kRed, const Color(0xFFFEE2E2)),
+      'pending'   => (context.l10n.orderStatusPending, kAmber, const Color(0xFFFEF3C7)),
+      'confirmed' => (context.l10n.orderStatusConfirmed, const Color(0xFF0369A1), const Color(0xFFE0F2FE)),
+      'harvested' => (context.l10n.orderStatusHarvested, kGreenMid, kGreenLight),
+      'delivered' => (context.l10n.orderStatusDelivered, const Color(0xFF7C3AED), const Color(0xFFEDE9FE)),
+      'cancelled' => (context.l10n.orderStatusCancelled, kRed, const Color(0xFFFEE2E2)),
       _           => (status, kText2, const Color(0xFFF3F4F6)),
     };
     return Container(

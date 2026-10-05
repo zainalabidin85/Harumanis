@@ -21,3 +21,22 @@ String stageName(AppLocalizations l10n, int stage) {
       return l10n.stageUnknown;
   }
 }
+
+/// Order status identifier from the API to its display name.
+/// Unknown values are shown as received.
+String orderStatusLabel(AppLocalizations l10n, String status) {
+  switch (status) {
+    case 'pending':
+      return l10n.orderStatusPending;
+    case 'confirmed':
+      return l10n.orderStatusConfirmed;
+    case 'harvested':
+      return l10n.orderStatusHarvested;
+    case 'delivered':
+      return l10n.orderStatusDelivered;
+    case 'cancelled':
+      return l10n.orderStatusCancelled;
+    default:
+      return status;
+  }
+}

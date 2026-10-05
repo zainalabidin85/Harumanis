@@ -1129,6 +1129,840 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} fruits · {harvest}'**
   String treeMarkerSnippet(int count, String harvest);
+
+  /// No description provided for @pulpErrorNoCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'No camera found on this device.'**
+  String get pulpErrorNoCamera;
+
+  /// No description provided for @pulpErrorCapture.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to capture. Try again.'**
+  String get pulpErrorCapture;
+
+  /// No description provided for @pulpCameraTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulp Ripeness'**
+  String get pulpCameraTitle;
+
+  /// No description provided for @pulpCameraInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cut mango in half · Place flat side up\nAlign pulp inside the box · Use natural daylight'**
+  String get pulpCameraInstruction;
+
+  /// No description provided for @pulpStage1.
+  ///
+  /// In en, this message translates to:
+  /// **'Just harvested'**
+  String get pulpStage1;
+
+  /// No description provided for @pulpStage2.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting to ripen'**
+  String get pulpStage2;
+
+  /// No description provided for @pulpStage3.
+  ///
+  /// In en, this message translates to:
+  /// **'Ripening'**
+  String get pulpStage3;
+
+  /// No description provided for @pulpStage4.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to eat'**
+  String get pulpStage4;
+
+  /// No description provided for @pulpStage5.
+  ///
+  /// In en, this message translates to:
+  /// **'Overripe'**
+  String get pulpStage5;
+
+  /// No description provided for @pulpErrorAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis failed. Try again.'**
+  String get pulpErrorAnalysis;
+
+  /// No description provided for @pulpResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulp Analysis'**
+  String get pulpResultTitle;
+
+  /// No description provided for @pulpAnalysing.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysing pulp colour…'**
+  String get pulpAnalysing;
+
+  /// No description provided for @pulpRipenessStage.
+  ///
+  /// In en, this message translates to:
+  /// **'Ripeness Stage'**
+  String get pulpRipenessStage;
+
+  /// No description provided for @pulpStageOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Stage {stage} of 5 — {label}'**
+  String pulpStageOf(int stage, String label);
+
+  /// No description provided for @pulpBrixLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Brix (Sweetness)'**
+  String get pulpBrixLabel;
+
+  /// No description provided for @pulpFirmnessLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Firmness'**
+  String get pulpFirmnessLabel;
+
+  /// No description provided for @pulpNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Not ready yet'**
+  String get pulpNotReady;
+
+  /// No description provided for @pulpDaysToReady.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Approx. 1 more day at room temperature} other{Approx. {days} more days at room temperature}}'**
+  String pulpDaysToReady(int days);
+
+  /// No description provided for @pulpColourComparison.
+  ///
+  /// In en, this message translates to:
+  /// **'Pulp Colour Comparison'**
+  String get pulpColourComparison;
+
+  /// No description provided for @pulpDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'Detected'**
+  String get pulpDetected;
+
+  /// No description provided for @pulpStageReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Stage {stage} reference'**
+  String pulpStageReference(int stage);
+
+  /// No description provided for @pulpConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence: {level}'**
+  String pulpConfidence(String level);
+
+  /// No description provided for @pulpConfidenceHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'high'**
+  String get pulpConfidenceHigh;
+
+  /// No description provided for @pulpConfidenceMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'medium'**
+  String get pulpConfidenceMedium;
+
+  /// No description provided for @pulpConfidenceLow.
+  ///
+  /// In en, this message translates to:
+  /// **'low'**
+  String get pulpConfidenceLow;
+
+  /// No description provided for @pulpCitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on Nasir et al. (2021) — Harumanis ripeness guide (UniMAP)'**
+  String get pulpCitation;
+
+  /// No description provided for @pulpScanAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Another Mango'**
+  String get pulpScanAnother;
+
+  /// No description provided for @announcementsErrorLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load announcements: {detail}'**
+  String announcementsErrorLoad(String detail);
+
+  /// No description provided for @announcementsFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get announcementsFilterAll;
+
+  /// No description provided for @announcementsFilterUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get announcementsFilterUpcoming;
+
+  /// No description provided for @announcementsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No announcements yet.'**
+  String get announcementsEmpty;
+
+  /// No description provided for @announcementsPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Post Announcement'**
+  String get announcementsPost;
+
+  /// No description provided for @announcementsPostSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share news, workshops or notices'**
+  String get announcementsPostSubtitle;
+
+  /// No description provided for @announcementDetailDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete announcement?'**
+  String get announcementDetailDeleteTitle;
+
+  /// No description provided for @commonCantBeUndone.
+  ///
+  /// In en, this message translates to:
+  /// **'This can\'t be undone.'**
+  String get commonCantBeUndone;
+
+  /// No description provided for @announcementDetailErrorDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete. Please try again.'**
+  String get announcementDetailErrorDelete;
+
+  /// No description provided for @commonEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get commonEdit;
+
+  /// No description provided for @announcementDetailPosted.
+  ///
+  /// In en, this message translates to:
+  /// **'Posted {date} · DOA Perlis'**
+  String announcementDetailPosted(String date);
+
+  /// No description provided for @announcementEditorErrorRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Title and description are required.'**
+  String get announcementEditorErrorRequired;
+
+  /// No description provided for @announcementEditorErrorSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save changes. Please try again.'**
+  String get announcementEditorErrorSave;
+
+  /// No description provided for @announcementEditorErrorPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to post announcement. Please try again.'**
+  String get announcementEditorErrorPost;
+
+  /// No description provided for @announcementEditorEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Announcement'**
+  String get announcementEditorEditTitle;
+
+  /// No description provided for @announcementEditorAddBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Add banner image (optional)'**
+  String get announcementEditorAddBanner;
+
+  /// No description provided for @announcementEditorBannerLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Banner image can\'t be changed here — delete and repost to change it.'**
+  String get announcementEditorBannerLocked;
+
+  /// No description provided for @announcementEditorTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get announcementEditorTitleLabel;
+
+  /// No description provided for @announcementEditorTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Free Harumanis Grafting Workshop'**
+  String get announcementEditorTitleHint;
+
+  /// No description provided for @announcementEditorDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get announcementEditorDescriptionLabel;
+
+  /// No description provided for @announcementEditorDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Details farmers need to know'**
+  String get announcementEditorDescriptionHint;
+
+  /// No description provided for @announcementEditorLocationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Location (optional)'**
+  String get announcementEditorLocationLabel;
+
+  /// No description provided for @announcementEditorLocationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Pejabat DOA Perlis'**
+  String get announcementEditorLocationHint;
+
+  /// No description provided for @announcementEditorEventDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Event date (optional)'**
+  String get announcementEditorEventDateLabel;
+
+  /// No description provided for @announcementEditorNoDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No specific date — general notice'**
+  String get announcementEditorNoDate;
+
+  /// No description provided for @announcementEditorSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get announcementEditorSaveChanges;
+
+  /// No description provided for @doaReportErrorLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load report: {detail}'**
+  String doaReportErrorLoad(String detail);
+
+  /// No description provided for @doaReportErrorVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update verification: {detail}'**
+  String doaReportErrorVerify(String detail);
+
+  /// No description provided for @doaReportSeasonAllFarms.
+  ///
+  /// In en, this message translates to:
+  /// **'Season {year} · All Farms'**
+  String doaReportSeasonAllFarms(String year);
+
+  /// No description provided for @doaReportYieldByStage.
+  ///
+  /// In en, this message translates to:
+  /// **'Yield by Stage'**
+  String get doaReportYieldByStage;
+
+  /// No description provided for @doaReportByFarm.
+  ///
+  /// In en, this message translates to:
+  /// **'By Farm ({count})'**
+  String doaReportByFarm(int count);
+
+  /// No description provided for @doaReportSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search farm, owner, or location'**
+  String get doaReportSearchHint;
+
+  /// No description provided for @doaReportNoFarms.
+  ///
+  /// In en, this message translates to:
+  /// **'No farms registered yet.'**
+  String get doaReportNoFarms;
+
+  /// No description provided for @doaReportNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No farms match \"{query}\".'**
+  String doaReportNoMatch(String query);
+
+  /// No description provided for @doaReportStatFarms.
+  ///
+  /// In en, this message translates to:
+  /// **'Farms'**
+  String get doaReportStatFarms;
+
+  /// No description provided for @doaReportStatActiveFruits.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Fruits'**
+  String get doaReportStatActiveFruits;
+
+  /// No description provided for @doaReportStatLostAborted.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost/Aborted'**
+  String get doaReportStatLostAborted;
+
+  /// No description provided for @doaReportNoActiveFruits.
+  ///
+  /// In en, this message translates to:
+  /// **'No active fruits recorded this season.'**
+  String get doaReportNoActiveFruits;
+
+  /// No description provided for @doaReportVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get doaReportVerified;
+
+  /// No description provided for @doaReportNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Verified'**
+  String get doaReportNotVerified;
+
+  /// No description provided for @doaReportStatLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost'**
+  String get doaReportStatLost;
+
+  /// No description provided for @doaReportStageCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{stage}: {count}'**
+  String doaReportStageCount(String stage, int count);
+
+  /// No description provided for @orderStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get orderStatusPending;
+
+  /// No description provided for @orderStatusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get orderStatusConfirmed;
+
+  /// No description provided for @orderStatusHarvested.
+  ///
+  /// In en, this message translates to:
+  /// **'Harvested'**
+  String get orderStatusHarvested;
+
+  /// No description provided for @orderStatusDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get orderStatusDelivered;
+
+  /// No description provided for @orderStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get orderStatusCancelled;
+
+  /// No description provided for @ordersErrorNoFarm.
+  ///
+  /// In en, this message translates to:
+  /// **'No farm linked to your account.'**
+  String get ordersErrorNoFarm;
+
+  /// No description provided for @ordersErrorLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load orders.'**
+  String get ordersErrorLoad;
+
+  /// No description provided for @ordersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders yet'**
+  String get ordersEmpty;
+
+  /// No description provided for @ordersEmptyFiltered.
+  ///
+  /// In en, this message translates to:
+  /// **'No {status} orders'**
+  String ordersEmptyFiltered(String status);
+
+  /// No description provided for @ordersEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders from buyers will appear here.'**
+  String get ordersEmptyBody;
+
+  /// No description provided for @ordersPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get ordersPaid;
+
+  /// No description provided for @ordersUnpaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpaid'**
+  String get ordersUnpaid;
+
+  /// No description provided for @ordersOrderedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Ordered {date}'**
+  String ordersOrderedOn(String date);
+
+  /// No description provided for @orderDetailStatusUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Order {status}.'**
+  String orderDetailStatusUpdated(String status);
+
+  /// No description provided for @orderDetailErrorUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update: {detail}'**
+  String orderDetailErrorUpdate(String detail);
+
+  /// No description provided for @orderDetailConfirmOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Order'**
+  String get orderDetailConfirmOrder;
+
+  /// No description provided for @orderDetailMarkHarvested.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Harvested'**
+  String get orderDetailMarkHarvested;
+
+  /// No description provided for @orderDetailMarkDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Delivered'**
+  String get orderDetailMarkDelivered;
+
+  /// No description provided for @orderDetailCancelOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Order'**
+  String get orderDetailCancelOrder;
+
+  /// No description provided for @orderDetailConfirmMsgConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm this order? The buyer will be notified to proceed with payment.'**
+  String get orderDetailConfirmMsgConfirmed;
+
+  /// No description provided for @orderDetailConfirmMsgHarvested.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark this order as harvested? This means the mangoes are ready.'**
+  String get orderDetailConfirmMsgHarvested;
+
+  /// No description provided for @orderDetailConfirmMsgDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as delivered? This closes the order.'**
+  String get orderDetailConfirmMsgDelivered;
+
+  /// No description provided for @orderDetailConfirmMsgCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this order? This cannot be undone.'**
+  String get orderDetailConfirmMsgCancelled;
+
+  /// No description provided for @orderDetailConfirmMsgOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Update order status to {status}?'**
+  String orderDetailConfirmMsgOther(String status);
+
+  /// No description provided for @orderDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order #{id}'**
+  String orderDetailTitle(String id);
+
+  /// No description provided for @orderDetailStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get orderDetailStatus;
+
+  /// No description provided for @orderDetailBuyer.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer'**
+  String get orderDetailBuyer;
+
+  /// No description provided for @orderDetailDeliveryAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Address'**
+  String get orderDetailDeliveryAddress;
+
+  /// No description provided for @orderDetailNoAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'No address provided — contact buyer via WhatsApp.'**
+  String get orderDetailNoAddress;
+
+  /// No description provided for @orderDetailQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get orderDetailQuantity;
+
+  /// No description provided for @orderDetailPricePerKg.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per kg'**
+  String get orderDetailPricePerKg;
+
+  /// No description provided for @orderDetailTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get orderDetailTotal;
+
+  /// No description provided for @orderDetailPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get orderDetailPayment;
+
+  /// No description provided for @orderDetailPaidTick.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid ✓'**
+  String get orderDetailPaidTick;
+
+  /// No description provided for @orderDetailAwaitingPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting payment'**
+  String get orderDetailAwaitingPayment;
+
+  /// No description provided for @orderDetailPaidAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid at'**
+  String get orderDetailPaidAt;
+
+  /// No description provided for @orderDetailTargetDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Target date'**
+  String get orderDetailTargetDate;
+
+  /// No description provided for @orderDetailOrderedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Ordered on'**
+  String get orderDetailOrderedOn;
+
+  /// No description provided for @orderDetailNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes: {notes}'**
+  String orderDetailNotes(String notes);
+
+  /// No description provided for @orderDetailMarkAsHarvested.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Harvested'**
+  String get orderDetailMarkAsHarvested;
+
+  /// No description provided for @orderDetailMarkAsDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Delivered'**
+  String get orderDetailMarkAsDelivered;
+
+  /// No description provided for @orderDetailCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Order completed.'**
+  String get orderDetailCompleted;
+
+  /// No description provided for @orderDetailCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Order cancelled.'**
+  String get orderDetailCancelled;
+
+  /// No description provided for @farmPhotosAddCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Add caption'**
+  String get farmPhotosAddCaption;
+
+  /// No description provided for @farmPhotosCaptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Harumanis Season 2025 (optional)'**
+  String get farmPhotosCaptionHint;
+
+  /// No description provided for @farmPhotosUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get farmPhotosUpload;
+
+  /// No description provided for @farmPhotosErrorUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload failed. Please try again.'**
+  String get farmPhotosErrorUpload;
+
+  /// No description provided for @farmPhotosDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete photo?'**
+  String get farmPhotosDeleteTitle;
+
+  /// No description provided for @farmPhotosDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This photo will be permanently removed.'**
+  String get farmPhotosDeleteBody;
+
+  /// No description provided for @farmPhotosAddTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Add photo'**
+  String get farmPhotosAddTooltip;
+
+  /// No description provided for @farmPhotosNoFarmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No farm set up yet'**
+  String get farmPhotosNoFarmTitle;
+
+  /// No description provided for @farmPhotosNoFarmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your farm profile first.'**
+  String get farmPhotosNoFarmBody;
+
+  /// No description provided for @farmPhotosCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}/5 photos'**
+  String farmPhotosCount(int count);
+
+  /// No description provided for @farmPhotosTapToAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + to add a photo'**
+  String get farmPhotosTapToAdd;
+
+  /// No description provided for @farmPhotosEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No photos yet'**
+  String get farmPhotosEmptyTitle;
+
+  /// No description provided for @farmPhotosEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add up to 5 photos to attract buyers'**
+  String get farmPhotosEmptyBody;
+
+  /// No description provided for @farmPhotosAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Photo'**
+  String get farmPhotosAddButton;
+
+  /// No description provided for @qrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer QR Code'**
+  String get qrTitle;
+
+  /// No description provided for @qrSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show this to buyers when selling your Harumanis'**
+  String get qrSubtitle;
+
+  /// No description provided for @qrScanWithCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan with any camera'**
+  String get qrScanWithCamera;
+
+  /// No description provided for @qrDaysUntilReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Days until ready to eat'**
+  String get qrDaysUntilReady;
+
+  /// No description provided for @qrDaysHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyers will be reminded after this many days'**
+  String get qrDaysHint;
+
+  /// No description provided for @qrDaysUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get qrDaysUnit;
+
+  /// No description provided for @qrHowItWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How it works'**
+  String get qrHowItWorks;
+
+  /// No description provided for @qrStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer scans this QR with their phone camera'**
+  String get qrStep1;
+
+  /// No description provided for @qrStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'A page opens — they tap \"Open in Beli Harumanis\" or download the app first'**
+  String get qrStep2;
+
+  /// No description provided for @qrStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'They tap \"Remind Me\" → app notifies them in {days} days when fruit is ready to eat'**
+  String qrStep3(int days);
+
+  /// No description provided for @qrStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'They can also place future orders directly from your farm page'**
+  String get qrStep4;
+
+  /// No description provided for @qrTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip: Take a screenshot and print this to display at your stall'**
+  String get qrTip;
+
+  /// No description provided for @treeListTreeNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. T01'**
+  String get treeListTreeNumberHint;
 }
 
 class _AppLocalizationsDelegate

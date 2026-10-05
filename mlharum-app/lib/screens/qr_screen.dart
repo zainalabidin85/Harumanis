@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../services/api_service.dart';
 import '../theme.dart';
+import '../l10n/l10n.dart';
 
 class QrScreen extends StatefulWidget {
   final int farmId;
@@ -52,7 +53,7 @@ class _QrScreenState extends State<QrScreen> {
           backgroundColor: kGreenPrimary,
           foregroundColor: Colors.white,
           elevation: 0,
-          title: Text('Buyer QR Code',
+          title: Text(context.l10n.qrTitle,
               style: GoogleFonts.poppins(
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
@@ -73,7 +74,7 @@ class _QrScreenState extends State<QrScreen> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Show this to buyers when selling your Harumanis',
+                  context.l10n.qrSubtitle,
                   style: GoogleFonts.poppins(
                       fontSize: 13,
                       color: Colors.white.withValues(alpha: 0.8)),
@@ -124,7 +125,7 @@ class _QrScreenState extends State<QrScreen> {
                             const Text('🥭', style: TextStyle(fontSize: 14)),
                             const SizedBox(width: 8),
                             Text(
-                              'Scan with any camera',
+                              context.l10n.qrScanWithCamera,
                               style: GoogleFonts.poppins(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
@@ -153,7 +154,7 @@ class _QrScreenState extends State<QrScreen> {
                         const Icon(Icons.alarm_rounded,
                             color: Colors.white, size: 18),
                         const SizedBox(width: 8),
-                        Text('Days until ready to eat',
+                        Text(context.l10n.qrDaysUntilReady,
                             style: GoogleFonts.poppins(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
@@ -168,7 +169,7 @@ class _QrScreenState extends State<QrScreen> {
                       ]),
                       const SizedBox(height: 4),
                       Text(
-                        'Buyers will be reminded after this many days',
+                        context.l10n.qrDaysHint,
                         style: GoogleFonts.poppins(
                             fontSize: 11,
                             color: Colors.white.withValues(alpha: 0.7)),
@@ -210,7 +211,7 @@ class _QrScreenState extends State<QrScreen> {
                                             : Colors.white),
                                   ),
                                   Text(
-                                    'days',
+                                    context.l10n.qrDaysUnit,
                                     style: GoogleFonts.poppins(
                                         fontSize: 9,
                                         color: selected
@@ -240,7 +241,7 @@ class _QrScreenState extends State<QrScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('How it works',
+                      Text(context.l10n.qrHowItWorks,
                           style: GoogleFonts.poppins(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
@@ -248,26 +249,26 @@ class _QrScreenState extends State<QrScreen> {
                       const SizedBox(height: 12),
                       _Step(
                           number: '1',
-                          text: 'Buyer scans this QR with their phone camera'),
+                          text: context.l10n.qrStep1),
                       _Step(
                           number: '2',
                           text:
-                              'A page opens — they tap "Open in Beli Harumanis" or download the app first'),
+                              context.l10n.qrStep2),
                       _Step(
                           number: '3',
                           text:
-                              'They tap "Remind Me" → app notifies them in $_readyInDays days when fruit is ready to eat'),
+                              context.l10n.qrStep3(_readyInDays)),
                       _Step(
                           number: '4',
                           text:
-                              'They can also place future orders directly from your farm page'),
+                              context.l10n.qrStep4),
                     ],
                   ),
                 ),
 
                 const SizedBox(height: 20),
                 Text(
-                  'Tip: Take a screenshot and print this to display at your stall',
+                  context.l10n.qrTip,
                   style: GoogleFonts.poppins(
                       fontSize: 11,
                       color: Colors.white.withValues(alpha: 0.65),

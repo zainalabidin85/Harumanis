@@ -9,6 +9,7 @@ import '../theme.dart';
 import '../widgets/page_route.dart';
 import 'announcement_detail_screen.dart';
 import 'announcement_editor_screen.dart';
+import '../l10n/l10n.dart';
 
 class AnnouncementsScreen extends StatefulWidget {
   const AnnouncementsScreen({super.key});
@@ -42,7 +43,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
       final announcements = await ApiService.getAnnouncements(upcoming: _upcomingOnly);
       if (mounted) setState(() => _announcements = announcements);
     } catch (e) {
-      if (mounted) setState(() => _error = 'Failed to load announcements: $e');
+      if (mounted) setState(() => _error = context.l10n.announcementsErrorLoad(e.toString()));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -66,7 +67,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
-        title: const Text('Announcements'),
+        title: Text(context.l10n.homeAnnouncementsTitle),
       ),
       body: RefreshIndicator(
         onRefresh: _load,
@@ -100,7 +101,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
               Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: ChoiceChip(
-                  label: const Text('All'),
+                  label: Text(context.l10n.announcementsFilterAll),
                   selected: !_upcomingOnly,
                   onSelected: (_) => _setFilter(false),
                   selectedColor: kGreenPrimary,
@@ -117,7 +118,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                 ),
               ),
               ChoiceChip(
-                label: const Text('Upcoming'),
+                label: Text(context.l10n.announcementsFilterUpcoming),
                 selected: _upcomingOnly,
                 onSelected: (_) => _setFilter(true),
                 selectedColor: kGreenPrimary,
@@ -140,7 +141,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 40),
             child: Center(
-              child: Text('No announcements yet.', style: GoogleFonts.poppins(color: kText3)),
+              child: Text(context.l10n.announcementsEmpty, style: GoogleFonts.poppins(color: kText3)),
             ),
           )
         else
@@ -199,7 +200,7 @@ class _PostAnnouncementCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Post Announcement',
+                      context.l10n.announcementsPost,
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -208,7 +209,7 @@ class _PostAnnouncementCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      'Share news, workshops or notices',
+                      context.l10n.announcementsPostSubtitle,
                       style: GoogleFonts.poppins(fontSize: 13, color: kText2),
                     ),
                   ],
@@ -273,7 +274,7 @@ class _AnnouncementCard extends StatelessWidget {
                           if (announcement.eventDate != null)
                             _MetaRow(
                               icon: Icons.event_rounded,
-                              text: DateFormat('d MMM y, h:mm a').format(announcement.eventDate!),
+                              text: DateFormat('d MMM y, h:mm a', Localizations.localeOf(context).languageCode).format(announcement.eventDate!),
                             ),
                           if (announcement.location != null)
                             _MetaRow(icon: Icons.place_rounded, text: announcement.location!),

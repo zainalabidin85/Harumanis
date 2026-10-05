@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../models/announcement.dart';
 import '../services/api_service.dart';
 import '../theme.dart';
+import '../l10n/l10n.dart';
 
 class AnnouncementEditorScreen extends StatefulWidget {
   final Announcement? existing;
@@ -79,7 +80,7 @@ class _AnnouncementEditorScreenState extends State<AnnouncementEditorScreen> {
     final body = _bodyCtrl.text.trim();
     if (title.isEmpty || body.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Title and description are required.', style: GoogleFonts.poppins())),
+        SnackBar(content: Text(context.l10n.announcementEditorErrorRequired, style: GoogleFonts.poppins())),
       );
       return;
     }
@@ -109,8 +110,8 @@ class _AnnouncementEditorScreenState extends State<AnnouncementEditorScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(
               widget.isEditing
-                  ? 'Failed to save changes. Please try again.'
-                  : 'Failed to post announcement. Please try again.',
+                  ? context.l10n.announcementEditorErrorSave
+                  : context.l10n.announcementEditorErrorPost,
               style: GoogleFonts.poppins())),
         );
       }
@@ -124,7 +125,7 @@ class _AnnouncementEditorScreenState extends State<AnnouncementEditorScreen> {
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
-        title: Text(widget.isEditing ? 'Edit Announcement' : 'Post Announcement',
+        title: Text(widget.isEditing ? context.l10n.announcementEditorEditTitle : context.l10n.announcementsPost,
             style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
       ),
       body: ListView(
@@ -150,7 +151,7 @@ class _AnnouncementEditorScreenState extends State<AnnouncementEditorScreen> {
                           children: [
                             Icon(Icons.add_photo_alternate_outlined, size: 32, color: kText3),
                             const SizedBox(height: 8),
-                            Text('Add banner image (optional)',
+                            Text(context.l10n.announcementEditorAddBanner,
                                 style: GoogleFonts.poppins(fontSize: 13, color: kText3)),
                           ],
                         ),
@@ -161,41 +162,41 @@ class _AnnouncementEditorScreenState extends State<AnnouncementEditorScreen> {
           if (widget.isEditing && widget.existing!.imageUrl != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
-              child: Text('Banner image can\'t be changed here — delete and repost to change it.',
+              child: Text(context.l10n.announcementEditorBannerLocked,
                   style: GoogleFonts.poppins(fontSize: 12, color: kText3)),
             ),
           if (!widget.isEditing || widget.existing!.imageUrl != null) const SizedBox(height: 20),
           TextField(
             controller: _titleCtrl,
             maxLength: 150,
-            decoration: const InputDecoration(labelText: 'Title', hintText: 'e.g. Free Harumanis Grafting Workshop'),
+            decoration: InputDecoration(labelText: context.l10n.announcementEditorTitleLabel, hintText: context.l10n.announcementEditorTitleHint),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _bodyCtrl,
             maxLines: 6,
             maxLength: 2000,
-            decoration: const InputDecoration(
-              labelText: 'Description',
-              hintText: 'Details farmers need to know',
+            decoration: InputDecoration(
+              labelText: context.l10n.announcementEditorDescriptionLabel,
+              hintText: context.l10n.announcementEditorDescriptionHint,
               alignLabelWithHint: true,
             ),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _locationCtrl,
-            decoration: const InputDecoration(labelText: 'Location (optional)', hintText: 'e.g. Pejabat DOA Perlis'),
+            decoration: InputDecoration(labelText: context.l10n.announcementEditorLocationLabel, hintText: context.l10n.announcementEditorLocationHint),
           ),
           const SizedBox(height: 12),
           InkWell(
             onTap: _pickDate,
             borderRadius: BorderRadius.circular(12),
             child: InputDecorator(
-              decoration: const InputDecoration(labelText: 'Event date (optional)'),
+              decoration: InputDecoration(labelText: context.l10n.announcementEditorEventDateLabel),
               child: Text(
                 _eventDate != null
-                    ? DateFormat('EEEE, d MMM y · h:mm a').format(_eventDate!)
-                    : 'No specific date — general notice',
+                    ? DateFormat('EEEE, d MMM y · h:mm a', Localizations.localeOf(context).languageCode).format(_eventDate!)
+                    : context.l10n.announcementEditorNoDate,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: _eventDate != null ? kText1 : kText3,
@@ -211,7 +212,7 @@ class _AnnouncementEditorScreenState extends State<AnnouncementEditorScreen> {
                     width: 22, height: 22,
                     child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                   )
-                : Text(widget.isEditing ? 'Save Changes' : 'Post Announcement'),
+                : Text(widget.isEditing ? context.l10n.announcementEditorSaveChanges : context.l10n.announcementsPost),
           ),
         ],
       ),

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../models/doa_report.dart';
 import '../services/api_service.dart';
 import '../theme.dart';
+import '../l10n/l10n.dart';
 
 class DoaReportScreen extends StatefulWidget {
   const DoaReportScreen({super.key});
@@ -30,7 +31,7 @@ class _DoaReportScreenState extends State<DoaReportScreen> {
       final report = await ApiService.getDoaYieldReport(season: _selectedSeason);
       if (mounted) setState(() => _report = report);
     } catch (e) {
-      if (mounted) setState(() => _error = 'Failed to load report: $e');
+      if (mounted) setState(() => _error = context.l10n.doaReportErrorLoad(e.toString()));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -48,7 +49,7 @@ class _DoaReportScreenState extends State<DoaReportScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update verification: $e')),
+          SnackBar(content: Text(context.l10n.doaReportErrorVerify(e.toString()))),
         );
       }
     }
@@ -58,7 +59,7 @@ class _DoaReportScreenState extends State<DoaReportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBg,
-      appBar: AppBar(title: const Text('DOA Monitor')),
+      appBar: AppBar(title: Text(context.l10n.homeDoaMonitorTitle)),
       body: RefreshIndicator(
         onRefresh: _load,
         child: _loading
@@ -89,7 +90,7 @@ class _DoaReportScreenState extends State<DoaReportScreen> {
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
       children: [
         Text(
-          'Season ${report.currentSeason} · All Farms',
+          context.l10n.doaReportSeasonAllFarms('${report.currentSeason}'),
           style: GoogleFonts.poppins(fontSize: 13, color: kText2),
         ),
         if (report.availableSeasons.length > 1) ...[
@@ -126,16 +127,16 @@ class _DoaReportScreenState extends State<DoaReportScreen> {
         const SizedBox(height: 16),
         _SummaryGrid(report: report),
         const SizedBox(height: 24),
-        Text('Yield by Stage', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: kText1)),
+        Text(context.l10n.doaReportYieldByStage, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: kText1)),
         const SizedBox(height: 12),
         _StageBreakdownCard(stages: report.stageSummary),
         const SizedBox(height: 24),
-        Text('By Farm (${report.farms.length})', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: kText1)),
+        Text(context.l10n.doaReportByFarm(report.farms.length), style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: kText1)),
         const SizedBox(height: 12),
         TextField(
           onChanged: (value) => setState(() => _searchQuery = value),
           decoration: InputDecoration(
-            hintText: 'Search farm, owner, or location',
+            hintText: context.l10n.doaReportSearchHint,
             hintStyle: GoogleFonts.poppins(fontSize: 13, color: kText3),
             prefixIcon: const Icon(Icons.search_rounded, size: 20),
             filled: true,
@@ -156,14 +157,14 @@ class _DoaReportScreenState extends State<DoaReportScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24),
             child: Center(
-              child: Text('No farms registered yet.', style: GoogleFonts.poppins(color: kText3)),
+              child: Text(context.l10n.doaReportNoFarms, style: GoogleFonts.poppins(color: kText3)),
             ),
           )
         else if (filteredFarms.isEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24),
             child: Center(
-              child: Text('No farms match "$_searchQuery".', style: GoogleFonts.poppins(color: kText3)),
+              child: Text(context.l10n.doaReportNoMatch(_searchQuery), style: GoogleFonts.poppins(color: kText3)),
             ),
           ),
       ],
@@ -178,11 +179,11 @@ class _SummaryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      ('Farms', report.totalFarms.toString(), kGreenPrimary),
-      ('Trees', report.totalTrees.toString(), const Color(0xFF0369A1)),
-      ('Active Fruits', report.totalActiveFruits.toString(), kOrange),
-      ('Harvested', report.totalHarvestedFruits.toString(), const Color(0xFF7C3AED)),
-      ('Lost/Aborted', report.totalAbortedFruits.toString(), const Color(0xFFDC2626)),
+      (context.l10n.doaReportStatFarms, report.totalFarms.toString(), kGreenPrimary),
+      (context.l10n.dashboardStatTrees, report.totalTrees.toString(), const Color(0xFF0369A1)),
+      (context.l10n.doaReportStatActiveFruits, report.totalActiveFruits.toString(), kOrange),
+      (context.l10n.dashboardStatHarvested, report.totalHarvestedFruits.toString(), const Color(0xFF7C3AED)),
+      (context.l10n.doaReportStatLostAborted, report.totalAbortedFruits.toString(), const Color(0xFFDC2626)),
     ];
     return GridView.count(
       crossAxisCount: 2,
@@ -232,7 +233,7 @@ class _StageBreakdownCard extends StatelessWidget {
       child: stages.isEmpty
           ? Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Text('No active fruits recorded this season.', style: GoogleFonts.poppins(color: kText3)),
+              child: Text(context.l10n.doaReportNoActiveFruits, style: GoogleFonts.poppins(color: kText3)),
             )
           : Column(
               children: stages.map((stage) {
@@ -245,7 +246,7 @@ class _StageBreakdownCard extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(stage.label, style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w500, color: kText1)),
+                          Text(stageName(context.l10n, stage.stage), style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w500, color: kText1)),
                           Text('${stage.count}', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: kGreenPrimary)),
                         ],
                       ),
@@ -319,7 +320,7 @@ class _FarmCardState extends State<_FarmCard> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : Text(
-                          farm.isVerified ? 'Verified' : 'Not Verified',
+                          farm.isVerified ? context.l10n.doaReportVerified : context.l10n.doaReportNotVerified,
                           style: GoogleFonts.poppins(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -354,10 +355,10 @@ class _FarmCardState extends State<_FarmCard> {
             spacing: 16,
             runSpacing: 8,
             children: [
-              _MiniStat(label: 'Trees', value: farm.totalTrees),
-              _MiniStat(label: 'Active', value: farm.activeFruits),
-              _MiniStat(label: 'Harvested', value: farm.harvestedFruits),
-              _MiniStat(label: 'Lost', value: farm.abortedFruits),
+              _MiniStat(label: context.l10n.dashboardStatTrees, value: farm.totalTrees),
+              _MiniStat(label: context.l10n.dashboardStatActive, value: farm.activeFruits),
+              _MiniStat(label: context.l10n.dashboardStatHarvested, value: farm.harvestedFruits),
+              _MiniStat(label: context.l10n.doaReportStatLost, value: farm.abortedFruits),
             ],
           ),
           if (farm.stageCounts.isNotEmpty) ...[
@@ -372,7 +373,7 @@ class _FarmCardState extends State<_FarmCard> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      '${s.label}: ${s.count}',
+                      context.l10n.doaReportStageCount(stageName(context.l10n, s.stage), s.count),
                       style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.w500, color: kGreenPrimary),
                     ),
                   )).toList(),

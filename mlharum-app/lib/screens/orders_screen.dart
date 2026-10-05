@@ -8,6 +8,7 @@ import '../services/auth_service.dart';
 import '../theme.dart';
 import '../widgets/page_route.dart';
 import 'order_detail_screen.dart';
+import '../l10n/l10n.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -25,12 +26,12 @@ class _OrdersScreenState extends State<OrdersScreen>
   late TabController _tabCtrl;
 
   static const _tabs = [
-    ('all', 'All'),
-    ('pending', 'Pending'),
-    ('confirmed', 'Confirmed'),
-    ('harvested', 'Harvested'),
-    ('delivered', 'Delivered'),
-    ('cancelled', 'Cancelled'),
+    'all',
+    'pending',
+    'confirmed',
+    'harvested',
+    'delivered',
+    'cancelled',
   ];
 
   @override
@@ -39,7 +40,7 @@ class _OrdersScreenState extends State<OrdersScreen>
     _tabCtrl = TabController(length: _tabs.length, vsync: this);
     _tabCtrl.addListener(() {
       if (!_tabCtrl.indexIsChanging) {
-        setState(() => _filter = _tabs[_tabCtrl.index].$1);
+        setState(() => _filter = _tabs[_tabCtrl.index]);
       }
     });
     _load();
@@ -56,12 +57,12 @@ class _OrdersScreenState extends State<OrdersScreen>
     try {
       final farmId = await AuthService.getFarmId();
       if (farmId == null) {
-        _error = 'No farm linked to your account.';
+        _error = context.l10n.ordersErrorNoFarm;
         return;
       }
       _orders = await ApiService.getFarmOrders(farmId);
     } catch (e) {
-      _error = 'Failed to load orders.';
+      _error = context.l10n.ordersErrorLoad;
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -82,7 +83,7 @@ class _OrdersScreenState extends State<OrdersScreen>
       backgroundColor: kBg,
       appBar: AppBar(
         title: Row(children: [
-          const Text('Incoming Orders'),
+          Text(context.l10n.homeIncomingOrdersTitle),
           if (pendingCount > 0) ...[
             const SizedBox(width: 10),
             Container(
@@ -92,7 +93,7 @@ class _OrdersScreenState extends State<OrdersScreen>
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '$pendingCount new',
+                context.l10n.homeNewBadge(pendingCount),
                 style: GoogleFonts.poppins(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -116,17 +117,17 @@ class _OrdersScreenState extends State<OrdersScreen>
               GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600),
           unselectedLabelStyle: GoogleFonts.poppins(fontSize: 12),
           tabs: _tabs.map((t) {
-            final count = t.$1 == 'all' ? _orders.length : _count(t.$1);
+            final count = t == 'all' ? _orders.length : _count(t);
             return Tab(
               child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Text(t.$2),
-                if (count > 0 && t.$1 != 'all') ...[
+                Text(t == 'all' ? context.l10n.announcementsFilterAll : orderStatusLabel(context.l10n, t)),
+                if (count > 0 && t != 'all') ...[
                   const SizedBox(width: 6),
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                     decoration: BoxDecoration(
-                      color: t.$1 == 'pending'
+                      color: t == 'pending'
                           ? kAmber
                           : Colors.white.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(8),
@@ -154,7 +155,7 @@ class _OrdersScreenState extends State<OrdersScreen>
                           style: GoogleFonts.poppins(color: kText2)),
                       const SizedBox(height: 16),
                       ElevatedButton(
-                          onPressed: _load, child: const Text('Retry')),
+                          onPressed: _load, child: Text(context.l10n.commonRetry)),
                     ]))
               : RefreshIndicator(
                   onRefresh: _load,
@@ -172,13 +173,13 @@ class _OrdersScreenState extends State<OrdersScreen>
                                     const SizedBox(height: 16),
                                     Text(
                                         _filter == 'all'
-                                            ? 'No orders yet'
-                                            : 'No ${_filter} orders',
+                                            ? context.l10n.ordersEmpty
+                                            : context.l10n.ordersEmptyFiltered(orderStatusLabel(context.l10n, _filter).toLowerCase()),
                                         style: GoogleFonts.poppins(
                                             fontSize: 16, color: kText2)),
                                     const SizedBox(height: 6),
                                     Text(
-                                        'Orders from buyers will appear here.',
+                                        context.l10n.ordersEmptyBody,
                                         style: GoogleFonts.poppins(
                                             fontSize: 13, color: kText3)),
                                   ]),
@@ -217,7 +218,7 @@ class _OrderTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fmt = DateFormat('d MMM yyyy');
+    final fmt = DateFormat('d MMM yyyy', Localizations.localeOf(context).languageCode);
     return GestureDetector(
       onTap: () async {
         HapticFeedback.lightImpact();
@@ -264,20 +265,20 @@ class _OrderTile extends StatelessWidget {
                 const Icon(Icons.check_circle_rounded,
                     size: 14, color: kGreenMid),
                 const SizedBox(width: 4),
-                Text('Paid',
+                Text(context.l10n.ordersPaid,
                     style: GoogleFonts.poppins(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: kGreenMid)),
               ])
             else
-              Text('Unpaid',
+              Text(context.l10n.ordersUnpaid,
                   style:
                       GoogleFonts.poppins(fontSize: 11, color: kText3)),
           ]),
           const SizedBox(height: 6),
           Text(
-            'Ordered ${fmt.format(order.createdAt)}',
+            context.l10n.ordersOrderedOn(fmt.format(order.createdAt)),
             style: GoogleFonts.poppins(fontSize: 11, color: kText3),
           ),
         ]),
@@ -295,11 +296,11 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (label, color, bg) = switch (status) {
-      'pending'   => ('Pending', kAmber, const Color(0xFFFEF3C7)),
-      'confirmed' => ('Confirmed', const Color(0xFF0369A1), const Color(0xFFE0F2FE)),
-      'harvested' => ('Harvested', kGreenMid, kGreenLight),
-      'delivered' => ('Delivered', const Color(0xFF7C3AED), const Color(0xFFEDE9FE)),
-      'cancelled' => ('Cancelled', kRed, const Color(0xFFFEE2E2)),
+      'pending'   => (context.l10n.orderStatusPending, kAmber, const Color(0xFFFEF3C7)),
+      'confirmed' => (context.l10n.orderStatusConfirmed, const Color(0xFF0369A1), const Color(0xFFE0F2FE)),
+      'harvested' => (context.l10n.orderStatusHarvested, kGreenMid, kGreenLight),
+      'delivered' => (context.l10n.orderStatusDelivered, const Color(0xFF7C3AED), const Color(0xFFEDE9FE)),
+      'cancelled' => (context.l10n.orderStatusCancelled, kRed, const Color(0xFFFEE2E2)),
       _           => (status, kText2, const Color(0xFFF3F4F6)),
     };
     return Container(

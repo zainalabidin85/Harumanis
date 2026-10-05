@@ -4,6 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../widgets/page_route.dart';
 import 'pulp_result_screen.dart';
+import '../l10n/l10n.dart';
 
 class PulpCameraScreen extends StatefulWidget {
   const PulpCameraScreen({super.key});
@@ -27,7 +28,7 @@ class _PulpCameraScreenState extends State<PulpCameraScreen> {
   Future<void> _initCamera() async {
     final cameras = await availableCameras();
     if (cameras.isEmpty) {
-      setState(() => _error = 'No camera found on this device.');
+      setState(() => _error = context.l10n.pulpErrorNoCamera);
       return;
     }
     _controller = CameraController(cameras.first, ResolutionPreset.high);
@@ -54,7 +55,7 @@ class _PulpCameraScreenState extends State<PulpCameraScreen> {
         );
       }
     } catch (_) {
-      setState(() => _error = 'Failed to capture. Try again.');
+      setState(() => _error = context.l10n.pulpErrorCapture);
     } finally {
       if (mounted) setState(() => _capturing = false);
     }
@@ -125,7 +126,7 @@ class _PulpCameraScreenState extends State<PulpCameraScreen> {
                         ),
                         const Spacer(),
                         Text(
-                          'Pulp Ripeness',
+                          context.l10n.pulpCameraTitle,
                           style: GoogleFonts.poppins(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
@@ -171,7 +172,7 @@ class _PulpCameraScreenState extends State<PulpCameraScreen> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            'Cut mango in half · Place flat side up\nAlign pulp inside the box · Use natural daylight',
+                            context.l10n.pulpCameraInstruction,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.poppins(
                                 color: Colors.white, fontSize: 13),

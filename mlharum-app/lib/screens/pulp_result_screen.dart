@@ -4,11 +4,38 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/api_service.dart';
 import '../theme.dart';
+import '../l10n/l10n.dart';
 
-const _stageLabels = [
-  '', 'Just harvested', 'Starting to ripen',
-  'Ripening', 'Ready to eat', 'Overripe',
-];
+String _stageLabel(AppLocalizations l10n, int stage) {
+  switch (stage) {
+    case 1:
+      return l10n.pulpStage1;
+    case 2:
+      return l10n.pulpStage2;
+    case 3:
+      return l10n.pulpStage3;
+    case 4:
+      return l10n.pulpStage4;
+    case 5:
+      return l10n.pulpStage5;
+    default:
+      return '';
+  }
+}
+
+/// Server sends 'high' / 'medium' / 'low'; anything else is shown as received.
+String _confidenceLabel(AppLocalizations l10n, String level) {
+  switch (level) {
+    case 'high':
+      return l10n.pulpConfidenceHigh;
+    case 'medium':
+      return l10n.pulpConfidenceMedium;
+    case 'low':
+      return l10n.pulpConfidenceLow;
+    default:
+      return level;
+  }
+}
 
 class PulpResultScreen extends StatefulWidget {
   final String imagePath;
@@ -39,8 +66,8 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
       setState(() {
         _error = msg.contains('SocketException') ||
                 msg.contains('Connection refused')
-            ? 'Cannot reach server. Check your connection.'
-            : 'Analysis failed. Try again.';
+            ? context.l10n.loginErrorNoConnection
+            : context.l10n.pulpErrorAnalysis;
       });
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -55,7 +82,7 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
-        title: const Text('Pulp Analysis'),
+        title: Text(context.l10n.pulpResultTitle),
         backgroundColor: kOrange,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -69,7 +96,7 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
                 children: [
                   const CircularProgressIndicator(color: kOrange),
                   const SizedBox(height: 16),
-                  Text('Analysing pulp colour…',
+                  Text(context.l10n.pulpAnalysing,
                       style: GoogleFonts.poppins(
                           color: kText2, fontSize: 14)),
                 ],
@@ -101,7 +128,7 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
                         ElevatedButton.icon(
                           onPressed: _analyze,
                           icon: const Icon(Icons.refresh_rounded),
-                          label: const Text('Retry'),
+                          label: Text(context.l10n.commonRetry),
                           style: ElevatedButton.styleFrom(
                               backgroundColor: kOrange,
                               minimumSize: const Size(140, 46)),
@@ -139,7 +166,7 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // ── Stage bar ─────────────────────────────────────────
-                _SectionLabel('Ripeness Stage'),
+                _SectionLabel(context.l10n.pulpRipenessStage),
                 const SizedBox(height: 12),
                 Row(
                   children: List.generate(5, (i) {
@@ -163,7 +190,7 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Stage ${r.stage} of 5 — ${_stageLabels[r.stage]}',
+                  context.l10n.pulpStageOf(r.stage, _stageLabel(context.l10n, r.stage)),
                   style: GoogleFonts.poppins(
                       color: kText2, fontSize: 13),
                 ),
@@ -174,7 +201,7 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
                   children: [
                     Expanded(
                       child: _MetricCard(
-                        label: 'Brix (Sweetness)',
+                        label: context.l10n.pulpBrixLabel,
                         value: r.brixEstimate.toStringAsFixed(1),
                         unit: '°Bx',
                         color: kOrange,
@@ -183,7 +210,7 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _MetricCard(
-                        label: 'Firmness',
+                        label: context.l10n.pulpFirmnessLabel,
                         value: r.firmnessEstimate.toStringAsFixed(1),
                         unit: 'N',
                         color: const Color(0xFF78350F),
@@ -233,8 +260,8 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
                           children: [
                             Text(
                               r.isReady
-                                  ? 'Ready to eat'
-                                  : 'Not ready yet',
+                                  ? context.l10n.pulpStage4
+                                  : context.l10n.pulpNotReady,
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 15,
@@ -245,7 +272,7 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
                             ),
                             if (!r.isReady)
                               Text(
-                                'Approx. ${r.daysToReady} more day${r.daysToReady == 1 ? '' : 's'} at room temperature',
+                                context.l10n.pulpDaysToReady(r.daysToReady),
                                 style: GoogleFonts.poppins(
                                     color: kText2, fontSize: 13),
                               ),
@@ -258,13 +285,13 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
                 const SizedBox(height: 24),
 
                 // ── Colour comparison ─────────────────────────────────
-                _SectionLabel('Pulp Colour Comparison'),
+                _SectionLabel(context.l10n.pulpColourComparison),
                 const SizedBox(height: 12),
                 Row(
                   children: [
                     Expanded(
                       child: _ColorSwatch(
-                        label: 'Detected',
+                        label: context.l10n.pulpDetected,
                         color: detectedColor,
                         rgb: r.detectedRgb,
                       ),
@@ -272,7 +299,7 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _ColorSwatch(
-                        label: 'Stage ${r.stage} reference',
+                        label: context.l10n.pulpStageReference(r.stage),
                         color: referenceColor,
                         rgb: r.referenceRgb,
                       ),
@@ -281,13 +308,13 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Confidence: ${r.confidence}',
+                  context.l10n.pulpConfidence(_confidenceLabel(context.l10n, r.confidence)),
                   style:
                       GoogleFonts.poppins(color: kText3, fontSize: 12),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Based on Nasir et al. (2021) — Harumanis ripeness guide (UniMAP)',
+                  context.l10n.pulpCitation,
                   style:
                       GoogleFonts.poppins(color: kText3, fontSize: 11),
                 ),
@@ -299,7 +326,7 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
                     Navigator.pop(context);
                   },
                   icon: const Icon(Icons.camera_alt_rounded),
-                  label: const Text('Scan Another Mango'),
+                  label: Text(context.l10n.pulpScanAnother),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: kOrange),
                 ),

@@ -8,6 +8,7 @@ import '../services/auth_service.dart';
 import '../theme.dart';
 import '../widgets/page_route.dart';
 import 'announcement_editor_screen.dart';
+import '../l10n/l10n.dart';
 
 class AnnouncementDetailScreen extends StatefulWidget {
   final Announcement announcement;
@@ -50,13 +51,13 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Delete announcement?', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
-        content: Text('This can\'t be undone.', style: GoogleFonts.poppins()),
+        title: Text(context.l10n.announcementDetailDeleteTitle, style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+        content: Text(context.l10n.commonCantBeUndone, style: GoogleFonts.poppins()),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(context.l10n.commonCancel)),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text('Delete', style: GoogleFonts.poppins(color: Colors.red)),
+            child: Text(context.l10n.commonDelete, style: GoogleFonts.poppins(color: Colors.red)),
           ),
         ],
       ),
@@ -71,7 +72,7 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
       if (mounted) {
         setState(() => _deleting = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to delete. Please try again.', style: GoogleFonts.poppins())),
+          SnackBar(content: Text(context.l10n.announcementDetailErrorDelete, style: GoogleFonts.poppins())),
         );
       }
     }
@@ -103,7 +104,7 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
           if (_canManage)
             IconButton(
               icon: const Icon(Icons.edit_outlined),
-              tooltip: 'Edit',
+              tooltip: context.l10n.commonEdit,
               onPressed: _deleting ? null : _edit,
             ),
           if (_canManage)
@@ -114,7 +115,7 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
                       child: CircularProgressIndicator(color: kText1, strokeWidth: 2),
                     )
                   : const Icon(Icons.delete_outline),
-              tooltip: 'Delete',
+              tooltip: context.l10n.commonDelete,
               onPressed: _deleting ? null : _delete,
             ),
         ],
@@ -135,7 +136,7 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
                 if (announcement.eventDate != null)
                   _MetaChip(
                     icon: Icons.event_rounded,
-                    text: DateFormat('EEEE, d MMM y · h:mm a').format(announcement.eventDate!),
+                    text: DateFormat('EEEE, d MMM y · h:mm a', Localizations.localeOf(context).languageCode).format(announcement.eventDate!),
                   ),
                 if (announcement.location != null)
                   _MetaChip(icon: Icons.place_rounded, text: announcement.location!),
@@ -148,7 +149,7 @@ class _AnnouncementDetailScreenState extends State<AnnouncementDetailScreen> {
           ),
           const SizedBox(height: 20),
           Text(
-            'Posted ${DateFormat('d MMM y').format(announcement.createdAt)} · DOA Perlis',
+            context.l10n.announcementDetailPosted(DateFormat('d MMM y', Localizations.localeOf(context).languageCode).format(announcement.createdAt)),
             style: GoogleFonts.poppins(fontSize: 11, color: kText3),
           ),
           if (announcement.imageUrl != null) ...[

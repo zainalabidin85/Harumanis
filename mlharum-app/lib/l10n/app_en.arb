@@ -403,5 +403,297 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pulpErrorNoCamera": "No camera found on this device.",
+  "pulpErrorCapture": "Failed to capture. Try again.",
+  "pulpCameraTitle": "Pulp Ripeness",
+  "pulpCameraInstruction": "Cut mango in half · Place flat side up\nAlign pulp inside the box · Use natural daylight",
+  "pulpStage1": "Just harvested",
+  "pulpStage2": "Starting to ripen",
+  "pulpStage3": "Ripening",
+  "pulpStage4": "Ready to eat",
+  "pulpStage5": "Overripe",
+  "pulpErrorAnalysis": "Analysis failed. Try again.",
+  "pulpResultTitle": "Pulp Analysis",
+  "pulpAnalysing": "Analysing pulp colour…",
+  "pulpRipenessStage": "Ripeness Stage",
+  "pulpStageOf": "Stage {stage} of 5 — {label}",
+  "@pulpStageOf": {
+    "placeholders": {
+      "stage": {
+        "type": "int"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "pulpBrixLabel": "Brix (Sweetness)",
+  "pulpFirmnessLabel": "Firmness",
+  "pulpNotReady": "Not ready yet",
+  "pulpDaysToReady": "{days, plural, =1{Approx. 1 more day at room temperature} other{Approx. {days} more days at room temperature}}",
+  "@pulpDaysToReady": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "pulpColourComparison": "Pulp Colour Comparison",
+  "pulpDetected": "Detected",
+  "pulpStageReference": "Stage {stage} reference",
+  "@pulpStageReference": {
+    "placeholders": {
+      "stage": {
+        "type": "int"
+      }
+    }
+  },
+  "pulpConfidence": "Confidence: {level}",
+  "@pulpConfidence": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "pulpConfidenceHigh": "high",
+  "pulpConfidenceMedium": "medium",
+  "pulpConfidenceLow": "low",
+  "pulpCitation": "Based on Nasir et al. (2021) — Harumanis ripeness guide (UniMAP)",
+  "pulpScanAnother": "Scan Another Mango",
+  "announcementsErrorLoad": "Failed to load announcements: {detail}",
+  "@announcementsErrorLoad": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "announcementsFilterAll": "All",
+  "announcementsFilterUpcoming": "Upcoming",
+  "announcementsEmpty": "No announcements yet.",
+  "announcementsPost": "Post Announcement",
+  "announcementsPostSubtitle": "Share news, workshops or notices",
+  "announcementDetailDeleteTitle": "Delete announcement?",
+  "commonCantBeUndone": "This can't be undone.",
+  "announcementDetailErrorDelete": "Failed to delete. Please try again.",
+  "commonEdit": "Edit",
+  "announcementDetailPosted": "Posted {date} · DOA Perlis",
+  "@announcementDetailPosted": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "announcementEditorErrorRequired": "Title and description are required.",
+  "announcementEditorErrorSave": "Failed to save changes. Please try again.",
+  "announcementEditorErrorPost": "Failed to post announcement. Please try again.",
+  "announcementEditorEditTitle": "Edit Announcement",
+  "announcementEditorAddBanner": "Add banner image (optional)",
+  "announcementEditorBannerLocked": "Banner image can't be changed here — delete and repost to change it.",
+  "announcementEditorTitleLabel": "Title",
+  "announcementEditorTitleHint": "e.g. Free Harumanis Grafting Workshop",
+  "announcementEditorDescriptionLabel": "Description",
+  "announcementEditorDescriptionHint": "Details farmers need to know",
+  "announcementEditorLocationLabel": "Location (optional)",
+  "announcementEditorLocationHint": "e.g. Pejabat DOA Perlis",
+  "announcementEditorEventDateLabel": "Event date (optional)",
+  "announcementEditorNoDate": "No specific date — general notice",
+  "announcementEditorSaveChanges": "Save Changes",
+  "doaReportErrorLoad": "Failed to load report: {detail}",
+  "@doaReportErrorLoad": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "doaReportErrorVerify": "Failed to update verification: {detail}",
+  "@doaReportErrorVerify": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "doaReportSeasonAllFarms": "Season {year} · All Farms",
+  "@doaReportSeasonAllFarms": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "doaReportYieldByStage": "Yield by Stage",
+  "doaReportByFarm": "By Farm ({count})",
+  "@doaReportByFarm": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "doaReportSearchHint": "Search farm, owner, or location",
+  "doaReportNoFarms": "No farms registered yet.",
+  "doaReportNoMatch": "No farms match \"{query}\".",
+  "@doaReportNoMatch": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "doaReportStatFarms": "Farms",
+  "doaReportStatActiveFruits": "Active Fruits",
+  "doaReportStatLostAborted": "Lost/Aborted",
+  "doaReportNoActiveFruits": "No active fruits recorded this season.",
+  "doaReportVerified": "Verified",
+  "doaReportNotVerified": "Not Verified",
+  "doaReportStatLost": "Lost",
+  "doaReportStageCount": "{stage}: {count}",
+  "@doaReportStageCount": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orderStatusPending": "Pending",
+  "orderStatusConfirmed": "Confirmed",
+  "orderStatusHarvested": "Harvested",
+  "orderStatusDelivered": "Delivered",
+  "orderStatusCancelled": "Cancelled",
+  "ordersErrorNoFarm": "No farm linked to your account.",
+  "ordersErrorLoad": "Failed to load orders.",
+  "ordersEmpty": "No orders yet",
+  "ordersEmptyFiltered": "No {status} orders",
+  "@ordersEmptyFiltered": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "ordersEmptyBody": "Orders from buyers will appear here.",
+  "ordersPaid": "Paid",
+  "ordersUnpaid": "Unpaid",
+  "ordersOrderedOn": "Ordered {date}",
+  "@ordersOrderedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "orderDetailStatusUpdated": "Order {status}.",
+  "@orderDetailStatusUpdated": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "orderDetailErrorUpdate": "Failed to update: {detail}",
+  "@orderDetailErrorUpdate": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "orderDetailConfirmOrder": "Confirm Order",
+  "orderDetailMarkHarvested": "Mark Harvested",
+  "orderDetailMarkDelivered": "Mark Delivered",
+  "orderDetailCancelOrder": "Cancel Order",
+  "orderDetailConfirmMsgConfirmed": "Confirm this order? The buyer will be notified to proceed with payment.",
+  "orderDetailConfirmMsgHarvested": "Mark this order as harvested? This means the mangoes are ready.",
+  "orderDetailConfirmMsgDelivered": "Mark as delivered? This closes the order.",
+  "orderDetailConfirmMsgCancelled": "Cancel this order? This cannot be undone.",
+  "orderDetailConfirmMsgOther": "Update order status to {status}?",
+  "@orderDetailConfirmMsgOther": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "orderDetailTitle": "Order #{id}",
+  "@orderDetailTitle": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "orderDetailStatus": "Status",
+  "orderDetailBuyer": "Buyer",
+  "orderDetailDeliveryAddress": "Delivery Address",
+  "orderDetailNoAddress": "No address provided — contact buyer via WhatsApp.",
+  "orderDetailQuantity": "Quantity",
+  "orderDetailPricePerKg": "Price per kg",
+  "orderDetailTotal": "Total",
+  "orderDetailPayment": "Payment",
+  "orderDetailPaidTick": "Paid ✓",
+  "orderDetailAwaitingPayment": "Awaiting payment",
+  "orderDetailPaidAt": "Paid at",
+  "orderDetailTargetDate": "Target date",
+  "orderDetailOrderedOn": "Ordered on",
+  "orderDetailNotes": "Notes: {notes}",
+  "@orderDetailNotes": {
+    "placeholders": {
+      "notes": {
+        "type": "String"
+      }
+    }
+  },
+  "orderDetailMarkAsHarvested": "Mark as Harvested",
+  "orderDetailMarkAsDelivered": "Mark as Delivered",
+  "orderDetailCompleted": "Order completed.",
+  "orderDetailCancelled": "Order cancelled.",
+  "farmPhotosAddCaption": "Add caption",
+  "farmPhotosCaptionHint": "e.g. Harumanis Season 2025 (optional)",
+  "farmPhotosUpload": "Upload",
+  "farmPhotosErrorUpload": "Upload failed. Please try again.",
+  "farmPhotosDeleteTitle": "Delete photo?",
+  "farmPhotosDeleteBody": "This photo will be permanently removed.",
+  "farmPhotosAddTooltip": "Add photo",
+  "farmPhotosNoFarmTitle": "No farm set up yet",
+  "farmPhotosNoFarmBody": "Create your farm profile first.",
+  "farmPhotosCount": "{count}/5 photos",
+  "@farmPhotosCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "farmPhotosTapToAdd": "Tap + to add a photo",
+  "farmPhotosEmptyTitle": "No photos yet",
+  "farmPhotosEmptyBody": "Add up to 5 photos to attract buyers",
+  "farmPhotosAddButton": "Add Photo",
+  "qrTitle": "Buyer QR Code",
+  "qrSubtitle": "Show this to buyers when selling your Harumanis",
+  "qrScanWithCamera": "Scan with any camera",
+  "qrDaysUntilReady": "Days until ready to eat",
+  "qrDaysHint": "Buyers will be reminded after this many days",
+  "qrDaysUnit": "days",
+  "qrHowItWorks": "How it works",
+  "qrStep1": "Buyer scans this QR with their phone camera",
+  "qrStep2": "A page opens — they tap \"Open in Beli Harumanis\" or download the app first",
+  "qrStep3": "They tap \"Remind Me\" → app notifies them in {days} days when fruit is ready to eat",
+  "@qrStep3": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "qrStep4": "They can also place future orders directly from your farm page",
+  "qrTip": "Tip: Take a screenshot and print this to display at your stall",
+  "treeListTreeNumberHint": "e.g. T01"
 }

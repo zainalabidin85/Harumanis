@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
 import '../theme.dart';
+import '../l10n/l10n.dart';
 
 class FarmPhotosScreen extends StatefulWidget {
   const FarmPhotosScreen({super.key});
@@ -61,24 +62,24 @@ class _FarmPhotosScreenState extends State<FarmPhotosScreen> {
         final ctrl = TextEditingController();
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text('Add caption',
+          title: Text(context.l10n.farmPhotosAddCaption,
               style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
           content: TextField(
             controller: ctrl,
             autofocus: true,
             maxLength: 100,
-            decoration: const InputDecoration(
-              hintText: 'e.g. Harumanis Season 2025 (optional)',
+            decoration: InputDecoration(
+              hintText: context.l10n.farmPhotosCaptionHint,
             ),
             onChanged: (v) => caption = v,
           ),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancel')),
+                child: Text(context.l10n.commonCancel)),
             ElevatedButton(
                 onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Upload')),
+                child: Text(context.l10n.farmPhotosUpload)),
           ],
         );
       },
@@ -93,7 +94,7 @@ class _FarmPhotosScreenState extends State<FarmPhotosScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed. Please try again.',
+          SnackBar(content: Text(context.l10n.farmPhotosErrorUpload,
               style: GoogleFonts.poppins())),
         );
       }
@@ -107,18 +108,18 @@ class _FarmPhotosScreenState extends State<FarmPhotosScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('Delete photo?',
+        title: Text(context.l10n.farmPhotosDeleteTitle,
             style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
-        content: Text('This photo will be permanently removed.',
+        content: Text(context.l10n.farmPhotosDeleteBody,
             style: GoogleFonts.poppins(fontSize: 13, color: kText2)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Cancel')),
+              child: Text(context.l10n.commonCancel)),
           TextButton(
               onPressed: () => Navigator.pop(ctx, true),
               style: TextButton.styleFrom(foregroundColor: kRed),
-              child: const Text('Delete')),
+              child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -134,7 +135,7 @@ class _FarmPhotosScreenState extends State<FarmPhotosScreen> {
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
-        title: Text('Farm Photos',
+        title: Text(context.l10n.homeFarmPhotosTitle,
             style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
         backgroundColor: kGreenPrimary,
         foregroundColor: Colors.white,
@@ -150,7 +151,7 @@ class _FarmPhotosScreenState extends State<FarmPhotosScreen> {
           else if (_images.length < 5)
             IconButton(
               icon: const Icon(Icons.add_photo_alternate_outlined),
-              tooltip: 'Add photo',
+              tooltip: context.l10n.farmPhotosAddTooltip,
               onPressed: _pick,
             ),
         ],
@@ -167,11 +168,11 @@ class _FarmPhotosScreenState extends State<FarmPhotosScreen> {
                         Icon(Icons.store_mall_directory_outlined,
                             size: 64, color: kText3),
                         const SizedBox(height: 16),
-                        Text('No farm set up yet',
+                        Text(context.l10n.farmPhotosNoFarmTitle,
                             style: GoogleFonts.poppins(
                                 fontSize: 16, color: kText2)),
                         const SizedBox(height: 6),
-                        Text('Create your farm profile first.',
+                        Text(context.l10n.farmPhotosNoFarmBody,
                             style: GoogleFonts.poppins(
                                 fontSize: 13, color: kText3)),
                       ],
@@ -186,11 +187,11 @@ class _FarmPhotosScreenState extends State<FarmPhotosScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${_images.length}/5 photos',
+                      Text(context.l10n.farmPhotosCount(_images.length),
                           style: GoogleFonts.poppins(
                               fontSize: 13, color: kText2, fontWeight: FontWeight.w500)),
                       if (_images.length < 5)
-                        Text('Tap + to add a photo',
+                        Text(context.l10n.farmPhotosTapToAdd,
                             style: GoogleFonts.poppins(fontSize: 12, color: kText3)),
                     ],
                   ),
@@ -204,17 +205,17 @@ class _FarmPhotosScreenState extends State<FarmPhotosScreen> {
                           Icon(Icons.add_photo_alternate_outlined,
                               size: 64, color: kText3),
                           const SizedBox(height: 16),
-                          Text('No photos yet',
+                          Text(context.l10n.farmPhotosEmptyTitle,
                               style: GoogleFonts.poppins(
                                   fontSize: 16, color: kText2)),
                           const SizedBox(height: 6),
-                          Text('Add up to 5 photos to attract buyers',
+                          Text(context.l10n.farmPhotosEmptyBody,
                               style: GoogleFonts.poppins(
                                   fontSize: 13, color: kText3)),
                           const SizedBox(height: 24),
                           ElevatedButton.icon(
                             icon: const Icon(Icons.add_photo_alternate_outlined),
-                            label: const Text('Add Photo'),
+                            label: Text(context.l10n.farmPhotosAddButton),
                             onPressed: _pick,
                           ),
                         ],

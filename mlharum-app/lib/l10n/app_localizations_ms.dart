@@ -612,4 +612,488 @@ class AppLocalizationsMs extends AppLocalizations {
   String treeMarkerSnippet(int count, String harvest) {
     return '$count buah · $harvest';
   }
+
+  @override
+  String get pulpErrorNoCamera => 'Tiada kamera ditemui pada peranti ini.';
+
+  @override
+  String get pulpErrorCapture => 'Gagal menangkap gambar. Cuba lagi.';
+
+  @override
+  String get pulpCameraTitle => 'Kematangan Isi';
+
+  @override
+  String get pulpCameraInstruction =>
+      'Belah mangga kepada dua · Letak bahagian rata ke atas\nLetak isi di dalam kotak · Guna cahaya siang';
+
+  @override
+  String get pulpStage1 => 'Baru dituai';
+
+  @override
+  String get pulpStage2 => 'Mula masak';
+
+  @override
+  String get pulpStage3 => 'Sedang masak';
+
+  @override
+  String get pulpStage4 => 'Sedia dimakan';
+
+  @override
+  String get pulpStage5 => 'Terlalu masak';
+
+  @override
+  String get pulpErrorAnalysis => 'Analisis gagal. Cuba lagi.';
+
+  @override
+  String get pulpResultTitle => 'Analisis Isi';
+
+  @override
+  String get pulpAnalysing => 'Menganalisis warna isi…';
+
+  @override
+  String get pulpRipenessStage => 'Peringkat Kematangan';
+
+  @override
+  String pulpStageOf(int stage, String label) {
+    return 'Peringkat $stage daripada 5 — $label';
+  }
+
+  @override
+  String get pulpBrixLabel => 'Brix (Kemanisan)';
+
+  @override
+  String get pulpFirmnessLabel => 'Kepejalan';
+
+  @override
+  String get pulpNotReady => 'Belum sedia';
+
+  @override
+  String pulpDaysToReady(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Kira-kira $days hari lagi pada suhu bilik',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pulpColourComparison => 'Perbandingan Warna Isi';
+
+  @override
+  String get pulpDetected => 'Dikesan';
+
+  @override
+  String pulpStageReference(int stage) {
+    return 'Rujukan peringkat $stage';
+  }
+
+  @override
+  String pulpConfidence(String level) {
+    return 'Keyakinan: $level';
+  }
+
+  @override
+  String get pulpConfidenceHigh => 'tinggi';
+
+  @override
+  String get pulpConfidenceMedium => 'sederhana';
+
+  @override
+  String get pulpConfidenceLow => 'rendah';
+
+  @override
+  String get pulpCitation =>
+      'Berdasarkan Nasir et al. (2021) — panduan kematangan Harumanis (UniMAP)';
+
+  @override
+  String get pulpScanAnother => 'Imbas Mangga Lain';
+
+  @override
+  String announcementsErrorLoad(String detail) {
+    return 'Gagal memuatkan pengumuman: $detail';
+  }
+
+  @override
+  String get announcementsFilterAll => 'Semua';
+
+  @override
+  String get announcementsFilterUpcoming => 'Akan datang';
+
+  @override
+  String get announcementsEmpty => 'Belum ada pengumuman.';
+
+  @override
+  String get announcementsPost => 'Hantar Pengumuman';
+
+  @override
+  String get announcementsPostSubtitle => 'Kongsi berita, bengkel atau notis';
+
+  @override
+  String get announcementDetailDeleteTitle => 'Padam pengumuman?';
+
+  @override
+  String get commonCantBeUndone => 'Tindakan ini tidak boleh dibatalkan.';
+
+  @override
+  String get announcementDetailErrorDelete => 'Gagal memadam. Sila cuba lagi.';
+
+  @override
+  String get commonEdit => 'Sunting';
+
+  @override
+  String announcementDetailPosted(String date) {
+    return 'Dihantar $date · DOA Perlis';
+  }
+
+  @override
+  String get announcementEditorErrorRequired =>
+      'Tajuk dan keterangan diperlukan.';
+
+  @override
+  String get announcementEditorErrorSave =>
+      'Gagal menyimpan perubahan. Sila cuba lagi.';
+
+  @override
+  String get announcementEditorErrorPost =>
+      'Gagal menghantar pengumuman. Sila cuba lagi.';
+
+  @override
+  String get announcementEditorEditTitle => 'Sunting Pengumuman';
+
+  @override
+  String get announcementEditorAddBanner => 'Tambah gambar sepanduk (pilihan)';
+
+  @override
+  String get announcementEditorBannerLocked =>
+      'Gambar sepanduk tidak boleh ditukar di sini — padam dan hantar semula untuk menukarnya.';
+
+  @override
+  String get announcementEditorTitleLabel => 'Tajuk';
+
+  @override
+  String get announcementEditorTitleHint =>
+      'cth. Bengkel Cantuman Harumanis Percuma';
+
+  @override
+  String get announcementEditorDescriptionLabel => 'Keterangan';
+
+  @override
+  String get announcementEditorDescriptionHint =>
+      'Butiran yang perlu diketahui pekebun';
+
+  @override
+  String get announcementEditorLocationLabel => 'Lokasi (pilihan)';
+
+  @override
+  String get announcementEditorLocationHint => 'cth. Pejabat DOA Perlis';
+
+  @override
+  String get announcementEditorEventDateLabel => 'Tarikh acara (pilihan)';
+
+  @override
+  String get announcementEditorNoDate => 'Tiada tarikh khusus — notis umum';
+
+  @override
+  String get announcementEditorSaveChanges => 'Simpan Perubahan';
+
+  @override
+  String doaReportErrorLoad(String detail) {
+    return 'Gagal memuatkan laporan: $detail';
+  }
+
+  @override
+  String doaReportErrorVerify(String detail) {
+    return 'Gagal mengemas kini pengesahan: $detail';
+  }
+
+  @override
+  String doaReportSeasonAllFarms(String year) {
+    return 'Musim $year · Semua Ladang';
+  }
+
+  @override
+  String get doaReportYieldByStage => 'Hasil mengikut Peringkat';
+
+  @override
+  String doaReportByFarm(int count) {
+    return 'Mengikut Ladang ($count)';
+  }
+
+  @override
+  String get doaReportSearchHint => 'Cari ladang, pemilik atau lokasi';
+
+  @override
+  String get doaReportNoFarms => 'Belum ada ladang didaftarkan.';
+
+  @override
+  String doaReportNoMatch(String query) {
+    return 'Tiada ladang sepadan dengan \"$query\".';
+  }
+
+  @override
+  String get doaReportStatFarms => 'Ladang';
+
+  @override
+  String get doaReportStatActiveFruits => 'Buah Aktif';
+
+  @override
+  String get doaReportStatLostAborted => 'Hilang/Gugur';
+
+  @override
+  String get doaReportNoActiveFruits =>
+      'Tiada buah aktif direkodkan musim ini.';
+
+  @override
+  String get doaReportVerified => 'Disahkan';
+
+  @override
+  String get doaReportNotVerified => 'Belum Disahkan';
+
+  @override
+  String get doaReportStatLost => 'Hilang';
+
+  @override
+  String doaReportStageCount(String stage, int count) {
+    return '$stage: $count';
+  }
+
+  @override
+  String get orderStatusPending => 'Menunggu';
+
+  @override
+  String get orderStatusConfirmed => 'Disahkan';
+
+  @override
+  String get orderStatusHarvested => 'Dituai';
+
+  @override
+  String get orderStatusDelivered => 'Dihantar';
+
+  @override
+  String get orderStatusCancelled => 'Dibatalkan';
+
+  @override
+  String get ordersErrorNoFarm => 'Tiada ladang dipautkan ke akaun anda.';
+
+  @override
+  String get ordersErrorLoad => 'Gagal memuatkan pesanan.';
+
+  @override
+  String get ordersEmpty => 'Belum ada pesanan';
+
+  @override
+  String ordersEmptyFiltered(String status) {
+    return 'Tiada pesanan $status';
+  }
+
+  @override
+  String get ordersEmptyBody =>
+      'Pesanan daripada pembeli akan dipaparkan di sini.';
+
+  @override
+  String get ordersPaid => 'Dibayar';
+
+  @override
+  String get ordersUnpaid => 'Belum dibayar';
+
+  @override
+  String ordersOrderedOn(String date) {
+    return 'Dipesan $date';
+  }
+
+  @override
+  String orderDetailStatusUpdated(String status) {
+    return 'Pesanan $status.';
+  }
+
+  @override
+  String orderDetailErrorUpdate(String detail) {
+    return 'Gagal mengemas kini: $detail';
+  }
+
+  @override
+  String get orderDetailConfirmOrder => 'Sahkan Pesanan';
+
+  @override
+  String get orderDetailMarkHarvested => 'Tanda Dituai';
+
+  @override
+  String get orderDetailMarkDelivered => 'Tanda Dihantar';
+
+  @override
+  String get orderDetailCancelOrder => 'Batal Pesanan';
+
+  @override
+  String get orderDetailConfirmMsgConfirmed =>
+      'Sahkan pesanan ini? Pembeli akan dimaklumkan untuk membuat bayaran.';
+
+  @override
+  String get orderDetailConfirmMsgHarvested =>
+      'Tanda pesanan ini sebagai dituai? Ini bermakna mangga sudah sedia.';
+
+  @override
+  String get orderDetailConfirmMsgDelivered =>
+      'Tanda sebagai dihantar? Pesanan ini akan ditutup.';
+
+  @override
+  String get orderDetailConfirmMsgCancelled =>
+      'Batalkan pesanan ini? Tindakan ini tidak boleh dibatalkan.';
+
+  @override
+  String orderDetailConfirmMsgOther(String status) {
+    return 'Kemas kini status pesanan kepada $status?';
+  }
+
+  @override
+  String orderDetailTitle(String id) {
+    return 'Pesanan #$id';
+  }
+
+  @override
+  String get orderDetailStatus => 'Status';
+
+  @override
+  String get orderDetailBuyer => 'Pembeli';
+
+  @override
+  String get orderDetailDeliveryAddress => 'Alamat Penghantaran';
+
+  @override
+  String get orderDetailNoAddress =>
+      'Tiada alamat diberikan — hubungi pembeli melalui WhatsApp.';
+
+  @override
+  String get orderDetailQuantity => 'Kuantiti';
+
+  @override
+  String get orderDetailPricePerKg => 'Harga sekilogram';
+
+  @override
+  String get orderDetailTotal => 'Jumlah';
+
+  @override
+  String get orderDetailPayment => 'Bayaran';
+
+  @override
+  String get orderDetailPaidTick => 'Dibayar ✓';
+
+  @override
+  String get orderDetailAwaitingPayment => 'Menunggu bayaran';
+
+  @override
+  String get orderDetailPaidAt => 'Dibayar pada';
+
+  @override
+  String get orderDetailTargetDate => 'Tarikh sasaran';
+
+  @override
+  String get orderDetailOrderedOn => 'Dipesan pada';
+
+  @override
+  String orderDetailNotes(String notes) {
+    return 'Catatan: $notes';
+  }
+
+  @override
+  String get orderDetailMarkAsHarvested => 'Tanda Sudah Dituai';
+
+  @override
+  String get orderDetailMarkAsDelivered => 'Tanda Sudah Dihantar';
+
+  @override
+  String get orderDetailCompleted => 'Pesanan selesai.';
+
+  @override
+  String get orderDetailCancelled => 'Pesanan dibatalkan.';
+
+  @override
+  String get farmPhotosAddCaption => 'Tambah kapsyen';
+
+  @override
+  String get farmPhotosCaptionHint => 'cth. Musim Harumanis 2025 (pilihan)';
+
+  @override
+  String get farmPhotosUpload => 'Muat naik';
+
+  @override
+  String get farmPhotosErrorUpload => 'Muat naik gagal. Sila cuba lagi.';
+
+  @override
+  String get farmPhotosDeleteTitle => 'Padam gambar?';
+
+  @override
+  String get farmPhotosDeleteBody => 'Gambar ini akan dipadam selama-lamanya.';
+
+  @override
+  String get farmPhotosAddTooltip => 'Tambah gambar';
+
+  @override
+  String get farmPhotosNoFarmTitle => 'Ladang belum ditetapkan';
+
+  @override
+  String get farmPhotosNoFarmBody => 'Lengkapkan profil ladang anda dahulu.';
+
+  @override
+  String farmPhotosCount(int count) {
+    return '$count/5 gambar';
+  }
+
+  @override
+  String get farmPhotosTapToAdd => 'Tekan + untuk menambah gambar';
+
+  @override
+  String get farmPhotosEmptyTitle => 'Belum ada gambar';
+
+  @override
+  String get farmPhotosEmptyBody =>
+      'Tambah sehingga 5 gambar untuk menarik pembeli';
+
+  @override
+  String get farmPhotosAddButton => 'Tambah Gambar';
+
+  @override
+  String get qrTitle => 'Kod QR Pembeli';
+
+  @override
+  String get qrSubtitle =>
+      'Tunjukkan kepada pembeli semasa menjual Harumanis anda';
+
+  @override
+  String get qrScanWithCamera => 'Imbas dengan mana-mana kamera';
+
+  @override
+  String get qrDaysUntilReady => 'Hari sehingga sedia dimakan';
+
+  @override
+  String get qrDaysHint => 'Pembeli akan diingatkan selepas bilangan hari ini';
+
+  @override
+  String get qrDaysUnit => 'hari';
+
+  @override
+  String get qrHowItWorks => 'Cara ia berfungsi';
+
+  @override
+  String get qrStep1 => 'Pembeli mengimbas QR ini dengan kamera telefon';
+
+  @override
+  String get qrStep2 =>
+      'Satu halaman dibuka — mereka tekan \"Open in Beli Harumanis\" atau muat turun aplikasi dahulu';
+
+  @override
+  String qrStep3(int days) {
+    return 'Mereka tekan \"Remind Me\" → aplikasi memaklumkan mereka dalam $days hari apabila buah sedia dimakan';
+  }
+
+  @override
+  String get qrStep4 =>
+      'Mereka juga boleh membuat pesanan akan datang terus dari halaman ladang anda';
+
+  @override
+  String get qrTip =>
+      'Petua: Ambil tangkapan skrin dan cetak untuk dipamerkan di gerai anda';
+
+  @override
+  String get treeListTreeNumberHint => 'cth. T01';
 }

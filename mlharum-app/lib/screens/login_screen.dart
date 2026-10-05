@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
+import '../services/locale_service.dart';
 import '../services/push_notification_service.dart';
 import '../theme.dart';
 import '../widgets/page_route.dart';
@@ -76,6 +78,7 @@ class _LoginScreenState extends State<LoginScreen>
       await AuthService.saveRole(role!);
       final farmId = me['farm_id'] as int?;
       if (farmId != null) await AuthService.saveFarmId(farmId);
+      unawaited(LocaleController.instance.syncToAccount());
       if (await PushNotificationService.requestPermission()) {
         await PushNotificationService.registerToken();
       }

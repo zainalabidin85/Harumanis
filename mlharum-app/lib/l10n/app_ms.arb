@@ -1,0 +1,18 @@
+{
+  "@@locale": "ms",
+  "languageRowTitle": "Bahasa",
+  "languageMalay": "Bahasa Malaysia",
+  "languageEnglish": "English",
+  "stageEarly": "Awal",
+  "stageBagging": "Pembalutan",
+  "stagePreHarvest": "Pra-tuai",
+  "stageUnknown": "Tidak diketahui",
+  "updateRequiredTitle": "Kemas Kini Diperlukan",
+  "updateAvailableTitle": "Kemas Kini Tersedia",
+  "updateRequiredBody": "Ai-Harumanis v{version} diperlukan. Muat turun APK terkini untuk meneruskan.",
+  "updateAvailableBody": "Ai-Harumanis v{version} kini tersedia dengan ciri baharu dan pembaikan.",
+  "updateLater": "Nanti",
+  "updateExit": "Keluar",
+  "updateOk": "OK",
+  "updateDownload": "Muat turun"
+}

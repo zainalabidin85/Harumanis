@@ -1,0 +1,20 @@
+{
+  "@@locale": "en",
+  "languageRowTitle": "Language",
+  "languageMalay": "Bahasa Malaysia",
+  "languageEnglish": "English",
+  "stageEarly": "Early",
+  "stageBagging": "Bagging",
+  "stagePreHarvest": "Pre-harvest",
+  "stageUnknown": "Unknown",
+  "updateRequiredTitle": "Update Required",
+  "updateAvailableTitle": "Update Available",
+  "updateRequiredBody": "Ai-Harumanis v{version} is required. Download the latest APK to continue.",
+  "@updateRequiredBody": {"placeholders": {"version": {"type": "String"}}},
+  "updateAvailableBody": "Ai-Harumanis v{version} is available with new features and fixes.",
+  "@updateAvailableBody": {"placeholders": {"version": {"type": "String"}}},
+  "updateLater": "Later",
+  "updateExit": "Exit",
+  "updateOk": "OK",
+  "updateDownload": "Download"
+}

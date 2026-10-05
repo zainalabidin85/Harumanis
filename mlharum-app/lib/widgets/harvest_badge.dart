@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../theme.dart';
+import '../l10n/l10n.dart';
 
 class HarvestBadge extends StatelessWidget {
   final DateTime harvestDate;
@@ -40,7 +41,7 @@ class HarvestBadge extends StatelessWidget {
           Icon(_icon, color: _color, size: 12),
           const SizedBox(width: 5),
           Text(
-            '${DateFormat('d MMM yyyy').format(harvestDate)} · $daysToHarvest d',
+            context.l10n.harvestBadgeLabel(DateFormat('d MMM yyyy', Localizations.localeOf(context).languageCode).format(harvestDate), daysToHarvest),
             style: GoogleFonts.poppins(
               color: _color,
               fontWeight: FontWeight.w600,

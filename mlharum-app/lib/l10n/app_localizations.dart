@@ -745,6 +745,390 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save Profile'**
   String get profileSaveButton;
+
+  /// No description provided for @treeListErrorNoFarm.
+  ///
+  /// In en, this message translates to:
+  /// **'No farm found. Please set up your farm in Profile first.'**
+  String get treeListErrorNoFarm;
+
+  /// No description provided for @treeListErrorLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load trees: {detail}'**
+  String treeListErrorLoad(String detail);
+
+  /// No description provided for @treeListGettingLocationAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting location… ±{meters}m'**
+  String treeListGettingLocationAccuracy(String meters);
+
+  /// No description provided for @treeListGettingLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting location…'**
+  String get treeListGettingLocation;
+
+  /// No description provided for @treeListLocationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Location unavailable'**
+  String get treeListLocationUnavailable;
+
+  /// No description provided for @commonRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get commonRetry;
+
+  /// No description provided for @treeListAddTree.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Tree'**
+  String get treeListAddTree;
+
+  /// No description provided for @treeListTreeNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tree number *'**
+  String get treeListTreeNumberLabel;
+
+  /// No description provided for @treeListNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get treeListNotesLabel;
+
+  /// No description provided for @treeListNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Near main road'**
+  String get treeListNotesHint;
+
+  /// No description provided for @treeListAddedWithGps.
+  ///
+  /// In en, this message translates to:
+  /// **'Tree {number} added with GPS.'**
+  String treeListAddedWithGps(String number);
+
+  /// No description provided for @treeListAddedNoGps.
+  ///
+  /// In en, this message translates to:
+  /// **'Tree {number} added (no GPS).'**
+  String treeListAddedNoGps(String number);
+
+  /// No description provided for @treeListErrorAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to add tree: {detail}'**
+  String treeListErrorAdd(String detail);
+
+  /// No description provided for @commonAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get commonAdd;
+
+  /// No description provided for @treeListEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No trees registered yet'**
+  String get treeListEmptyTitle;
+
+  /// No description provided for @treeListEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your mango trees to get started.'**
+  String get treeListEmptyBody;
+
+  /// No description provided for @treeListAddFirstTree.
+  ///
+  /// In en, this message translates to:
+  /// **'Add First Tree'**
+  String get treeListAddFirstTree;
+
+  /// No description provided for @treeDetailErrorLoadStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load fruits (error {status}).'**
+  String treeDetailErrorLoadStatus(String status);
+
+  /// No description provided for @treeDetailDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Tree {number}?'**
+  String treeDetailDeleteTitle(String number);
+
+  /// No description provided for @treeDetailDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete this tree and all its scan history. This cannot be undone.'**
+  String get treeDetailDeleteBody;
+
+  /// No description provided for @commonDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get commonDelete;
+
+  /// No description provided for @treeDetailErrorDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete tree.'**
+  String get treeDetailErrorDelete;
+
+  /// No description provided for @treeDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tree {number}'**
+  String treeDetailTitle(String number);
+
+  /// No description provided for @treeDetailDeleteTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete tree'**
+  String get treeDetailDeleteTooltip;
+
+  /// No description provided for @treeDetailAddFruit.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Add Fruit'**
+  String get treeDetailAddFruit;
+
+  /// No description provided for @treeDetailActiveFruits.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 active fruit} other{{count} active fruits}}'**
+  String treeDetailActiveFruits(int count);
+
+  /// No description provided for @treeDetailEarliestHarvest.
+  ///
+  /// In en, this message translates to:
+  /// **'Earliest harvest: {date}'**
+  String treeDetailEarliestHarvest(String date);
+
+  /// No description provided for @treeDetailStageCount.
+  ///
+  /// In en, this message translates to:
+  /// **'S{stage}: {count}'**
+  String treeDetailStageCount(int stage, int count);
+
+  /// No description provided for @treeDetailReadyToHarvest.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to harvest'**
+  String get treeDetailReadyToHarvest;
+
+  /// No description provided for @treeDetailDaysToHarvest.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days to harvest'**
+  String treeDetailDaysToHarvest(int days);
+
+  /// No description provided for @treeDetailFruitSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{size} cm · {stage} · {days} days to harvest'**
+  String treeDetailFruitSummary(String size, String stage, int days);
+
+  /// No description provided for @commonFailedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed (error {status}).'**
+  String commonFailedStatus(String status);
+
+  /// No description provided for @treeDetailMarkHarvested.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Harvested'**
+  String get treeDetailMarkHarvested;
+
+  /// No description provided for @treeDetailMarkAborted.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Fallen / Aborted'**
+  String get treeDetailMarkAborted;
+
+  /// No description provided for @treeDetailReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason (optional)'**
+  String get treeDetailReasonLabel;
+
+  /// No description provided for @treeDetailReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Fell from tree, pest damage, thinned'**
+  String get treeDetailReasonHint;
+
+  /// No description provided for @treeDetailConfirmAbort.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Abort'**
+  String get treeDetailConfirmAbort;
+
+  /// No description provided for @commonClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get commonClose;
+
+  /// No description provided for @treeDetailEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No active fruits'**
+  String get treeDetailEmptyTitle;
+
+  /// No description provided for @treeDetailEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan this tree to detect and track mangoes.'**
+  String get treeDetailEmptyBody;
+
+  /// No description provided for @harvestBadgeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · {days} d'**
+  String harvestBadgeLabel(String date, int days);
+
+  /// No description provided for @cameraErrorNoHand.
+  ///
+  /// In en, this message translates to:
+  /// **'No hand detected. Hold your open palm beside the fruit.'**
+  String get cameraErrorNoHand;
+
+  /// No description provided for @cameraErrorNoMango.
+  ///
+  /// In en, this message translates to:
+  /// **'No mangoes detected. Try again with better lighting.'**
+  String get cameraErrorNoMango;
+
+  /// No description provided for @cameraErrorTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection timed out. Check your internet and try again.'**
+  String get cameraErrorTimeout;
+
+  /// No description provided for @cameraErrorNoConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot reach server. Check your internet connection.'**
+  String get cameraErrorNoConnection;
+
+  /// No description provided for @cameraInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Point at ONE mango. Hold your open palm beside it, then tap Capture.'**
+  String get cameraInstruction;
+
+  /// No description provided for @resultReadyForBagging.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready for bagging'**
+  String get resultReadyForBagging;
+
+  /// No description provided for @resultAttachLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach label {label} to this fruit'**
+  String resultAttachLabel(String label);
+
+  /// No description provided for @commonDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get commonDone;
+
+  /// No description provided for @resultFlushColorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag bagging color (optional)'**
+  String get resultFlushColorTitle;
+
+  /// No description provided for @resultFlushColorBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Match the color you tie on the bagging paper for this flush'**
+  String get resultFlushColorBody;
+
+  /// No description provided for @resultFruitRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Fruit Recorded'**
+  String get resultFruitRecorded;
+
+  /// No description provided for @resultStillDeveloping.
+  ///
+  /// In en, this message translates to:
+  /// **'Still Developing'**
+  String get resultStillDeveloping;
+
+  /// No description provided for @commonTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get commonTryAgain;
+
+  /// No description provided for @resultBackToTree.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Tree'**
+  String get resultBackToTree;
+
+  /// No description provided for @dashboardErrorNoFarm.
+  ///
+  /// In en, this message translates to:
+  /// **'No farm found.'**
+  String get dashboardErrorNoFarm;
+
+  /// No description provided for @dashboardErrorLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load dashboard.'**
+  String get dashboardErrorLoad;
+
+  /// No description provided for @dashboardSeason.
+  ///
+  /// In en, this message translates to:
+  /// **'Season {year}'**
+  String dashboardSeason(String year);
+
+  /// No description provided for @dashboardStatTrees.
+  ///
+  /// In en, this message translates to:
+  /// **'Trees'**
+  String get dashboardStatTrees;
+
+  /// No description provided for @dashboardStatActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get dashboardStatActive;
+
+  /// No description provided for @dashboardStatHarvested.
+  ///
+  /// In en, this message translates to:
+  /// **'Harvested'**
+  String get dashboardStatHarvested;
+
+  /// No description provided for @dashboardStatAborted.
+  ///
+  /// In en, this message translates to:
+  /// **'Aborted'**
+  String get dashboardStatAborted;
+
+  /// No description provided for @treeMarkerNoFruit.
+  ///
+  /// In en, this message translates to:
+  /// **'No fruit'**
+  String get treeMarkerNoFruit;
+
+  /// No description provided for @treeMarkerSnippet.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} fruits · {harvest}'**
+  String treeMarkerSnippet(int count, String harvest);
 }
 
 class _AppLocalizationsDelegate

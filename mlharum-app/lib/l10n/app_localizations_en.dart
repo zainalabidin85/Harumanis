@@ -366,4 +366,248 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileSaveButton => 'Save Profile';
+
+  @override
+  String get treeListErrorNoFarm =>
+      'No farm found. Please set up your farm in Profile first.';
+
+  @override
+  String treeListErrorLoad(String detail) {
+    return 'Failed to load trees: $detail';
+  }
+
+  @override
+  String treeListGettingLocationAccuracy(String meters) {
+    return 'Getting location… ±${meters}m';
+  }
+
+  @override
+  String get treeListGettingLocation => 'Getting location…';
+
+  @override
+  String get treeListLocationUnavailable => 'Location unavailable';
+
+  @override
+  String get commonRetry => 'Retry';
+
+  @override
+  String get treeListAddTree => 'Add Tree';
+
+  @override
+  String get treeListTreeNumberLabel => 'Tree number *';
+
+  @override
+  String get treeListNotesLabel => 'Notes (optional)';
+
+  @override
+  String get treeListNotesHint => 'e.g. Near main road';
+
+  @override
+  String treeListAddedWithGps(String number) {
+    return 'Tree $number added with GPS.';
+  }
+
+  @override
+  String treeListAddedNoGps(String number) {
+    return 'Tree $number added (no GPS).';
+  }
+
+  @override
+  String treeListErrorAdd(String detail) {
+    return 'Failed to add tree: $detail';
+  }
+
+  @override
+  String get commonAdd => 'Add';
+
+  @override
+  String get treeListEmptyTitle => 'No trees registered yet';
+
+  @override
+  String get treeListEmptyBody => 'Add your mango trees to get started.';
+
+  @override
+  String get treeListAddFirstTree => 'Add First Tree';
+
+  @override
+  String treeDetailErrorLoadStatus(String status) {
+    return 'Failed to load fruits (error $status).';
+  }
+
+  @override
+  String treeDetailDeleteTitle(String number) {
+    return 'Delete Tree $number?';
+  }
+
+  @override
+  String get treeDetailDeleteBody =>
+      'This will permanently delete this tree and all its scan history. This cannot be undone.';
+
+  @override
+  String get commonDelete => 'Delete';
+
+  @override
+  String get treeDetailErrorDelete => 'Failed to delete tree.';
+
+  @override
+  String treeDetailTitle(String number) {
+    return 'Tree $number';
+  }
+
+  @override
+  String get treeDetailDeleteTooltip => 'Delete tree';
+
+  @override
+  String get treeDetailAddFruit => '+ Add Fruit';
+
+  @override
+  String treeDetailActiveFruits(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count active fruits',
+      one: '1 active fruit',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String treeDetailEarliestHarvest(String date) {
+    return 'Earliest harvest: $date';
+  }
+
+  @override
+  String treeDetailStageCount(int stage, int count) {
+    return 'S$stage: $count';
+  }
+
+  @override
+  String get treeDetailReadyToHarvest => 'Ready to harvest';
+
+  @override
+  String treeDetailDaysToHarvest(int days) {
+    return '$days days to harvest';
+  }
+
+  @override
+  String treeDetailFruitSummary(String size, String stage, int days) {
+    return '$size cm · $stage · $days days to harvest';
+  }
+
+  @override
+  String commonFailedStatus(String status) {
+    return 'Failed (error $status).';
+  }
+
+  @override
+  String get treeDetailMarkHarvested => 'Mark as Harvested';
+
+  @override
+  String get treeDetailMarkAborted => 'Mark as Fallen / Aborted';
+
+  @override
+  String get treeDetailReasonLabel => 'Reason (optional)';
+
+  @override
+  String get treeDetailReasonHint =>
+      'e.g. Fell from tree, pest damage, thinned';
+
+  @override
+  String get treeDetailConfirmAbort => 'Confirm Abort';
+
+  @override
+  String get commonClose => 'Close';
+
+  @override
+  String get treeDetailEmptyTitle => 'No active fruits';
+
+  @override
+  String get treeDetailEmptyBody =>
+      'Scan this tree to detect and track mangoes.';
+
+  @override
+  String harvestBadgeLabel(String date, int days) {
+    return '$date · $days d';
+  }
+
+  @override
+  String get cameraErrorNoHand =>
+      'No hand detected. Hold your open palm beside the fruit.';
+
+  @override
+  String get cameraErrorNoMango =>
+      'No mangoes detected. Try again with better lighting.';
+
+  @override
+  String get cameraErrorTimeout =>
+      'Connection timed out. Check your internet and try again.';
+
+  @override
+  String get cameraErrorNoConnection =>
+      'Cannot reach server. Check your internet connection.';
+
+  @override
+  String get cameraInstruction =>
+      'Point at ONE mango. Hold your open palm beside it, then tap Capture.';
+
+  @override
+  String get resultReadyForBagging => 'Ready for bagging';
+
+  @override
+  String resultAttachLabel(String label) {
+    return 'Attach label $label to this fruit';
+  }
+
+  @override
+  String get commonDone => 'Done';
+
+  @override
+  String get resultFlushColorTitle => 'Tag bagging color (optional)';
+
+  @override
+  String get resultFlushColorBody =>
+      'Match the color you tie on the bagging paper for this flush';
+
+  @override
+  String get resultFruitRecorded => 'Fruit Recorded';
+
+  @override
+  String get resultStillDeveloping => 'Still Developing';
+
+  @override
+  String get commonTryAgain => 'Try Again';
+
+  @override
+  String get resultBackToTree => 'Back to Tree';
+
+  @override
+  String get dashboardErrorNoFarm => 'No farm found.';
+
+  @override
+  String get dashboardErrorLoad => 'Failed to load dashboard.';
+
+  @override
+  String dashboardSeason(String year) {
+    return 'Season $year';
+  }
+
+  @override
+  String get dashboardStatTrees => 'Trees';
+
+  @override
+  String get dashboardStatActive => 'Active';
+
+  @override
+  String get dashboardStatHarvested => 'Harvested';
+
+  @override
+  String get dashboardStatAborted => 'Aborted';
+
+  @override
+  String get treeMarkerNoFruit => 'No fruit';
+
+  @override
+  String treeMarkerSnippet(int count, String harvest) {
+    return '$count fruits · $harvest';
+  }
 }

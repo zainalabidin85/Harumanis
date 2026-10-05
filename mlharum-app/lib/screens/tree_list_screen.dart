@@ -8,6 +8,7 @@ import '../services/auth_service.dart';
 import '../theme.dart';
 import '../widgets/page_route.dart';
 import 'tree_detail_screen.dart';
+import '../l10n/l10n.dart';
 
 class TreeListScreen extends StatefulWidget {
   const TreeListScreen({super.key});
@@ -44,7 +45,7 @@ class _TreeListScreenState extends State<TreeListScreen>
     final farmId = await AuthService.getFarmId();
     if (farmId == null) {
       setState(() {
-        _error = 'No farm found. Please set up your farm in Profile first.';
+        _error = context.l10n.treeListErrorNoFarm;
         _loading = false;
       });
       return;
@@ -57,7 +58,7 @@ class _TreeListScreenState extends State<TreeListScreen>
         _ctrl.forward(from: 0);
       }
     } catch (e) {
-      if (mounted) setState(() { _error = 'Failed to load trees: $e'; _loading = false; });
+      if (mounted) setState(() { _error = context.l10n.treeListErrorLoad(e.toString()); _loading = false; });
     }
   }
 
@@ -133,8 +134,8 @@ class _TreeListScreenState extends State<TreeListScreen>
               const SizedBox(width: 10),
               Text(
                 accuracy != null
-                    ? 'Getting location… ±${accuracy.toStringAsFixed(0)}m'
-                    : 'Getting location…',
+                    ? context.l10n.treeListGettingLocationAccuracy(accuracy.toStringAsFixed(0))
+                    : context.l10n.treeListGettingLocation,
                 style: GoogleFonts.poppins(fontSize: 12, color: kText2),
               ),
             ]);
@@ -156,7 +157,7 @@ class _TreeListScreenState extends State<TreeListScreen>
             gpsRow = Row(children: [
               const Icon(Icons.location_off_rounded, size: 16, color: kText3),
               const SizedBox(width: 6),
-              Text('Location unavailable',
+              Text(context.l10n.treeListLocationUnavailable,
                   style: GoogleFonts.poppins(fontSize: 12, color: kText3)),
               const SizedBox(width: 6),
               GestureDetector(
@@ -167,7 +168,7 @@ class _TreeListScreenState extends State<TreeListScreen>
                     gpsFetchStarted = false;
                   });
                 },
-                child: Text('Retry',
+                child: Text(context.l10n.commonRetry,
                     style: GoogleFonts.poppins(
                         fontSize: 12,
                         color: kGreenPrimary,
@@ -178,15 +179,15 @@ class _TreeListScreenState extends State<TreeListScreen>
 
           return AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: Text('Add Tree',
+            title: Text(context.l10n.treeListAddTree,
                 style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 17)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   controller: treeNumCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Tree number *',
+                  decoration: InputDecoration(
+                    labelText: context.l10n.treeListTreeNumberLabel,
                     hintText: 'e.g. T01',
                     prefixIcon: Icon(Icons.forest_rounded),
                   ),
@@ -197,9 +198,9 @@ class _TreeListScreenState extends State<TreeListScreen>
                 const SizedBox(height: 14),
                 TextField(
                   controller: notesCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Notes (optional)',
-                    hintText: 'e.g. Near main road',
+                  decoration: InputDecoration(
+                    labelText: context.l10n.treeListNotesLabel,
+                    hintText: context.l10n.treeListNotesHint,
                     prefixIcon: Icon(Icons.notes_rounded),
                   ),
                   textCapitalization: TextCapitalization.sentences,
@@ -219,7 +220,7 @@ class _TreeListScreenState extends State<TreeListScreen>
             actions: [
               TextButton(
                 onPressed: adding ? null : () => Navigator.pop(ctx),
-                child: Text('Cancel', style: GoogleFonts.poppins(color: kText2)),
+                child: Text(context.l10n.commonCancel, style: GoogleFonts.poppins(color: kText2)),
               ),
               ElevatedButton(
                 onPressed: adding
@@ -244,8 +245,8 @@ class _TreeListScreenState extends State<TreeListScreen>
                               SnackBar(
                                 content: Text(
                                   position != null
-                                      ? 'Tree ${tree.treeNumber} added with GPS.'
-                                      : 'Tree ${tree.treeNumber} added (no GPS).',
+                                      ? context.l10n.treeListAddedWithGps(tree.treeNumber)
+                                      : context.l10n.treeListAddedNoGps(tree.treeNumber),
                                   style: GoogleFonts.poppins(),
                                 ),
                                 backgroundColor: kGreenPrimary,
@@ -257,7 +258,7 @@ class _TreeListScreenState extends State<TreeListScreen>
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Failed to add tree: $e',
+                                content: Text(context.l10n.treeListErrorAdd(e.toString()),
                                     style: GoogleFonts.poppins()),
                                 backgroundColor: kRed,
                               ),
@@ -275,7 +276,7 @@ class _TreeListScreenState extends State<TreeListScreen>
                         height: 18,
                         child: CircularProgressIndicator(
                             color: Colors.white, strokeWidth: 2))
-                    : Text('Add', style: GoogleFonts.poppins(color: Colors.white)),
+                    : Text(context.l10n.commonAdd, style: GoogleFonts.poppins(color: Colors.white)),
               ),
             ],
           );
@@ -289,7 +290,7 @@ class _TreeListScreenState extends State<TreeListScreen>
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
-        title: const Text('My Trees'),
+        title: Text(context.l10n.homeMyTreesTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => Navigator.pop(context),
@@ -303,7 +304,7 @@ class _TreeListScreenState extends State<TreeListScreen>
               },
               backgroundColor: kGreenPrimary,
               icon: const Icon(Icons.add_rounded, color: Colors.white),
-              label: Text('Add Tree',
+              label: Text(context.l10n.treeListAddTree,
                   style: GoogleFonts.poppins(
                       color: Colors.white, fontWeight: FontWeight.w600)),
             )
@@ -482,7 +483,7 @@ class _ErrorState extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh_rounded),
-              label: const Text('Retry'),
+              label: Text(context.l10n.commonRetry),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(140, 46),
               ),
@@ -508,13 +509,13 @@ class _EmptyState extends StatelessWidget {
           children: [
             const Text('🌱', style: TextStyle(fontSize: 48)),
             const SizedBox(height: 16),
-            Text('No trees registered yet',
+            Text(context.l10n.treeListEmptyTitle,
                 style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: kText1)),
             const SizedBox(height: 6),
-            Text('Add your mango trees to get started.',
+            Text(context.l10n.treeListEmptyBody,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.poppins(fontSize: 14, color: kText2)),
             if (onAddTree != null) ...[
@@ -522,7 +523,7 @@ class _EmptyState extends StatelessWidget {
               ElevatedButton.icon(
                 onPressed: onAddTree,
                 icon: const Icon(Icons.add_rounded),
-                label: const Text('Add First Tree'),
+                label: Text(context.l10n.treeListAddFirstTree),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(160, 46),
                 ),

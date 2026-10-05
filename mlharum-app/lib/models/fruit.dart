@@ -38,11 +38,6 @@ class FruitResult {
         bboxW: (json['bbox_w'] as num).toDouble(),
         bboxH: (json['bbox_h'] as num).toDouble(),
       );
-
-  String get stageName {
-    const names = {1: 'Early', 2: 'Bagging', 3: 'Pre-harvest'};
-    return names[growthStage] ?? 'Unknown';
-  }
 }
 
 class ActiveFruit {
@@ -82,11 +77,6 @@ class ActiveFruit {
         abortReason: json['abort_reason'] as String?,
         flushColor: json['flush_color'] as String?,
       );
-
-  String get stageName {
-    const names = {1: 'Early', 2: 'Bagging', 3: 'Pre-harvest'};
-    return names[growthStage] ?? 'Unknown';
-  }
 }
 
 

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../models/fruit.dart';
 import '../theme.dart';
 import 'harvest_badge.dart';
+import '../l10n/l10n.dart';
 
 class FruitCard extends StatelessWidget {
   final FruitResult fruit;
@@ -46,7 +47,7 @@ class FruitCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    '${fruit.sizeCm.toStringAsFixed(1)} cm  ·  ${fruit.stageName}',
+                    '${fruit.sizeCm.toStringAsFixed(1)} cm  ·  ${stageName(context.l10n, fruit.growthStage)}',
                     style: GoogleFonts.poppins(
                         color: kText2, fontSize: 13),
                   ),

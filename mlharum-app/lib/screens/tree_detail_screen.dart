@@ -9,6 +9,7 @@ import '../services/api_service.dart';
 import '../theme.dart';
 import '../widgets/page_route.dart';
 import 'camera_screen.dart';
+import '../l10n/l10n.dart';
 
 class TreeDetailScreen extends StatefulWidget {
   final Tree tree;
@@ -37,11 +38,11 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
       if (mounted) setState(() { _fruits = fruits; _loading = false; });
     } on DioException catch (e) {
       if (mounted) setState(() {
-        _error = 'Failed to load fruits (error ${e.response?.statusCode}).';
+        _error = context.l10n.treeDetailErrorLoadStatus('${e.response?.statusCode}');
         _loading = false;
       });
     } catch (e) {
-      if (mounted) setState(() { _error = 'Error: $e'; _loading = false; });
+      if (mounted) setState(() { _error = context.l10n.commonErrorWithDetail(e.toString()); _loading = false; });
     }
   }
 
@@ -50,21 +51,21 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('Delete Tree ${widget.tree.treeNumber}?',
+        title: Text(context.l10n.treeDetailDeleteTitle(widget.tree.treeNumber),
             style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
         content: Text(
-          'This will permanently delete this tree and all its scan history. This cannot be undone.',
+          context.l10n.treeDetailDeleteBody,
           style: GoogleFonts.poppins(fontSize: 14, color: kText2),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel', style: GoogleFonts.poppins(color: kText2)),
+            child: Text(context.l10n.commonCancel, style: GoogleFonts.poppins(color: kText2)),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: kRed),
-            child: Text('Delete', style: GoogleFonts.poppins()),
+            child: Text(context.l10n.commonDelete, style: GoogleFonts.poppins()),
           ),
         ],
       ),
@@ -82,7 +83,7 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
           ? (e.response!.data as Map)['detail']?.toString()
           : null;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(detail ?? 'Failed to delete tree.',
+        content: Text(detail ?? context.l10n.treeDetailErrorDelete,
             style: GoogleFonts.poppins()),
         backgroundColor: kRed,
         behavior: SnackBarBehavior.floating,
@@ -106,7 +107,7 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
-        title: Text('Tree ${widget.tree.treeNumber}'),
+        title: Text(context.l10n.treeDetailTitle(widget.tree.treeNumber)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => Navigator.pop(context),
@@ -114,7 +115,7 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_outline_rounded, color: kRed),
-            tooltip: 'Delete tree',
+            tooltip: context.l10n.treeDetailDeleteTooltip,
             onPressed: _deleteTree,
           ),
         ],
@@ -128,7 +129,7 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
         },
         backgroundColor: kGreenPrimary,
         icon: const Icon(Icons.camera_alt_rounded, color: Colors.white),
-        label: Text('+ Add Fruit',
+        label: Text(context.l10n.treeDetailAddFruit,
             style: GoogleFonts.poppins(
                 color: Colors.white, fontWeight: FontWeight.w600)),
       ),
@@ -147,7 +148,7 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
                           _SummaryBar(fruits: _fruits),
                           const SizedBox(height: 16),
                           Text(
-                            '${_fruits.length} active fruit${_fruits.length == 1 ? '' : 's'}',
+                            context.l10n.treeDetailActiveFruits(_fruits.length),
                             style: GoogleFonts.poppins(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
@@ -201,12 +202,12 @@ class _SummaryBar extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('${fruits.length} active fruits',
+            Text(context.l10n.treeDetailActiveFruits(fruits.length),
                 style: GoogleFonts.poppins(
                     fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
             if (earliest != null)
               Text(
-                'Earliest harvest: ${DateFormat('d MMM yyyy').format(earliest)}',
+                context.l10n.treeDetailEarliestHarvest(DateFormat('d MMM yyyy', Localizations.localeOf(context).languageCode).format(earliest)),
                 style: GoogleFonts.poppins(
                     fontSize: 12, color: Colors.white.withValues(alpha: 0.85)),
               ),
@@ -214,7 +215,7 @@ class _SummaryBar extends StatelessWidget {
         ),
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           for (final e in stages.entries.where((e) => e.value > 0))
-            Text('S${e.key}: ${e.value}',
+            Text(context.l10n.treeDetailStageCount(e.key, e.value),
                 style: GoogleFonts.poppins(
                     fontSize: 11,
                     color: Colors.white.withValues(alpha: 0.85))),
@@ -252,10 +253,10 @@ class _ActiveFruitCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final daysText = fruit.daysToHarvest <= 0
-        ? 'Ready to harvest'
-        : '${fruit.daysToHarvest} days to harvest';
+        ? context.l10n.treeDetailReadyToHarvest
+        : context.l10n.treeDetailDaysToHarvest(fruit.daysToHarvest);
     final harvestStr =
-        DateFormat('d MMM yyyy').format(fruit.harvestDate);
+        DateFormat('d MMM yyyy', Localizations.localeOf(context).languageCode).format(fruit.harvestDate);
 
     return GestureDetector(
       onTap: onTap,
@@ -306,7 +307,7 @@ class _ActiveFruitCard extends StatelessWidget {
               ]),
               const SizedBox(height: 2),
               Text(
-                '${fruit.sizeCm.toStringAsFixed(1)} cm · ${fruit.stageName} · $harvestStr',
+                '${fruit.sizeCm.toStringAsFixed(1)} cm · ${stageName(context.l10n, fruit.growthStage)} · $harvestStr',
                 style: GoogleFonts.poppins(fontSize: 12, color: kText2),
               ),
               const SizedBox(height: 4),
@@ -364,11 +365,11 @@ class _FruitActionDialogState extends State<_FruitActionDialog> {
       final detail = e.response?.data is Map
           ? e.response!.data['detail'] : null;
       setState(() {
-        _error = detail ?? 'Failed (error ${e.response?.statusCode}).';
+        _error = detail ?? context.l10n.commonFailedStatus('${e.response?.statusCode}');
         _loading = false;
       });
     } catch (e) {
-      setState(() { _error = 'Error: $e'; _loading = false; });
+      setState(() { _error = context.l10n.commonErrorWithDetail(e.toString()); _loading = false; });
     }
   }
 
@@ -383,11 +384,11 @@ class _FruitActionDialogState extends State<_FruitActionDialog> {
       final detail = e.response?.data is Map
           ? e.response!.data['detail'] : null;
       setState(() {
-        _error = detail ?? 'Failed (error ${e.response?.statusCode}).';
+        _error = detail ?? context.l10n.commonFailedStatus('${e.response?.statusCode}');
         _loading = false;
       });
     } catch (e) {
-      setState(() { _error = 'Error: $e'; _loading = false; });
+      setState(() { _error = context.l10n.commonErrorWithDetail(e.toString()); _loading = false; });
     }
   }
 
@@ -404,7 +405,7 @@ class _FruitActionDialogState extends State<_FruitActionDialog> {
                   fontSize: 16, fontWeight: FontWeight.w600, color: kText1)),
           const SizedBox(height: 6),
           Text(
-            '${fruit.sizeCm.toStringAsFixed(1)} cm · ${fruit.stageName} · ${fruit.daysToHarvest} days to harvest',
+            context.l10n.treeDetailFruitSummary(fruit.sizeCm.toStringAsFixed(1), stageName(context.l10n, fruit.growthStage), fruit.daysToHarvest),
             style: GoogleFonts.poppins(fontSize: 12, color: kText3),
           ),
         ],
@@ -429,7 +430,7 @@ class _FruitActionDialogState extends State<_FruitActionDialog> {
                 child: ElevatedButton.icon(
                   onPressed: _harvest,
                   icon: const Icon(Icons.check_circle_outline_rounded),
-                  label: const Text('Mark as Harvested'),
+                  label: Text(context.l10n.treeDetailMarkHarvested),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: kGreenPrimary,
                       padding: const EdgeInsets.symmetric(vertical: 14)),
@@ -444,7 +445,7 @@ class _FruitActionDialogState extends State<_FruitActionDialog> {
                   child: OutlinedButton.icon(
                     onPressed: () => setState(() => _showAbortReason = true),
                     icon: const Icon(Icons.cancel_outlined, color: kRed),
-                    label: Text('Mark as Fallen / Aborted',
+                    label: Text(context.l10n.treeDetailMarkAborted,
                         style: GoogleFonts.poppins(color: kRed)),
                     style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: kRed),
@@ -454,9 +455,9 @@ class _FruitActionDialogState extends State<_FruitActionDialog> {
               else ...[
                 TextField(
                   controller: _reasonCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Reason (optional)',
-                    hintText: 'e.g. Fell from tree, pest damage, thinned',
+                  decoration: InputDecoration(
+                    labelText: context.l10n.treeDetailReasonLabel,
+                    hintText: context.l10n.treeDetailReasonHint,
                     prefixIcon: Icon(Icons.notes_rounded),
                   ),
                   textCapitalization: TextCapitalization.sentences,
@@ -469,7 +470,7 @@ class _FruitActionDialogState extends State<_FruitActionDialog> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => setState(() => _showAbortReason = false),
-                      child: Text('Cancel',
+                      child: Text(context.l10n.commonCancel,
                           style: GoogleFonts.poppins(color: kText2)),
                     ),
                   ),
@@ -480,7 +481,7 @@ class _FruitActionDialogState extends State<_FruitActionDialog> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: kRed,
                           padding: const EdgeInsets.symmetric(vertical: 14)),
-                      child: const Text('Confirm Abort'),
+                      child: Text(context.l10n.treeDetailConfirmAbort),
                     ),
                   ),
                 ]),
@@ -492,7 +493,7 @@ class _FruitActionDialogState extends State<_FruitActionDialog> {
       actions: [
         TextButton(
           onPressed: _loading ? null : () => Navigator.pop(context),
-          child: Text('Close', style: GoogleFonts.poppins(color: kText2)),
+          child: Text(context.l10n.commonClose, style: GoogleFonts.poppins(color: kText2)),
         ),
       ],
     );
@@ -512,13 +513,13 @@ class _EmptyView extends StatelessWidget {
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             const Text('🌿', style: TextStyle(fontSize: 48)),
             const SizedBox(height: 16),
-            Text('No active fruits',
+            Text(context.l10n.treeDetailEmptyTitle,
                 style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: kText1)),
             const SizedBox(height: 6),
-            Text('Scan this tree to detect and track mangoes.',
+            Text(context.l10n.treeDetailEmptyBody,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.poppins(fontSize: 14, color: kText2)),
           ]),
@@ -545,7 +546,7 @@ class _ErrorView extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh_rounded),
-              label: const Text('Retry'),
+              label: Text(context.l10n.commonRetry),
             ),
           ]),
         ),

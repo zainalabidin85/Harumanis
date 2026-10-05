@@ -7,6 +7,7 @@ import '../services/auth_service.dart';
 import '../theme.dart';
 import '../widgets/tree_marker.dart';
 import '../widgets/harvest_badge.dart';
+import '../l10n/l10n.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -30,14 +31,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _loadDashboard() async {
     final farmId = await AuthService.getFarmId();
     if (farmId == null) {
-      setState(() { _error = 'No farm found.'; _loading = false; });
+      setState(() { _error = context.l10n.dashboardErrorNoFarm; _loading = false; });
       return;
     }
     try {
       final dashboard = await ApiService.getDashboard(farmId);
       setState(() { _dashboard = dashboard; _loading = false; });
     } catch (_) {
-      setState(() { _error = 'Failed to load dashboard.'; _loading = false; });
+      setState(() { _error = context.l10n.dashboardErrorLoad; _loading = false; });
     }
   }
 
@@ -45,7 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (_dashboard == null) return {};
     return _dashboard!.trees
         .where((t) => t.gpsLat != null && t.gpsLng != null)
-        .map((tree) => buildTreeMarker(
+        .map((tree) => buildTreeMarker(l10n: context.l10n, 
               tree: tree,
               onTap: () => setState(() => _selectedTree = tree),
             ))
@@ -67,7 +68,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_dashboard?.farmName ?? 'Farm Dashboard'),
+        title: Text(_dashboard?.farmName ?? context.l10n.homeDashboardTitle),
         backgroundColor: const Color(0xFF0369A1),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -137,7 +138,7 @@ class _FarmSummaryBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Season ${dashboard.currentSeason}',
+            context.l10n.dashboardSeason('${dashboard.currentSeason}'),
             style: GoogleFonts.poppins(
               fontSize: 11,
               fontWeight: FontWeight.w600,
@@ -150,28 +151,28 @@ class _FarmSummaryBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _Stat(
-            label: 'Trees',
+            label: context.l10n.dashboardStatTrees,
             value: '${dashboard.totalTrees}',
             icon: Icons.forest_rounded,
             color: kGreenPrimary,
           ),
           Container(width: 1, height: 32, color: kDivider),
           _Stat(
-            label: 'Active',
+            label: context.l10n.dashboardStatActive,
             value: '${dashboard.totalActiveFruits}',
             icon: Icons.eco_rounded,
             color: kGreenMid,
           ),
           Container(width: 1, height: 32, color: kDivider),
           _Stat(
-            label: 'Harvested',
+            label: context.l10n.dashboardStatHarvested,
             value: '${dashboard.totalHarvestedFruits}',
             icon: Icons.shopping_basket_rounded,
             color: const Color(0xFF0369A1),
           ),
           Container(width: 1, height: 32, color: kDivider),
           _Stat(
-            label: 'Aborted',
+            label: context.l10n.dashboardStatAborted,
             value: '${dashboard.totalAbortedFruits}',
             icon: Icons.cancel_outlined,
             color: const Color(0xFFDC2626),
@@ -282,7 +283,7 @@ class _TreeBottomSheet extends StatelessWidget {
                           color: kText1),
                     ),
                     Text(
-                      '${tree.fruitCount} active fruits',
+                      context.l10n.treeDetailActiveFruits(tree.fruitCount),
                       style: GoogleFonts.poppins(
                           color: kText2, fontSize: 13),
                     ),

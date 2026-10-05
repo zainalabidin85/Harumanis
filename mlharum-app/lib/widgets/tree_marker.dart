@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import '../models/tree.dart';
+import '../l10n/l10n.dart';
 
 Color markerColor(int daysToHarvest) {
   if (daysToHarvest <= 14) return Colors.red;
@@ -19,12 +20,13 @@ BitmapDescriptor markerIcon(int daysToHarvest) {
 }
 
 Marker buildTreeMarker({
+  required AppLocalizations l10n,
   required TreeDashboard tree,
   required VoidCallback onTap,
 }) {
   final harvestLabel = tree.earliestHarvestDate != null
-      ? DateFormat('d MMM').format(tree.earliestHarvestDate!)
-      : 'No fruit';
+      ? DateFormat('d MMM', l10n.localeName).format(tree.earliestHarvestDate!)
+      : l10n.treeMarkerNoFruit;
 
   return Marker(
     markerId: MarkerId(tree.treeNumber),
@@ -32,7 +34,7 @@ Marker buildTreeMarker({
     icon: markerIcon(tree.daysToHarvest),
     infoWindow: InfoWindow(
       title: tree.treeNumber,
-      snippet: '${tree.fruitCount} fruits · $harvestLabel',
+      snippet: l10n.treeMarkerSnippet(tree.fruitCount, harvestLabel),
     ),
     onTap: onTap,
   );

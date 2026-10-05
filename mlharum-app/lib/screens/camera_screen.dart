@@ -7,6 +7,7 @@ import '../models/tree.dart';
 import '../services/api_service.dart';
 import '../widgets/page_route.dart';
 import 'result_screen.dart';
+import '../l10n/l10n.dart';
 
 class CameraScreen extends StatefulWidget {
   final Tree tree;
@@ -50,26 +51,26 @@ class _CameraScreenState extends State<CameraScreen> {
           : null;
       if (detail != null) {
         if (detail.contains('No hand')) {
-          return 'No hand detected. Hold your open palm beside the fruit.';
+          return context.l10n.cameraErrorNoHand;
         }
         if (detail.contains('No mango')) {
-          return 'No mangoes detected. Try again with better lighting.';
+          return context.l10n.cameraErrorNoMango;
         }
         return detail;
       }
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.receiveTimeout ||
           e.type == DioExceptionType.sendTimeout) {
-        return 'Connection timed out. Check your internet and try again.';
+        return context.l10n.cameraErrorTimeout;
       }
       if (e.type == DioExceptionType.connectionError) {
-        return 'Cannot reach server. Check your internet connection.';
+        return context.l10n.cameraErrorNoConnection;
       }
     }
     if (e is DioException) {
-      return 'Error ${e.response?.statusCode ?? "?"}: ${e.type.name}';
+      return context.l10n.commonErrorWithDetail('${e.response?.statusCode ?? "?"}: ${e.type.name}');
     }
-    return 'Error: ${e.runtimeType}';
+    return context.l10n.commonErrorWithDetail('${e.runtimeType}');
   }
 
   Future<void> _capture() async {
@@ -141,7 +142,7 @@ class _CameraScreenState extends State<CameraScreen> {
                         ),
                         const Spacer(),
                         Text(
-                          'Tree ${widget.tree.treeNumber}',
+                          context.l10n.treeDetailTitle(widget.tree.treeNumber),
                           style: GoogleFonts.poppins(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
@@ -188,7 +189,7 @@ class _CameraScreenState extends State<CameraScreen> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            'Point at ONE mango. Hold your open palm beside it, then tap Capture.',
+                            context.l10n.cameraInstruction,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.poppins(
                                 color: Colors.white, fontSize: 13),

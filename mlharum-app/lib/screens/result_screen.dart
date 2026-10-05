@@ -8,6 +8,7 @@ import '../models/fruit.dart';
 import '../services/api_service.dart';
 import '../theme.dart';
 import '../widgets/harvest_badge.dart';
+import '../l10n/l10n.dart';
 
 class ResultScreen extends StatelessWidget {
   final DetectionResponse result;
@@ -19,7 +20,7 @@ class ResultScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
-        title: Text('Tree ${result.treeNumber}'),
+        title: Text(context.l10n.treeDetailTitle(result.treeNumber)),
         automaticallyImplyLeading: false,
       ),
       body: result.readyForBagging
@@ -65,7 +66,7 @@ class _ReadyView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Ready for bagging',
+                      context.l10n.resultReadyForBagging,
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -73,7 +74,7 @@ class _ReadyView extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Attach label ${fruit.label} to this fruit',
+                      context.l10n.resultAttachLabel(fruit.label),
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         color: Colors.white.withValues(alpha: 0.8),
@@ -120,7 +121,7 @@ class _ReadyView extends StatelessWidget {
               nav.pop();
             },
             icon: const Icon(Icons.check_rounded),
-            label: const Text('Done'),
+            label: Text(context.l10n.commonDone),
           ),
         ),
       ],
@@ -211,13 +212,13 @@ class _FlushColorPicker extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Tag bagging color (optional)',
+            context.l10n.resultFlushColorTitle,
             style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w600, fontSize: 14, color: kText1),
           ),
           const SizedBox(height: 4),
           Text(
-            'Match the color you tie on the bagging paper for this flush',
+            context.l10n.resultFlushColorBody,
             style: GoogleFonts.poppins(fontSize: 12, color: kText2),
           ),
           const SizedBox(height: 12),
@@ -305,7 +306,7 @@ class _RecordedView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Fruit Recorded',
+                      context.l10n.resultFruitRecorded,
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -360,7 +361,7 @@ class _RecordedView extends StatelessWidget {
               nav.pop();
             },
             icon: const Icon(Icons.check_rounded),
-            label: const Text('Done'),
+            label: Text(context.l10n.commonDone),
           ),
         ),
       ],
@@ -409,7 +410,7 @@ class _StillDevelopingView extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    'Still Developing',
+                    context.l10n.resultStillDeveloping,
                     style: GoogleFonts.poppins(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -439,7 +440,7 @@ class _StillDevelopingView extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   icon: const Icon(Icons.camera_alt_rounded),
-                  label: const Text('Try Again'),
+                  label: Text(context.l10n.commonTryAgain),
                 ),
               ),
               const SizedBox(width: 12),
@@ -452,7 +453,7 @@ class _StillDevelopingView extends StatelessWidget {
                     nav.pop();
                   },
                   icon: const Icon(Icons.arrow_back_rounded),
-                  label: const Text('Back to Tree'),
+                  label: Text(context.l10n.resultBackToTree),
                 ),
               ),
             ],
@@ -653,7 +654,7 @@ class _FruitDetailCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    '${fruit.sizeCm.toStringAsFixed(1)} cm  ·  ${fruit.stageName}',
+                    '${fruit.sizeCm.toStringAsFixed(1)} cm  ·  ${stageName(context.l10n, fruit.growthStage)}',
                     style: GoogleFonts.poppins(color: kText2, fontSize: 13),
                   ),
                   const SizedBox(height: 7),

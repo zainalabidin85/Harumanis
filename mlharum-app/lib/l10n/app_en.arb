@@ -198,5 +198,210 @@
   "profileAccountNumberHint": "e.g. 1234567890",
   "profileAccountHolderLabel": "Account Holder Name",
   "profileAccountHolderHint": "Name as on bank card",
-  "profileSaveButton": "Save Profile"
+  "profileSaveButton": "Save Profile",
+  "treeListErrorNoFarm": "No farm found. Please set up your farm in Profile first.",
+  "treeListErrorLoad": "Failed to load trees: {detail}",
+  "@treeListErrorLoad": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "treeListGettingLocationAccuracy": "Getting location… ±{meters}m",
+  "@treeListGettingLocationAccuracy": {
+    "placeholders": {
+      "meters": {
+        "type": "String"
+      }
+    }
+  },
+  "treeListGettingLocation": "Getting location…",
+  "treeListLocationUnavailable": "Location unavailable",
+  "commonRetry": "Retry",
+  "treeListAddTree": "Add Tree",
+  "treeListTreeNumberLabel": "Tree number *",
+  "treeListNotesLabel": "Notes (optional)",
+  "treeListNotesHint": "e.g. Near main road",
+  "treeListAddedWithGps": "Tree {number} added with GPS.",
+  "@treeListAddedWithGps": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "treeListAddedNoGps": "Tree {number} added (no GPS).",
+  "@treeListAddedNoGps": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "treeListErrorAdd": "Failed to add tree: {detail}",
+  "@treeListErrorAdd": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "commonAdd": "Add",
+  "treeListEmptyTitle": "No trees registered yet",
+  "treeListEmptyBody": "Add your mango trees to get started.",
+  "treeListAddFirstTree": "Add First Tree",
+  "treeDetailErrorLoadStatus": "Failed to load fruits (error {status}).",
+  "@treeDetailErrorLoadStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "treeDetailDeleteTitle": "Delete Tree {number}?",
+  "@treeDetailDeleteTitle": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "treeDetailDeleteBody": "This will permanently delete this tree and all its scan history. This cannot be undone.",
+  "commonDelete": "Delete",
+  "treeDetailErrorDelete": "Failed to delete tree.",
+  "treeDetailTitle": "Tree {number}",
+  "@treeDetailTitle": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "treeDetailDeleteTooltip": "Delete tree",
+  "treeDetailAddFruit": "+ Add Fruit",
+  "treeDetailActiveFruits": "{count, plural, =1{1 active fruit} other{{count} active fruits}}",
+  "@treeDetailActiveFruits": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "treeDetailEarliestHarvest": "Earliest harvest: {date}",
+  "@treeDetailEarliestHarvest": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "treeDetailStageCount": "S{stage}: {count}",
+  "@treeDetailStageCount": {
+    "placeholders": {
+      "stage": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "treeDetailReadyToHarvest": "Ready to harvest",
+  "treeDetailDaysToHarvest": "{days} days to harvest",
+  "@treeDetailDaysToHarvest": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "treeDetailFruitSummary": "{size} cm · {stage} · {days} days to harvest",
+  "@treeDetailFruitSummary": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      },
+      "stage": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "commonFailedStatus": "Failed (error {status}).",
+  "@commonFailedStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "treeDetailMarkHarvested": "Mark as Harvested",
+  "treeDetailMarkAborted": "Mark as Fallen / Aborted",
+  "treeDetailReasonLabel": "Reason (optional)",
+  "treeDetailReasonHint": "e.g. Fell from tree, pest damage, thinned",
+  "treeDetailConfirmAbort": "Confirm Abort",
+  "commonClose": "Close",
+  "treeDetailEmptyTitle": "No active fruits",
+  "treeDetailEmptyBody": "Scan this tree to detect and track mangoes.",
+  "harvestBadgeLabel": "{date} · {days} d",
+  "@harvestBadgeLabel": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "cameraErrorNoHand": "No hand detected. Hold your open palm beside the fruit.",
+  "cameraErrorNoMango": "No mangoes detected. Try again with better lighting.",
+  "cameraErrorTimeout": "Connection timed out. Check your internet and try again.",
+  "cameraErrorNoConnection": "Cannot reach server. Check your internet connection.",
+  "cameraInstruction": "Point at ONE mango. Hold your open palm beside it, then tap Capture.",
+  "resultReadyForBagging": "Ready for bagging",
+  "resultAttachLabel": "Attach label {label} to this fruit",
+  "@resultAttachLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "commonDone": "Done",
+  "resultFlushColorTitle": "Tag bagging color (optional)",
+  "resultFlushColorBody": "Match the color you tie on the bagging paper for this flush",
+  "resultFruitRecorded": "Fruit Recorded",
+  "resultStillDeveloping": "Still Developing",
+  "commonTryAgain": "Try Again",
+  "resultBackToTree": "Back to Tree",
+  "dashboardErrorNoFarm": "No farm found.",
+  "dashboardErrorLoad": "Failed to load dashboard.",
+  "dashboardSeason": "Season {year}",
+  "@dashboardSeason": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardStatTrees": "Trees",
+  "dashboardStatActive": "Active",
+  "dashboardStatHarvested": "Harvested",
+  "dashboardStatAborted": "Aborted",
+  "treeMarkerNoFruit": "No fruit",
+  "treeMarkerSnippet": "{count} fruits · {harvest}",
+  "@treeMarkerSnippet": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "harvest": {
+        "type": "String"
+      }
+    }
+  }
 }

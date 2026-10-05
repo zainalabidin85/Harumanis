@@ -369,4 +369,247 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get profileSaveButton => 'Simpan Profil';
+
+  @override
+  String get treeListErrorNoFarm =>
+      'Tiada ladang ditemui. Sila tetapkan ladang anda di Profil dahulu.';
+
+  @override
+  String treeListErrorLoad(String detail) {
+    return 'Gagal memuatkan pokok: $detail';
+  }
+
+  @override
+  String treeListGettingLocationAccuracy(String meters) {
+    return 'Mendapatkan lokasi… ±${meters}m';
+  }
+
+  @override
+  String get treeListGettingLocation => 'Mendapatkan lokasi…';
+
+  @override
+  String get treeListLocationUnavailable => 'Lokasi tidak tersedia';
+
+  @override
+  String get commonRetry => 'Cuba lagi';
+
+  @override
+  String get treeListAddTree => 'Tambah Pokok';
+
+  @override
+  String get treeListTreeNumberLabel => 'Nombor pokok *';
+
+  @override
+  String get treeListNotesLabel => 'Catatan (pilihan)';
+
+  @override
+  String get treeListNotesHint => 'cth. Dekat jalan utama';
+
+  @override
+  String treeListAddedWithGps(String number) {
+    return 'Pokok $number ditambah dengan GPS.';
+  }
+
+  @override
+  String treeListAddedNoGps(String number) {
+    return 'Pokok $number ditambah (tanpa GPS).';
+  }
+
+  @override
+  String treeListErrorAdd(String detail) {
+    return 'Gagal menambah pokok: $detail';
+  }
+
+  @override
+  String get commonAdd => 'Tambah';
+
+  @override
+  String get treeListEmptyTitle => 'Belum ada pokok didaftarkan';
+
+  @override
+  String get treeListEmptyBody => 'Tambah pokok mangga anda untuk bermula.';
+
+  @override
+  String get treeListAddFirstTree => 'Tambah Pokok Pertama';
+
+  @override
+  String treeDetailErrorLoadStatus(String status) {
+    return 'Gagal memuatkan buah (ralat $status).';
+  }
+
+  @override
+  String treeDetailDeleteTitle(String number) {
+    return 'Padam Pokok $number?';
+  }
+
+  @override
+  String get treeDetailDeleteBody =>
+      'Pokok ini dan semua sejarah imbasannya akan dipadam selama-lamanya. Tindakan ini tidak boleh dibatalkan.';
+
+  @override
+  String get commonDelete => 'Padam';
+
+  @override
+  String get treeDetailErrorDelete => 'Gagal memadam pokok.';
+
+  @override
+  String treeDetailTitle(String number) {
+    return 'Pokok $number';
+  }
+
+  @override
+  String get treeDetailDeleteTooltip => 'Padam pokok';
+
+  @override
+  String get treeDetailAddFruit => '+ Tambah Buah';
+
+  @override
+  String treeDetailActiveFruits(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count buah aktif',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String treeDetailEarliestHarvest(String date) {
+    return 'Tuaian terawal: $date';
+  }
+
+  @override
+  String treeDetailStageCount(int stage, int count) {
+    return 'P$stage: $count';
+  }
+
+  @override
+  String get treeDetailReadyToHarvest => 'Sedia untuk dituai';
+
+  @override
+  String treeDetailDaysToHarvest(int days) {
+    return '$days hari sebelum tuai';
+  }
+
+  @override
+  String treeDetailFruitSummary(String size, String stage, int days) {
+    return '$size cm · $stage · $days hari sebelum tuai';
+  }
+
+  @override
+  String commonFailedStatus(String status) {
+    return 'Gagal (ralat $status).';
+  }
+
+  @override
+  String get treeDetailMarkHarvested => 'Tanda Sudah Dituai';
+
+  @override
+  String get treeDetailMarkAborted => 'Tanda Gugur / Rosak';
+
+  @override
+  String get treeDetailReasonLabel => 'Sebab (pilihan)';
+
+  @override
+  String get treeDetailReasonHint =>
+      'cth. Gugur dari pokok, serangan perosak, penjarangan';
+
+  @override
+  String get treeDetailConfirmAbort => 'Sahkan Gugur';
+
+  @override
+  String get commonClose => 'Tutup';
+
+  @override
+  String get treeDetailEmptyTitle => 'Tiada buah aktif';
+
+  @override
+  String get treeDetailEmptyBody =>
+      'Imbas pokok ini untuk mengesan dan menjejak mangga.';
+
+  @override
+  String harvestBadgeLabel(String date, int days) {
+    return '$date · $days h';
+  }
+
+  @override
+  String get cameraErrorNoHand =>
+      'Tangan tidak dikesan. Buka tapak tangan anda di sebelah buah.';
+
+  @override
+  String get cameraErrorNoMango =>
+      'Mangga tidak dikesan. Cuba lagi dengan pencahayaan yang lebih baik.';
+
+  @override
+  String get cameraErrorTimeout =>
+      'Sambungan tamat masa. Semak internet anda dan cuba lagi.';
+
+  @override
+  String get cameraErrorNoConnection =>
+      'Tidak dapat menghubungi pelayan. Semak sambungan internet anda.';
+
+  @override
+  String get cameraInstruction =>
+      'Hala ke SATU mangga. Buka tapak tangan di sebelahnya, kemudian tekan butang tangkap.';
+
+  @override
+  String get resultReadyForBagging => 'Sedia untuk dibalut';
+
+  @override
+  String resultAttachLabel(String label) {
+    return 'Lekatkan label $label pada buah ini';
+  }
+
+  @override
+  String get commonDone => 'Selesai';
+
+  @override
+  String get resultFlushColorTitle => 'Tanda warna pembalut (pilihan)';
+
+  @override
+  String get resultFlushColorBody =>
+      'Padankan dengan warna yang anda ikat pada kertas pembalut untuk pusingan ini';
+
+  @override
+  String get resultFruitRecorded => 'Buah Direkodkan';
+
+  @override
+  String get resultStillDeveloping => 'Masih Membesar';
+
+  @override
+  String get commonTryAgain => 'Cuba Lagi';
+
+  @override
+  String get resultBackToTree => 'Kembali ke Pokok';
+
+  @override
+  String get dashboardErrorNoFarm => 'Tiada ladang ditemui.';
+
+  @override
+  String get dashboardErrorLoad => 'Gagal memuatkan papan pemuka.';
+
+  @override
+  String dashboardSeason(String year) {
+    return 'Musim $year';
+  }
+
+  @override
+  String get dashboardStatTrees => 'Pokok';
+
+  @override
+  String get dashboardStatActive => 'Aktif';
+
+  @override
+  String get dashboardStatHarvested => 'Dituai';
+
+  @override
+  String get dashboardStatAborted => 'Gugur';
+
+  @override
+  String get treeMarkerNoFruit => 'Tiada buah';
+
+  @override
+  String treeMarkerSnippet(int count, String harvest) {
+    return '$count buah · $harvest';
+  }
 }

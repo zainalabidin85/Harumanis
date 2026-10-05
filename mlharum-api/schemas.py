@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, field_validator
 from datetime import date, datetime
-from typing import Optional
+from typing import Literal, Optional
 
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
@@ -61,6 +61,7 @@ class UserProfileResponse(BaseModel):
     bank_name: Optional[str] = None
     bank_account_number: Optional[str] = None
     bank_account_name: Optional[str] = None
+    language: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -74,6 +75,7 @@ class UserProfileUpdate(BaseModel):
     bank_name: Optional[str] = None
     bank_account_number: Optional[str] = None
     bank_account_name: Optional[str] = None
+    language: Optional[Literal["en", "ms"]] = None
 
 
 class DeviceTokenRegister(BaseModel):

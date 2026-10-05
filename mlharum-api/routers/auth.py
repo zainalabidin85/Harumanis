@@ -77,6 +77,7 @@ def get_me(current_user: User = Depends(get_current_user)):
         bank_name=current_user.bank_name,
         bank_account_number=current_user.bank_account_number,
         bank_account_name=current_user.bank_account_name,
+        language=current_user.language,
     )
 
 

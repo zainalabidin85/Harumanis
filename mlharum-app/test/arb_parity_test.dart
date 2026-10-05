@@ -23,6 +23,16 @@ void main() {
     }
   });
 
+  test('language row title is readable in either language', () {
+    // Someone who cannot read the current language must still find the switch.
+    expect(en['languageRowTitle'], 'Bahasa / Language');
+    expect(ms['languageRowTitle'], 'Bahasa / Language');
+  });
+
+  test('Malay harvest badge spells out days so it is not read as hours', () {
+    expect(ms['harvestBadgeLabel'], contains('hari'));
+  });
+
   test('every placeholder declared in English is used in both languages', () {
     for (final key in _messageKeys(en)) {
       final meta = en['@$key'] as Map<String, dynamic>?;

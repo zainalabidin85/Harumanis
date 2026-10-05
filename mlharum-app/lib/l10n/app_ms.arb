@@ -1,6 +1,6 @@
 {
   "@@locale": "ms",
-  "languageRowTitle": "Bahasa",
+  "languageRowTitle": "Bahasa / Language",
   "languageMalay": "Bahasa Malaysia",
   "languageEnglish": "English",
   "stageEarly": "Awal",
@@ -148,7 +148,7 @@
   "commonClose": "Tutup",
   "treeDetailEmptyTitle": "Tiada buah aktif",
   "treeDetailEmptyBody": "Imbas pokok ini untuk mengesan dan menjejak mangga.",
-  "harvestBadgeLabel": "{date} · {days} h",
+  "harvestBadgeLabel": "{date} · {days} hari",
   "cameraErrorNoHand": "Tangan tidak dikesan. Buka tapak tangan anda di sebelah buah.",
   "cameraErrorNoMango": "Mangga tidak dikesan. Cuba lagi dengan pencahayaan yang lebih baik.",
   "cameraErrorTimeout": "Sambungan tamat masa. Semak internet anda dan cuba lagi.",

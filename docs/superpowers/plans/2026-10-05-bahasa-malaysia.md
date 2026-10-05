@@ -1631,12 +1631,14 @@ Deployment touches the production server and replaces the public APK. Do not pro
 Follow the established server procedure (production host over Tailscale, service `mlharum-api.service`):
 
 1. Back up the database with `pg_dump` before migrating; unlike in July, real farmer accounts may now exist.
-2. Copy the changed API files: `services/i18n.py`, `routers/detection.py`, `routers/auth.py`, `services/harvest_reminder_job.py`, `models/user.py`, `schemas.py`, `main.py`, `migrations/versions/022_add_language_to_users.py`.
+2. Copy the changed API files: `services/i18n.py`, `routers/detection.py`, `routers/auth.py`, `services/harvest_reminder_job.py`, `models/user.py`, `schemas.py`, `migrations/versions/022_add_language_to_users.py`. Do **not** copy `main.py` yet: it carries the `/version` bump, and advertising 1.10.0 before the APK is on R2 would send 1.9.0 users into a download loop.
 3. Run `alembic upgrade head`; expect `Running upgrade 021 -> 022`.
 4. Restart `mlharum-api.service`.
-5. Verify: `curl https://mlharum.unitani.com/version` shows `1.10.0`; `/health` responds; the installed 1.9.0 app still logs in and scans in English.
+5. Verify: `/health` responds; `curl https://mlharum.unitani.com/version` still shows `1.9.0`; the installed 1.9.0 app still logs in and scans in English.
 
 - [ ] **Step 7: Release the APK**
 
 Run from the repo root: `./deploy-apk.sh ai`
-Expected: release APK builds and uploads to R2 as `Ai-Harumanis.apk`. A phone on 1.9.0 then shows the optional update prompt.
+Expected: release APK builds and uploads to R2 as `Ai-Harumanis.apk`.
+
+Only then copy `main.py` to the server and restart `mlharum-api.service`. Verify `curl https://mlharum.unitani.com/version` shows `1.10.0`; a phone on 1.9.0 then shows the optional update prompt.

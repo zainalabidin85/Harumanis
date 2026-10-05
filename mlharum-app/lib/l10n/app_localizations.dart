@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @languageRowTitle.
   ///
   /// In en, this message translates to:
-  /// **'Language'**
+  /// **'Bahasa / Language'**
   String get languageRowTitle;
 
   /// No description provided for @languageMalay.

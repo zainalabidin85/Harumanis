@@ -9,7 +9,7 @@ class AppLocalizationsMs extends AppLocalizations {
   AppLocalizationsMs([String locale = 'ms']) : super(locale);
 
   @override
-  String get languageRowTitle => 'Bahasa';
+  String get languageRowTitle => 'Bahasa / Language';
 
   @override
   String get languageMalay => 'Bahasa Malaysia';
@@ -529,7 +529,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String harvestBadgeLabel(String date, int days) {
-    return '$date · $days h';
+    return '$date · $days hari';
   }
 
   @override

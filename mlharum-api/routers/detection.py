@@ -2,7 +2,8 @@ import asyncio
 import cv2
 import numpy as np
 from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request, Header
 from sqlalchemy.orm import Session
 from database import get_db
 from models.user import User
@@ -14,6 +15,7 @@ from services.mediapipe_service import detect_knuckle_width
 from services.yolo_service import detect_mangoes
 from services.size_estimator import estimate_size
 from services.harvest_predictor import predict_harvest
+from services.i18n import resolve_language, t
 from config import settings
 from limiter import limiter
 
@@ -34,6 +36,7 @@ async def run_detection(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    accept_language: Optional[str] = Header(default=None),
 ):
     tree = (
         db.query(Tree)
@@ -74,6 +77,8 @@ async def run_detection(
 
     min_size = settings.bagging_min_size_cm
     max_size = settings.bagging_max_size_cm
+    lang = resolve_language(accept_language)
+    size_text = f"{size_cm:.1f}"
 
     if size_cm < min_size:
         db.commit()
@@ -83,7 +88,7 @@ async def run_detection(
             detection_date=detection_record.detected_at,
             mango_count=1,
             ready_for_bagging=False,
-            message=f"This mango is {size_cm:.1f} cm — Early stage, not yet recorded (natural fruit drop risk is high at this size). Scan again once it reaches {min_size} cm to begin bagging.",
+            message=t("detect.early", lang, size=size_text, min_size=min_size),
             fruits=[],
             hand_index_x=hand_marker.index_x,
             hand_index_y=hand_marker.index_y,
@@ -136,7 +141,7 @@ async def run_detection(
             detection_date=detection_record.detected_at,
             mango_count=1,
             ready_for_bagging=False,
-            message=f"This mango ({size_cm:.1f} cm) has passed the bagging window and been recorded as {label} — Pre-harvest / late-bagging. Estimated harvest in {days_to_harvest} days.",
+            message=t("detect.late", lang, size=size_text, label=label, days=days_to_harvest),
             fruits=[fruit_result],
             hand_index_x=hand_marker.index_x,
             hand_index_y=hand_marker.index_y,
@@ -150,7 +155,7 @@ async def run_detection(
         detection_date=detection_record.detected_at,
         mango_count=1,
         ready_for_bagging=True,
-        message=f"Ready for bagging — {size_cm:.1f} cm. Estimated harvest in {days_to_harvest} days.",
+        message=t("detect.ready", lang, size=size_text, days=days_to_harvest),
         fruits=[fruit_result],
         hand_index_x=hand_marker.index_x,
         hand_index_y=hand_marker.index_y,

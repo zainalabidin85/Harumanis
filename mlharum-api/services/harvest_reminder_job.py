@@ -7,7 +7,9 @@ from sqlalchemy.orm import Session
 from models.fruit import Fruit
 from models.tree import Tree
 from models.farm import Farm
+from models.user import User
 from services import push_service
+from services.i18n import harvest_reminder_text
 
 logger = logging.getLogger(__name__)
 
@@ -40,17 +42,18 @@ def run_harvest_reminder_check(db: Session) -> None:
     for fruit, owner_id in due_fruits:
         by_owner[owner_id].append(fruit)
 
+    languages = dict(
+        db.query(User.id, User.language).filter(User.id.in_(list(by_owner.keys()))).all()
+    )
+
     for owner_id, fruits in by_owner.items():
-        count = len(fruits)
-        body = (
-            f"{fruits[0].label} is ready for harvest soon."
-            if count == 1
-            else f"{count} of your Harumanis fruits are ready for harvest soon."
+        title, body = harvest_reminder_text(
+            languages.get(owner_id), [f.label for f in fruits]
         )
         push_service.send_to_user(
             db,
             owner_id,
-            title="🥭 Harvest reminder",
+            title=title,
             body=body,
             data={"type": "harvest_reminder"},
         )

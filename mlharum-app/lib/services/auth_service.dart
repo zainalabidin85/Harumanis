@@ -30,6 +30,9 @@ class AuthService {
   }
 
   static Future<void> logout() async {
-    await _storage.deleteAll();
+    // Not deleteAll(): the language choice is stored alongside and must survive logout.
+    await _storage.delete(key: _tokenKey);
+    await _storage.delete(key: _farmIdKey);
+    await _storage.delete(key: _roleKey);
   }
 }

@@ -5,17 +5,24 @@ import '../models/farm_order.dart';
 import '../models/doa_report.dart';
 import '../models/announcement.dart';
 import 'auth_service.dart';
+import 'locale_service.dart';
 
 class ApiService {
   static const _baseUrl = 'https://mlharum.unitani.com';
 
-  static Dio _dio() => Dio(BaseOptions(baseUrl: _baseUrl));
+  static Dio _dio() => Dio(BaseOptions(
+        baseUrl: _baseUrl,
+        headers: {'Accept-Language': LocaleController.instance.code},
+      ));
 
   static Future<Dio> _authDio() async {
     final token = await AuthService.getToken();
     return Dio(BaseOptions(
       baseUrl: _baseUrl,
-      headers: {'Authorization': 'Bearer $token'},
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept-Language': LocaleController.instance.code,
+      },
     ));
   }
 
@@ -62,6 +69,11 @@ class ApiService {
       if (bankAccountName != null) 'bank_account_name': bankAccountName,
     });
     return res.data as Map<String, dynamic>;
+  }
+
+  static Future<void> updateLanguage(String code) async {
+    final dio = await _authDio();
+    await dio.patch('/auth/me', data: {'language': code});
   }
 
   static Future<void> forgotPassword(String email) async {

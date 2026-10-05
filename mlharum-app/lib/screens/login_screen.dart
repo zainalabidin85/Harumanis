@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
 import '../services/locale_service.dart';
+import '../widgets/language_toggle.dart';
 import '../services/push_notification_service.dart';
 import '../theme.dart';
 import '../widgets/page_route.dart';
@@ -124,207 +125,51 @@ class _LoginScreenState extends State<LoginScreen>
           ),
           child: SafeArea(
             bottom: false,
-            child: Column(
+            child: Stack(
               children: [
-                // ── Hero / logo ──────────────────────────────────────────
-                Expanded(
-                  flex: 4,
-                  child: FadeTransition(
-                    opacity: _logoFade,
-                    child: ScaleTransition(
-                      scale: _logoScale,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 96,
-                            height: 96,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: 0.15),
-                              border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.3),
-                                  width: 1.5),
-                            ),
-                            child: const Center(
-                              child:
-                                  Text('🥭', style: TextStyle(fontSize: 46)),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            'Ai-Harumanis',
-                            style: GoogleFonts.poppins(
-                              fontSize: 34,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Harumanis Farm Manager',
-                            style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              color: Colors.white.withValues(alpha: 0.7),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-                // ── Form card ────────────────────────────────────────────
-                Expanded(
-                  flex: 6,
-                  child: FadeTransition(
-                    opacity: _cardFade,
-                    child: SlideTransition(
-                      position: _cardSlide,
-                      child: Container(
-                        width: double.infinity,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFFAFAFA),
-                          borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(32)),
-                        ),
-                        child: SingleChildScrollView(
-                          padding:
-                              const EdgeInsets.fromLTRB(28, 36, 28, 24),
+                Column(
+                  children: [
+                    // ── Hero / logo ──────────────────────────────────────────
+                    Expanded(
+                      flex: 4,
+                      child: FadeTransition(
+                        opacity: _logoFade,
+                        child: ScaleTransition(
+                          scale: _logoScale,
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Container(
+                                width: 96,
+                                height: 96,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white.withValues(alpha: 0.15),
+                                  border: Border.all(
+                                      color: Colors.white.withValues(alpha: 0.3),
+                                      width: 1.5),
+                                ),
+                                child: const Center(
+                                  child:
+                                      Text('🥭', style: TextStyle(fontSize: 46)),
+                                ),
+                              ),
+                              const SizedBox(height: 20),
                               Text(
-                                'Welcome back',
+                                'Ai-Harumanis',
                                 style: GoogleFonts.poppins(
-                                  fontSize: 24,
+                                  fontSize: 34,
                                   fontWeight: FontWeight.bold,
-                                  color: kText1,
+                                  color: Colors.white,
+                                  letterSpacing: -0.5,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 6),
                               Text(
-                                'Sign in to your farm account',
+                                'Harumanis Farm Manager',
                                 style: GoogleFonts.poppins(
-                                    fontSize: 14, color: kText2),
-                              ),
-                              const SizedBox(height: 28),
-                              TextField(
-                                controller: _emailCtrl,
-                                decoration: const InputDecoration(
-                                  labelText: 'Email',
-                                  prefixIcon: Icon(Icons.email_outlined),
-                                ),
-                                keyboardType: TextInputType.emailAddress,
-                                textInputAction: TextInputAction.next,
-                              ),
-                              const SizedBox(height: 14),
-                              TextField(
-                                controller: _passwordCtrl,
-                                decoration: InputDecoration(
-                                  labelText: 'Password',
-                                  prefixIcon:
-                                      const Icon(Icons.lock_outline),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _obscure
-                                          ? Icons.visibility_outlined
-                                          : Icons.visibility_off_outlined,
-                                      color: kText3,
-                                    ),
-                                    onPressed: () =>
-                                        setState(() => _obscure = !_obscure),
-                                  ),
-                                ),
-                                obscureText: _obscure,
-                                textInputAction: TextInputAction.done,
-                                onSubmitted: (_) => _login(),
-                              ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: TextButton(
-                                  onPressed: _loading
-                                      ? null
-                                      : _showForgotPasswordDialog,
-                                  style: TextButton.styleFrom(
-                                      foregroundColor: kGreenPrimary),
-                                  child: Text(
-                                    'Forgot Password?',
-                                    style: GoogleFonts.poppins(fontSize: 13),
-                                  ),
-                                ),
-                              ),
-                              AnimatedSize(
-                                duration: const Duration(milliseconds: 250),
-                                curve: Curves.easeOut,
-                                child: _error != null
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(
-                                            bottom: 14),
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12, vertical: 10),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFFEF2F2),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                color:
-                                                    const Color(0xFFFECACA)),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              const Icon(
-                                                  Icons.error_outline,
-                                                  color: kRed,
-                                                  size: 18),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                _error!,
-                                                style: GoogleFonts.poppins(
-                                                    color: kRed,
-                                                    fontSize: 13),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    : const SizedBox.shrink(),
-                              ),
-                              ElevatedButton(
-                                onPressed: _loading ? null : _login,
-                                child: _loading
-                                    ? const SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2.5),
-                                      )
-                                    : const Text('Sign In'),
-                              ),
-                              const SizedBox(height: 16),
-                              GestureDetector(
-                                onTap: _loading ? null : _showRegisterDialog,
-                                child: Center(
-                                  child: RichText(
-                                    text: TextSpan(
-                                      style: GoogleFonts.poppins(
-                                          fontSize: 14, color: kText2),
-                                      children: [
-                                        const TextSpan(
-                                            text: "Don't have an account? "),
-                                        TextSpan(
-                                          text: 'Register',
-                                          style: GoogleFonts.poppins(
-                                            color: kGreenPrimary,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                  fontSize: 14,
+                                  color: Colors.white.withValues(alpha: 0.7),
                                 ),
                               ),
                             ],
@@ -332,8 +177,169 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                       ),
                     ),
-                  ),
+
+                    // ── Form card ────────────────────────────────────────────
+                    Expanded(
+                      flex: 6,
+                      child: FadeTransition(
+                        opacity: _cardFade,
+                        child: SlideTransition(
+                          position: _cardSlide,
+                          child: Container(
+                            width: double.infinity,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFFAFAFA),
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(32)),
+                            ),
+                            child: SingleChildScrollView(
+                              padding:
+                                  const EdgeInsets.fromLTRB(28, 36, 28, 24),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Text(
+                                    'Welcome back',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: kText1,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Sign in to your farm account',
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 14, color: kText2),
+                                  ),
+                                  const SizedBox(height: 28),
+                                  TextField(
+                                    controller: _emailCtrl,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Email',
+                                      prefixIcon: Icon(Icons.email_outlined),
+                                    ),
+                                    keyboardType: TextInputType.emailAddress,
+                                    textInputAction: TextInputAction.next,
+                                  ),
+                                  const SizedBox(height: 14),
+                                  TextField(
+                                    controller: _passwordCtrl,
+                                    decoration: InputDecoration(
+                                      labelText: 'Password',
+                                      prefixIcon:
+                                          const Icon(Icons.lock_outline),
+                                      suffixIcon: IconButton(
+                                        icon: Icon(
+                                          _obscure
+                                              ? Icons.visibility_outlined
+                                              : Icons.visibility_off_outlined,
+                                          color: kText3,
+                                        ),
+                                        onPressed: () =>
+                                            setState(() => _obscure = !_obscure),
+                                      ),
+                                    ),
+                                    obscureText: _obscure,
+                                    textInputAction: TextInputAction.done,
+                                    onSubmitted: (_) => _login(),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: TextButton(
+                                      onPressed: _loading
+                                          ? null
+                                          : _showForgotPasswordDialog,
+                                      style: TextButton.styleFrom(
+                                          foregroundColor: kGreenPrimary),
+                                      child: Text(
+                                        'Forgot Password?',
+                                        style: GoogleFonts.poppins(fontSize: 13),
+                                      ),
+                                    ),
+                                  ),
+                                  AnimatedSize(
+                                    duration: const Duration(milliseconds: 250),
+                                    curve: Curves.easeOut,
+                                    child: _error != null
+                                        ? Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 14),
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 12, vertical: 10),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFFEF2F2),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                border: Border.all(
+                                                    color:
+                                                        const Color(0xFFFECACA)),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  const Icon(
+                                                      Icons.error_outline,
+                                                      color: kRed,
+                                                      size: 18),
+                                                  const SizedBox(width: 8),
+                                                  Text(
+                                                    _error!,
+                                                    style: GoogleFonts.poppins(
+                                                        color: kRed,
+                                                        fontSize: 13),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                        : const SizedBox.shrink(),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: _loading ? null : _login,
+                                    child: _loading
+                                        ? const SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                                color: Colors.white,
+                                                strokeWidth: 2.5),
+                                          )
+                                        : const Text('Sign In'),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  GestureDetector(
+                                    onTap: _loading ? null : _showRegisterDialog,
+                                    child: Center(
+                                      child: RichText(
+                                        text: TextSpan(
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 14, color: kText2),
+                                          children: [
+                                            const TextSpan(
+                                                text: "Don't have an account? "),
+                                            TextSpan(
+                                              text: 'Register',
+                                              style: GoogleFonts.poppins(
+                                                color: kGreenPrimary,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+                const Positioned(top: 4, right: 8, child: LanguageToggle()),
               ],
             ),
           ),

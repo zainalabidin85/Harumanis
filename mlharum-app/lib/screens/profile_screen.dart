@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import '../l10n/l10n.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
+import '../services/locale_service.dart';
 import '../theme.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -195,6 +197,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void _chooseLanguage() {
+    final l10n = context.l10n;
+    final current = LocaleController.instance.code;
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final option in [
+              ('ms', l10n.languageMalay),
+              ('en', l10n.languageEnglish),
+            ])
+              ListTile(
+                title: Text(option.$2, style: GoogleFonts.poppins(fontSize: 14)),
+                trailing: current == option.$1
+                    ? const Icon(Icons.check_rounded, color: kGreenPrimary)
+                    : null,
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  LocaleController.instance.setLocale(option.$1);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -296,6 +329,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onSubmitted: (_) => _save(),
                         ),
                       ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // ── Language ─────────────────────────────────────────────
+                  Container(
+                    decoration: BoxDecoration(
+                      color: kCard,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: kCardShadow,
+                    ),
+                    child: ListTile(
+                      leading: const Icon(Icons.language_rounded, color: kGreenPrimary),
+                      title: Text(context.l10n.languageRowTitle,
+                          style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: kText1)),
+                      subtitle: Text(
+                          LocaleController.instance.code == 'ms'
+                              ? context.l10n.languageMalay
+                              : context.l10n.languageEnglish,
+                          style: GoogleFonts.poppins(fontSize: 12, color: kText2)),
+                      trailing: const Icon(Icons.chevron_right_rounded, color: kText3),
+                      onTap: _chooseLanguage,
                     ),
                   ),
                   const SizedBox(height: 20),

@@ -10,11 +10,193 @@
   "updateRequiredTitle": "Update Required",
   "updateAvailableTitle": "Update Available",
   "updateRequiredBody": "Ai-Harumanis v{version} is required. Download the latest APK to continue.",
-  "@updateRequiredBody": {"placeholders": {"version": {"type": "String"}}},
+  "@updateRequiredBody": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "updateAvailableBody": "Ai-Harumanis v{version} is available with new features and fixes.",
-  "@updateAvailableBody": {"placeholders": {"version": {"type": "String"}}},
+  "@updateAvailableBody": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "updateLater": "Later",
   "updateExit": "Exit",
   "updateOk": "OK",
-  "updateDownload": "Download"
+  "updateDownload": "Download",
+  "loginErrorBuyerAccount": "This account is registered as a buyer. Please use the Beli Harumanis app.",
+  "loginErrorInvalidCredentials": "Invalid email or password",
+  "loginErrorNoConnection": "Cannot reach server. Check your connection.",
+  "loginErrorFailed": "Login failed ({detail})",
+  "@loginErrorFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "commonErrorWithDetail": "Error: {detail}",
+  "@commonErrorWithDetail": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "loginTagline": "Harumanis Farm Manager",
+  "loginWelcomeBack": "Welcome back",
+  "loginSubtitle": "Sign in to your farm account",
+  "commonEmail": "Email",
+  "commonPassword": "Password",
+  "loginForgotPasswordLink": "Forgot Password?",
+  "loginSignInButton": "Sign In",
+  "loginNoAccountPrompt": "Don't have an account? ",
+  "loginRegister": "Register",
+  "loginErrorEnterEmail": "Please enter your email.",
+  "loginErrorSendCodeFailed": "Failed to send code. Try again.",
+  "loginErrorFillAllFields": "Please fill in all fields.",
+  "loginPasswordResetDone": "Password reset! Please log in with your new password.",
+  "loginErrorInvalidCode": "Invalid or expired code.",
+  "loginEnterResetCodeTitle": "Enter Reset Code",
+  "loginForgotPasswordTitle": "Forgot Password",
+  "loginForgotPasswordBody": "Enter your email and we will send you a 6-digit reset code.",
+  "loginCodeSentTo": "A 6-digit code was sent to {email}.",
+  "@loginCodeSentTo": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "loginSixDigitCodeLabel": "6-digit Code",
+  "loginNewPasswordLabel": "New Password",
+  "commonCancel": "Cancel",
+  "loginResetPasswordButton": "Reset Password",
+  "loginSendCodeButton": "Send Code",
+  "loginCreateAccountTitle": "Create Account",
+  "commonFullName": "Full Name",
+  "loginPhoneOptionalLabel": "Phone (optional)",
+  "loginErrorRegisterRequired": "Name, email and password are required.",
+  "loginAccountCreated": "Account created. Please log in.",
+  "loginErrorRegisterFailed": "Registration failed: {detail}",
+  "@loginErrorRegisterFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "homeProfileTooltip": "Profile",
+  "homeSignOutTooltip": "Sign out",
+  "homePrompt": "What would you like to do today?",
+  "homeMyTreesTitle": "My Trees",
+  "homeMyTreesSubtitle": "Scan fruit and manage trees",
+  "homeDashboardTitle": "Farm Dashboard",
+  "homeDashboardSubtitle": "Satellite map of your farm",
+  "homeSellSubtitle": "Farm photos, orders & QR code",
+  "homeNewBadge": "{count} new",
+  "@homeNewBadge": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeAnnouncementsTitle": "Announcements",
+  "homeAnnouncementsSubtitle": "Courses, workshops & DOA notices",
+  "homeDoaMonitorTitle": "DOA Monitor",
+  "homeDoaMonitorSubtitle": "Cross-farm yield by growth stage",
+  "homeFarmPhotosTitle": "Farm Photos",
+  "homeFarmPhotosSubtitle": "Add photos to attract buyers",
+  "homeIncomingOrdersTitle": "Incoming Orders",
+  "homeIncomingOrdersSubtitle": "Manage buyer orders from Harumanis",
+  "homePulpTitle": "Check Pulp Ripeness",
+  "homePulpSubtitle": "Predict Brix & sweetness from pulp colour",
+  "homeReminderQrTitle": "Reminder QR",
+  "homeReminderQrSubtitle": "Let street buyers set a ripeness reminder",
+  "commonMyFarm": "My Farm",
+  "profileSessionExpiredRelogin": "Session expired. Please log out and log in again.",
+  "profileErrorLoadStatus": "Failed to load profile (error {status}).",
+  "@profileErrorLoadStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "profileErrorLoad": "Failed to load profile: {detail}",
+  "@profileErrorLoad": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "profileSessionExpired": "Session expired. Please log in again.",
+  "profileErrorUpdateStatus": "Failed to update (error {status}).",
+  "@profileErrorUpdateStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "profileErrorSavePriceStatus": "Failed to save price (error {status}).",
+  "@profileErrorSavePriceStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "profileSaved": "Profile saved.",
+  "profileErrorSaveStatus": "Failed to save (error {status}).",
+  "@profileErrorSaveStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "profileErrorSave": "Failed to save: {detail}",
+  "@profileErrorSave": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "profileTitle": "My Profile",
+  "profileFarmerAccount": "Farmer Account",
+  "profilePersonalInfo": "Personal Info",
+  "profilePhoneLabel": "Phone number",
+  "profilePhoneHint": "e.g. 0123456789",
+  "profileWhatsappLabel": "WhatsApp number",
+  "profileWhatsappHint": "e.g. 60123456789",
+  "profileVisibleToBuyers": "Visible to buyers",
+  "profileFarmInfo": "Farm Info",
+  "profileNotSetUp": "Not set up",
+  "profileFarmNameLabel": "Farm Name",
+  "profileLocationLabel": "Location",
+  "profileLocationHint": "e.g. Perlis, Malaysia",
+  "profileListOnBeli": "List on Beli Harumanis",
+  "profileListedPublic": "Buyers can see and order your fruit",
+  "profileListedPrivate": "Your farm is private",
+  "profilePricePerKgLabel": "Price per kg (RM)",
+  "commonSave": "Save",
+  "profileSetPriceHint": "Set your price so buyers can place orders.",
+  "profileBankDetails": "Bank Details",
+  "profileBankDetailsSubtitle": "Used for receiving payouts from Harumanis sales.",
+  "profileBankNameLabel": "Bank Name",
+  "profileBankNameHint": "e.g. Maybank",
+  "profileAccountNumberLabel": "Account Number",
+  "profileAccountNumberHint": "e.g. 1234567890",
+  "profileAccountHolderLabel": "Account Holder Name",
+  "profileAccountHolderHint": "Name as on bank card",
+  "profileSaveButton": "Save Profile"
 }

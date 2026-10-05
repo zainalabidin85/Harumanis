@@ -16,6 +16,7 @@ import 'farm_photos_screen.dart';
 import 'qr_screen.dart';
 import 'doa_report_screen.dart';
 import 'announcements_screen.dart';
+import '../l10n/l10n.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -135,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen>
               actions: [
                 IconButton(
                   icon: const Icon(Icons.person_outline_rounded, color: Colors.white),
-                  tooltip: 'Profile',
+                  tooltip: context.l10n.homeProfileTooltip,
                   onPressed: () => Navigator.push(
                       context, FadeSlideRoute(page: const ProfileScreen())),
                 ),
@@ -143,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen>
                   padding: const EdgeInsets.only(right: 8),
                   child: IconButton(
                     icon: const Icon(Icons.logout_rounded, color: Colors.white),
-                    tooltip: 'Sign out',
+                    tooltip: context.l10n.homeSignOutTooltip,
                     onPressed: _logout,
                   ),
                 ),
@@ -202,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen>
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            'Harumanis Farm Manager',
+                            context.l10n.loginTagline,
                             style: GoogleFonts.poppins(
                               fontSize: 13,
                               color: Colors.white.withValues(alpha: 0.75),
@@ -210,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen>
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'What would you like to do today?',
+                            context.l10n.homePrompt,
                             style: GoogleFonts.poppins(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -236,8 +237,8 @@ class _HomeScreenState extends State<HomeScreen>
                       icon: Icons.forest_rounded,
                       iconColor: kGreenPrimary,
                       iconBg: kGreenLight,
-                      label: 'My Trees',
-                      subtitle: 'Scan fruit and manage trees',
+                      label: context.l10n.homeMyTreesTitle,
+                      subtitle: context.l10n.homeMyTreesSubtitle,
                       onTap: () => Navigator.push(
                         context,
                         FadeSlideRoute(page: const TreeListScreen()),
@@ -251,8 +252,8 @@ class _HomeScreenState extends State<HomeScreen>
                       icon: Icons.satellite_alt_rounded,
                       iconColor: const Color(0xFF0369A1),
                       iconBg: const Color(0xFFE0F2FE),
-                      label: 'Farm Dashboard',
-                      subtitle: 'Satellite map of your farm',
+                      label: context.l10n.homeDashboardTitle,
+                      subtitle: context.l10n.homeDashboardSubtitle,
                       onTap: () => Navigator.push(
                         context,
                         FadeSlideRoute(page: const DashboardScreen()),
@@ -267,8 +268,8 @@ class _HomeScreenState extends State<HomeScreen>
                       iconColor: const Color(0xFF7C3AED),
                       iconBg: const Color(0xFFEDE9FE),
                       label: 'Jual Harumanis',
-                      subtitle: 'Farm photos, orders & QR code',
-                      badge: _pendingOrders > 0 ? '$_pendingOrders new' : null,
+                      subtitle: context.l10n.homeSellSubtitle,
+                      badge: _pendingOrders > 0 ? context.l10n.homeNewBadge(_pendingOrders) : null,
                       onTap: _openBuyerTools,
                     ),
                   ),
@@ -279,8 +280,8 @@ class _HomeScreenState extends State<HomeScreen>
                       icon: Icons.campaign_rounded,
                       iconColor: const Color(0xFF0891B2),
                       iconBg: const Color(0xFFCFFAFE),
-                      label: 'Announcements',
-                      subtitle: 'Courses, workshops & DOA notices',
+                      label: context.l10n.homeAnnouncementsTitle,
+                      subtitle: context.l10n.homeAnnouncementsSubtitle,
                       onTap: () => Navigator.push(
                         context,
                         FadeSlideRoute(page: const AnnouncementsScreen()),
@@ -295,8 +296,8 @@ class _HomeScreenState extends State<HomeScreen>
                         icon: Icons.assessment_rounded,
                         iconColor: const Color(0xFF166534),
                         iconBg: kGreenLight,
-                        label: 'DOA Monitor',
-                        subtitle: 'Cross-farm yield by growth stage',
+                        label: context.l10n.homeDoaMonitorTitle,
+                        subtitle: context.l10n.homeDoaMonitorSubtitle,
                         onTap: () => Navigator.push(
                           context,
                           FadeSlideRoute(page: const DoaReportScreen()),
@@ -386,8 +387,8 @@ class _BuyerToolsSheet extends StatelessWidget {
               icon: Icons.photo_library_rounded,
               iconColor: const Color(0xFF7C3AED),
               iconBg: const Color(0xFFEDE9FE),
-              label: 'Farm Photos',
-              subtitle: 'Add photos to attract buyers',
+              label: context.l10n.homeFarmPhotosTitle,
+              subtitle: context.l10n.homeFarmPhotosSubtitle,
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -401,9 +402,9 @@ class _BuyerToolsSheet extends StatelessWidget {
               icon: Icons.receipt_long_rounded,
               iconColor: const Color(0xFFB45309),
               iconBg: const Color(0xFFFEF3C7),
-              label: 'Incoming Orders',
-              subtitle: 'Manage buyer orders from Harumanis',
-              badge: pendingOrders > 0 ? '$pendingOrders new' : null,
+              label: context.l10n.homeIncomingOrdersTitle,
+              subtitle: context.l10n.homeIncomingOrdersSubtitle,
+              badge: pendingOrders > 0 ? context.l10n.homeNewBadge(pendingOrders) : null,
               onTap: () async {
                 Navigator.pop(context);
                 await Navigator.push(
@@ -418,8 +419,8 @@ class _BuyerToolsSheet extends StatelessWidget {
               icon: Icons.colorize_rounded,
               iconColor: kOrange,
               iconBg: const Color(0xFFFFEDD5),
-              label: 'Check Pulp Ripeness',
-              subtitle: 'Predict Brix & sweetness from pulp colour',
+              label: context.l10n.homePulpTitle,
+              subtitle: context.l10n.homePulpSubtitle,
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -433,8 +434,8 @@ class _BuyerToolsSheet extends StatelessWidget {
               icon: Icons.qr_code_rounded,
               iconColor: const Color(0xFF0369A1),
               iconBg: const Color(0xFFE0F2FE),
-              label: 'Reminder QR',
-              subtitle: 'Let street buyers set a ripeness reminder',
+              label: context.l10n.homeReminderQrTitle,
+              subtitle: context.l10n.homeReminderQrSubtitle,
               onTap: () {
                 if (farmId == null) return;
                 Navigator.pop(context);
@@ -443,7 +444,7 @@ class _BuyerToolsSheet extends StatelessWidget {
                   FadeSlideRoute(
                     page: QrScreen(
                       farmId: farmId!,
-                      farmName: farmName.isNotEmpty ? farmName : 'My Farm',
+                      farmName: farmName.isNotEmpty ? farmName : context.l10n.commonMyFarm,
                       initialReadyInDays: readyInDays,
                     ),
                   ),

@@ -11,6 +11,7 @@ import '../services/push_notification_service.dart';
 import '../theme.dart';
 import '../widgets/page_route.dart';
 import 'home_screen.dart';
+import '../l10n/l10n.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -73,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen>
       final role = me['role'] as String?;
       if (role != 'farmer' && role != 'admin' && role != 'doa') {
         await AuthService.logout();
-        setState(() => _error = 'This account is registered as a buyer. Please use the Beli Harumanis app.');
+        setState(() => _error = context.l10n.loginErrorBuyerAccount);
         return;
       }
       await AuthService.saveRole(role!);
@@ -93,17 +94,17 @@ class _LoginScreenState extends State<LoginScreen>
       print('[LOGIN] response body=${e.response?.data}');
       final status = e.response?.statusCode;
       if (status == 401) {
-        setState(() => _error = 'Invalid email or password');
+        setState(() => _error = context.l10n.loginErrorInvalidCredentials);
       } else if (e.type == DioExceptionType.connectionError ||
                  e.type == DioExceptionType.unknown) {
-        setState(() => _error = 'Cannot reach server. Check your connection.');
+        setState(() => _error = context.l10n.loginErrorNoConnection);
       } else {
-        setState(() => _error = 'Login failed (${e.message})');
+        setState(() => _error = context.l10n.loginErrorFailed(e.message ?? ''));
       }
     } catch (e, st) {
       HapticFeedback.vibrate();
       print('[LOGIN] Unexpected error: $e\n$st');
-      setState(() => _error = 'Error: $e');
+      setState(() => _error = context.l10n.commonErrorWithDetail(e.toString()));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -166,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen>
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                'Harumanis Farm Manager',
+                                context.l10n.loginTagline,
                                 style: GoogleFonts.poppins(
                                   fontSize: 14,
                                   color: Colors.white.withValues(alpha: 0.7),
@@ -199,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Text(
-                                    'Welcome back',
+                                    context.l10n.loginWelcomeBack,
                                     style: GoogleFonts.poppins(
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
@@ -208,15 +209,15 @@ class _LoginScreenState extends State<LoginScreen>
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    'Sign in to your farm account',
+                                    context.l10n.loginSubtitle,
                                     style: GoogleFonts.poppins(
                                         fontSize: 14, color: kText2),
                                   ),
                                   const SizedBox(height: 28),
                                   TextField(
                                     controller: _emailCtrl,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Email',
+                                    decoration: InputDecoration(
+                                      labelText: context.l10n.commonEmail,
                                       prefixIcon: Icon(Icons.email_outlined),
                                     ),
                                     keyboardType: TextInputType.emailAddress,
@@ -226,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   TextField(
                                     controller: _passwordCtrl,
                                     decoration: InputDecoration(
-                                      labelText: 'Password',
+                                      labelText: context.l10n.commonPassword,
                                       prefixIcon:
                                           const Icon(Icons.lock_outline),
                                       suffixIcon: IconButton(
@@ -253,7 +254,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       style: TextButton.styleFrom(
                                           foregroundColor: kGreenPrimary),
                                       child: Text(
-                                        'Forgot Password?',
+                                        context.l10n.loginForgotPasswordLink,
                                         style: GoogleFonts.poppins(fontSize: 13),
                                       ),
                                     ),
@@ -305,7 +306,7 @@ class _LoginScreenState extends State<LoginScreen>
                                                 color: Colors.white,
                                                 strokeWidth: 2.5),
                                           )
-                                        : const Text('Sign In'),
+                                        : Text(context.l10n.loginSignInButton),
                                   ),
                                   const SizedBox(height: 16),
                                   GestureDetector(
@@ -316,10 +317,10 @@ class _LoginScreenState extends State<LoginScreen>
                                           style: GoogleFonts.poppins(
                                               fontSize: 14, color: kText2),
                                           children: [
-                                            const TextSpan(
-                                                text: "Don't have an account? "),
                                             TextSpan(
-                                              text: 'Register',
+                                                text: context.l10n.loginNoAccountPrompt),
+                                            TextSpan(
+                                              text: context.l10n.loginRegister,
                                               style: GoogleFonts.poppins(
                                                 color: kGreenPrimary,
                                                 fontWeight: FontWeight.w600,
@@ -364,7 +365,7 @@ class _LoginScreenState extends State<LoginScreen>
           Future<void> sendCode() async {
             if (emailCtrl.text.trim().isEmpty) {
               setDialogState(
-                  () => dialogError = 'Please enter your email.');
+                  () => dialogError = context.l10n.loginErrorEnterEmail);
               return;
             }
             setDialogState(
@@ -376,7 +377,7 @@ class _LoginScreenState extends State<LoginScreen>
             } catch (_) {
               setDialogState(() {
                 dialogLoading = false;
-                dialogError = 'Failed to send code. Try again.';
+                dialogError = context.l10n.loginErrorSendCodeFailed;
               });
             }
           }
@@ -385,7 +386,7 @@ class _LoginScreenState extends State<LoginScreen>
             if (otpCtrl.text.trim().isEmpty ||
                 newPassCtrl.text.isEmpty) {
               setDialogState(
-                  () => dialogError = 'Please fill in all fields.');
+                  () => dialogError = context.l10n.loginErrorFillAllFields);
               return;
             }
             setDialogState(
@@ -399,15 +400,15 @@ class _LoginScreenState extends State<LoginScreen>
               if (ctx.mounted) {
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                       content: Text(
-                          'Password reset! Please log in with your new password.')),
+                          context.l10n.loginPasswordResetDone)),
                 );
               }
             } catch (_) {
               setDialogState(() {
                 dialogLoading = false;
-                dialogError = 'Invalid or expired code.';
+                dialogError = context.l10n.loginErrorInvalidCode;
               });
             }
           }
@@ -415,7 +416,7 @@ class _LoginScreenState extends State<LoginScreen>
           return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20)),
-            title: Text(step2 ? 'Enter Reset Code' : 'Forgot Password',
+            title: Text(step2 ? context.l10n.loginEnterResetCodeTitle : context.l10n.loginForgotPasswordTitle,
                 style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
             content: SingleChildScrollView(
               child: Column(
@@ -423,30 +424,30 @@ class _LoginScreenState extends State<LoginScreen>
                 children: [
                   if (!step2) ...[
                     Text(
-                      'Enter your email and we will send you a 6-digit reset code.',
+                      context.l10n.loginForgotPasswordBody,
                       style: GoogleFonts.poppins(
                           color: kText2, fontSize: 13),
                     ),
                     const SizedBox(height: 16),
                     TextField(
                       controller: emailCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
+                      decoration: InputDecoration(
+                        labelText: context.l10n.commonEmail,
                         prefixIcon: Icon(Icons.email_outlined),
                       ),
                       keyboardType: TextInputType.emailAddress,
                     ),
                   ] else ...[
                     Text(
-                      'A 6-digit code was sent to ${emailCtrl.text.trim()}.',
+                      context.l10n.loginCodeSentTo(emailCtrl.text.trim()),
                       style: GoogleFonts.poppins(
                           color: kText2, fontSize: 13),
                     ),
                     const SizedBox(height: 16),
                     TextField(
                       controller: otpCtrl,
-                      decoration: const InputDecoration(
-                        labelText: '6-digit Code',
+                      decoration: InputDecoration(
+                        labelText: context.l10n.loginSixDigitCodeLabel,
                         prefixIcon: Icon(Icons.pin_outlined),
                       ),
                       keyboardType: TextInputType.number,
@@ -455,8 +456,8 @@ class _LoginScreenState extends State<LoginScreen>
                     const SizedBox(height: 8),
                     TextField(
                       controller: newPassCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'New Password',
+                      decoration: InputDecoration(
+                        labelText: context.l10n.loginNewPasswordLabel,
                         prefixIcon: Icon(Icons.lock_outline),
                       ),
                       obscureText: true,
@@ -474,7 +475,7 @@ class _LoginScreenState extends State<LoginScreen>
             actions: [
               TextButton(
                 onPressed: dialogLoading ? null : () => Navigator.pop(ctx),
-                child: Text('Cancel',
+                child: Text(context.l10n.commonCancel,
                     style: GoogleFonts.poppins(color: kText2)),
               ),
               ElevatedButton(
@@ -489,7 +490,7 @@ class _LoginScreenState extends State<LoginScreen>
                             color: Colors.white, strokeWidth: 2),
                       )
                     : Text(
-                        step2 ? 'Reset Password' : 'Send Code',
+                        step2 ? context.l10n.loginResetPasswordButton : context.l10n.loginSendCodeButton,
                         style: GoogleFonts.poppins(),
                       ),
               ),
@@ -515,7 +516,7 @@ class _LoginScreenState extends State<LoginScreen>
         builder: (ctx, setDialogState) => AlertDialog(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20)),
-          title: Text('Create Account',
+          title: Text(context.l10n.loginCreateAccountTitle,
               style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
           content: SingleChildScrollView(
             child: Column(
@@ -523,8 +524,8 @@ class _LoginScreenState extends State<LoginScreen>
               children: [
                 TextField(
                   controller: nameCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Full Name',
+                  decoration: InputDecoration(
+                    labelText: context.l10n.commonFullName,
                     prefixIcon: Icon(Icons.person_outline),
                   ),
                   textCapitalization: TextCapitalization.words,
@@ -532,8 +533,8 @@ class _LoginScreenState extends State<LoginScreen>
                 const SizedBox(height: 12),
                 TextField(
                   controller: emailCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
+                  decoration: InputDecoration(
+                    labelText: context.l10n.commonEmail,
                     prefixIcon: Icon(Icons.email_outlined),
                   ),
                   keyboardType: TextInputType.emailAddress,
@@ -541,8 +542,8 @@ class _LoginScreenState extends State<LoginScreen>
                 const SizedBox(height: 12),
                 TextField(
                   controller: phoneCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Phone (optional)',
+                  decoration: InputDecoration(
+                    labelText: context.l10n.loginPhoneOptionalLabel,
                     prefixIcon: Icon(Icons.phone_outlined),
                   ),
                   keyboardType: TextInputType.phone,
@@ -550,8 +551,8 @@ class _LoginScreenState extends State<LoginScreen>
                 const SizedBox(height: 12),
                 TextField(
                   controller: passCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
+                  decoration: InputDecoration(
+                    labelText: context.l10n.commonPassword,
                     prefixIcon: Icon(Icons.lock_outline),
                   ),
                   obscureText: true,
@@ -568,7 +569,7 @@ class _LoginScreenState extends State<LoginScreen>
           actions: [
             TextButton(
               onPressed: dialogLoading ? null : () => Navigator.pop(ctx),
-              child: Text('Cancel',
+              child: Text(context.l10n.commonCancel,
                   style: GoogleFonts.poppins(color: kText2)),
             ),
             ElevatedButton(
@@ -579,7 +580,7 @@ class _LoginScreenState extends State<LoginScreen>
                           emailCtrl.text.trim().isEmpty ||
                           passCtrl.text.isEmpty) {
                         setDialogState(() => dialogError =
-                            'Name, email and password are required.');
+                            context.l10n.loginErrorRegisterRequired);
                         return;
                       }
                       setDialogState(() {
@@ -598,9 +599,9 @@ class _LoginScreenState extends State<LoginScreen>
                         if (ctx.mounted) {
                           Navigator.pop(ctx);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
+                            SnackBar(
                                 content: Text(
-                                    'Account created. Please log in.')),
+                                    context.l10n.loginAccountCreated)),
                           );
                           _emailCtrl.text = emailCtrl.text.trim();
                         }
@@ -609,7 +610,7 @@ class _LoginScreenState extends State<LoginScreen>
                         setDialogState(() {
                           dialogLoading = false;
                           dialogError =
-                              'Registration failed: $e';
+                              context.l10n.loginErrorRegisterFailed(e.toString());
                         });
                       }
                     },
@@ -620,7 +621,7 @@ class _LoginScreenState extends State<LoginScreen>
                       child: CircularProgressIndicator(
                           color: Colors.white, strokeWidth: 2),
                     )
-                  : Text('Register', style: GoogleFonts.poppins()),
+                  : Text(context.l10n.loginRegister, style: GoogleFonts.poppins()),
             ),
           ],
         ),

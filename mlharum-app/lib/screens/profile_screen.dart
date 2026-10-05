@@ -85,10 +85,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } on DioException catch (e) {
       final status = e.response?.statusCode;
       _error = status == 401
-          ? 'Session expired. Please log out and log in again.'
-          : 'Failed to load profile (error $status).';
+          ? context.l10n.profileSessionExpiredRelogin
+          : context.l10n.profileErrorLoadStatus('$status');
     } catch (e) {
-      _error = 'Failed to load profile: $e';
+      _error = context.l10n.profileErrorLoad(e.toString());
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -102,8 +102,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } on DioException catch (e) {
       final status = e.response?.statusCode;
       final msg = status == 401
-          ? 'Session expired. Please log in again.'
-          : 'Failed to update (error $status).';
+          ? context.l10n.profileSessionExpired
+          : context.l10n.profileErrorUpdateStatus('$status');
       if (mounted) {
         setState(() => _isPublic = !value);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -115,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (mounted) {
         setState(() => _isPublic = !value);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e', style: GoogleFonts.poppins()),
+          SnackBar(content: Text(context.l10n.commonErrorWithDetail(e.toString()), style: GoogleFonts.poppins()),
               backgroundColor: kRed),
         );
       }
@@ -135,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final status = e.response?.statusCode;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Failed to save price (error $status).',
+          content: Text(context.l10n.profileErrorSavePriceStatus('$status'),
               style: GoogleFonts.poppins()),
           backgroundColor: kRed,
         ));
@@ -143,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Error: $e', style: GoogleFonts.poppins()),
+          content: Text(context.l10n.commonErrorWithDetail(e.toString()), style: GoogleFonts.poppins()),
           backgroundColor: kRed,
         ));
       }
@@ -180,18 +180,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         }
       }
-      if (mounted) setState(() => _success = 'Profile saved.');
+      if (mounted) setState(() => _success = context.l10n.profileSaved);
     } on DioException catch (e) {
       final status = e.response?.statusCode;
       final detail = e.response?.data is Map
           ? (e.response!.data as Map)['detail']?.toString()
           : null;
       final msg = status == 401
-          ? 'Session expired. Please log out and log in again.'
-          : 'Failed to save (error $status${detail != null ? ': $detail' : ''}).';
+          ? context.l10n.profileSessionExpiredRelogin
+          : context.l10n.profileErrorSaveStatus('$status${detail != null ? ': $detail' : ''}');
       if (mounted) setState(() => _error = msg);
     } catch (e) {
-      if (mounted) setState(() => _error = 'Failed to save: $e');
+      if (mounted) setState(() => _error = context.l10n.profileErrorSave(e.toString()));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -233,7 +233,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
-        title: const Text('My Profile'),
+        title: Text(context.l10n.profileTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => Navigator.pop(context),
@@ -263,7 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 8),
                   Center(
-                    child: Text('Farmer Account',
+                    child: Text(context.l10n.profileFarmerAccount,
                         style: GoogleFonts.poppins(
                             fontSize: 13, color: kText2)),
                   ),
@@ -280,7 +280,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Personal Info',
+                        Text(context.l10n.profilePersonalInfo,
                             style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -288,8 +288,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 16),
                         TextField(
                           controller: _nameCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Full Name',
+                          decoration: InputDecoration(
+                            labelText: context.l10n.commonFullName,
                             prefixIcon: Icon(Icons.person_outline),
                           ),
                           textCapitalization: TextCapitalization.words,
@@ -298,10 +298,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 14),
                         TextField(
                           controller: _phoneCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Phone number',
+                          decoration: InputDecoration(
+                            labelText: context.l10n.profilePhoneLabel,
                             prefixIcon: Icon(Icons.phone_outlined),
-                            hintText: 'e.g. 0123456789',
+                            hintText: context.l10n.profilePhoneHint,
                           ),
                           keyboardType: TextInputType.phone,
                           textInputAction: TextInputAction.next,
@@ -312,10 +312,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         TextField(
                           controller: _whatsappCtrl,
                           decoration: InputDecoration(
-                            labelText: 'WhatsApp number',
+                            labelText: context.l10n.profileWhatsappLabel,
                             prefixIcon: const Icon(Icons.chat_outlined),
-                            hintText: 'e.g. 60123456789',
-                            helperText: 'Visible to buyers',
+                            hintText: context.l10n.profileWhatsappHint,
+                            helperText: context.l10n.profileVisibleToBuyers,
                             helperStyle:
                                 GoogleFonts.poppins(fontSize: 11, color: kText3),
                             suffixIcon: _whatsappCtrl.text.isNotEmpty
@@ -371,7 +371,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         Row(
                           children: [
-                            Text('Farm Info',
+                            Text(context.l10n.profileFarmInfo,
                                 style: GoogleFonts.poppins(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
@@ -384,7 +384,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   color: kOrange.withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
-                                child: Text('Not set up',
+                                child: Text(context.l10n.profileNotSetUp,
                                     style: GoogleFonts.poppins(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w600,
@@ -396,8 +396,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 16),
                         TextField(
                           controller: _farmNameCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Farm Name',
+                          decoration: InputDecoration(
+                            labelText: context.l10n.profileFarmNameLabel,
                             prefixIcon: Icon(Icons.agriculture_outlined),
                           ),
                           textCapitalization: TextCapitalization.words,
@@ -406,10 +406,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 14),
                         TextField(
                           controller: _farmLocCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Location',
+                          decoration: InputDecoration(
+                            labelText: context.l10n.profileLocationLabel,
                             prefixIcon: Icon(Icons.location_on_outlined),
-                            hintText: 'e.g. Perlis, Malaysia',
+                            hintText: context.l10n.profileLocationHint,
                           ),
                           textCapitalization: TextCapitalization.words,
                           textInputAction: TextInputAction.done,
@@ -460,7 +460,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('List on Beli Harumanis',
+                                  Text(context.l10n.profileListOnBeli,
                                       style: GoogleFonts.poppins(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
@@ -468,8 +468,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   const SizedBox(height: 2),
                                   Text(
                                     _isPublic
-                                        ? 'Buyers can see and order your fruit'
-                                        : 'Your farm is private',
+                                        ? context.l10n.profileListedPublic
+                                        : context.l10n.profileListedPrivate,
                                     style: GoogleFonts.poppins(
                                         fontSize: 12, color: kText2),
                                   ),
@@ -493,8 +493,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Expanded(
                                 child: TextField(
                                   controller: _priceCtrl,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Price per kg (RM)',
+                                  decoration: InputDecoration(
+                                    labelText: context.l10n.profilePricePerKgLabel,
                                     prefixText: 'RM ',
                                     prefixIcon: Icon(Icons.sell_rounded),
                                     isDense: true,
@@ -510,7 +510,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           strokeWidth: 2, color: kGreenPrimary))
                                   : TextButton(
                                       onPressed: _savePrice,
-                                      child: Text('Save',
+                                      child: Text(context.l10n.commonSave,
                                           style: GoogleFonts.poppins(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,
@@ -521,7 +521,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 6),
                                 child: Text(
-                                  'Set your price so buyers can place orders.',
+                                  context.l10n.profileSetPriceHint,
                                   style: GoogleFonts.poppins(
                                       fontSize: 11, color: kOrange),
                                 ),
@@ -546,22 +546,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Bank Details',
+                        Text(context.l10n.profileBankDetails,
                             style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: kText1)),
                         const SizedBox(height: 4),
-                        Text('Used for receiving payouts from Harumanis sales.',
+                        Text(context.l10n.profileBankDetailsSubtitle,
                             style: GoogleFonts.poppins(
                                 fontSize: 12, color: kText2)),
                         const SizedBox(height: 16),
                         TextField(
                           controller: _bankNameCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Bank Name',
+                          decoration: InputDecoration(
+                            labelText: context.l10n.profileBankNameLabel,
                             prefixIcon: Icon(Icons.account_balance_outlined),
-                            hintText: 'e.g. Maybank',
+                            hintText: context.l10n.profileBankNameHint,
                           ),
                           textCapitalization: TextCapitalization.words,
                           textInputAction: TextInputAction.next,
@@ -569,10 +569,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 14),
                         TextField(
                           controller: _bankAccountNumCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Account Number',
+                          decoration: InputDecoration(
+                            labelText: context.l10n.profileAccountNumberLabel,
                             prefixIcon: Icon(Icons.numbers_rounded),
-                            hintText: 'e.g. 1234567890',
+                            hintText: context.l10n.profileAccountNumberHint,
                           ),
                           keyboardType: TextInputType.number,
                           textInputAction: TextInputAction.next,
@@ -580,10 +580,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 14),
                         TextField(
                           controller: _bankAccountNameCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Account Holder Name',
+                          decoration: InputDecoration(
+                            labelText: context.l10n.profileAccountHolderLabel,
                             prefixIcon: Icon(Icons.badge_outlined),
-                            hintText: 'Name as on bank card',
+                            hintText: context.l10n.profileAccountHolderHint,
                           ),
                           textCapitalization: TextCapitalization.characters,
                           textInputAction: TextInputAction.done,
@@ -627,7 +627,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             width: 20,
                             child: CircularProgressIndicator(
                                 color: Colors.white, strokeWidth: 2.5))
-                        : const Text('Save Profile'),
+                        : Text(context.l10n.profileSaveButton),
                   ),
                   const SizedBox(height: 8),
                   Center(

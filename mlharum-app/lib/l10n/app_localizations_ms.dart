@@ -502,10 +502,10 @@ class AppLocalizationsMs extends AppLocalizations {
   }
 
   @override
-  String get treeDetailMarkHarvested => 'Tanda Sudah Dituai';
+  String get treeDetailMarkHarvested => 'Sudah Dituai';
 
   @override
-  String get treeDetailMarkAborted => 'Tanda Gugur / Rosak';
+  String get treeDetailMarkAborted => 'Gugur / Rosak';
 
   @override
   String get treeDetailReasonLabel => 'Sebab (pilihan)';
@@ -996,7 +996,7 @@ class AppLocalizationsMs extends AppLocalizations {
   }
 
   @override
-  String get orderDetailMarkAsHarvested => 'Tanda Sudah Dituai';
+  String get orderDetailMarkAsHarvested => 'Sudah Dituai';
 
   @override
   String get orderDetailMarkAsDelivered => 'Tanda Sudah Dihantar';

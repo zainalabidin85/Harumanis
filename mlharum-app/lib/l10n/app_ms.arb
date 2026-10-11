@@ -51,7 +51,7 @@
   "loginErrorRegisterFailed": "Pendaftaran gagal: {detail}",
   "homeProfileTooltip": "Profil",
   "homeSignOutTooltip": "Log keluar",
-  "homePrompt": "Apa yang anda ingin lakukan hari ini?",
+  "homePrompt": "Apa anda ingin lakukan hari ini?",
   "homeMyTreesTitle": "Pokok Saya",
   "homeMyTreesSubtitle": "Imbas buah dan urus pokok",
   "homeDashboardTitle": "Papan Pemuka Ladang",
@@ -310,5 +310,13 @@
   "qrStep3": "Mereka tekan \"Remind Me\" → aplikasi memaklumkan mereka dalam {days} hari apabila buah sedia dimakan",
   "qrStep4": "Mereka juga boleh membuat pesanan akan datang terus dari halaman ladang anda",
   "qrTip": "Petua: Ambil tangkapan skrin dan cetak untuk dipamerkan di gerai anda",
-  "treeListTreeNumberHint": "cth. T01"
+  "treeListTreeNumberHint": "cth. T01",
+  "handSpanTitle": "Ukuran Tangan",
+  "handSpanHow": "Ukur dari buku jari telunjuk ke buku jari kelingking.",
+  "handSpanFieldLabel": "Lebar buku jari (cm)",
+  "handSpanFieldHint": "cth. 6.5",
+  "handSpanErrorRange": "Masukkan nilai antara {min} hingga {max} cm.",
+  "handSpanErrorSave": "Gagal menyimpan. Semak sambungan anda dan cuba lagi.",
+  "handSpanNotSet": "Belum ditetapkan",
+  "handSpanValue": "{cm} cm"
 }

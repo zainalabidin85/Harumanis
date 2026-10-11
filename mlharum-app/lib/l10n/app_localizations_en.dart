@@ -1093,4 +1093,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get treeListTreeNumberHint => 'e.g. T01';
+
+  @override
+  String get handSpanTitle => 'Hand Measurement';
+
+  @override
+  String get handSpanHow =>
+      'Measure from your index-finger knuckle to your little-finger knuckle.';
+
+  @override
+  String get handSpanFieldLabel => 'Knuckle span (cm)';
+
+  @override
+  String get handSpanFieldHint => 'e.g. 6.5';
+
+  @override
+  String handSpanErrorRange(String min, String max) {
+    return 'Enter a value between $min and $max cm.';
+  }
+
+  @override
+  String get handSpanErrorSave =>
+      'Could not save. Check your connection and try again.';
+
+  @override
+  String get handSpanNotSet => 'Not set';
+
+  @override
+  String handSpanValue(String cm) {
+    return '$cm cm';
+  }
 }

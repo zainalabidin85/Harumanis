@@ -9,6 +9,7 @@ import '../services/api_service.dart';
 import '../theme.dart';
 import '../widgets/page_route.dart';
 import 'camera_screen.dart';
+import 'hand_span_screen.dart';
 import '../l10n/l10n.dart';
 
 class TreeDetailScreen extends StatefulWidget {
@@ -121,8 +122,10 @@ class _TreeDetailScreenState extends State<TreeDetailScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
+        onPressed: () async {
           HapticFeedback.lightImpact();
+          if (!await ensureHandSpan(context)) return;
+          if (!context.mounted) return;
           Navigator.push(context,
               FadeSlideRoute(page: CameraScreen(tree: widget.tree)))
               .then((_) => _load());

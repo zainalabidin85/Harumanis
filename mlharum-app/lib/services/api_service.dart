@@ -6,6 +6,7 @@ import '../models/doa_report.dart';
 import '../models/announcement.dart';
 import 'auth_service.dart';
 import 'locale_service.dart';
+import 'session_service.dart';
 
 class ApiService {
   static const _baseUrl = 'https://mlharum.unitani.com';
@@ -23,7 +24,7 @@ class ApiService {
         'Authorization': 'Bearer $token',
         'Accept-Language': LocaleController.instance.code,
       },
-    ));
+    ))..interceptors.add(SessionController.instance.interceptor);
   }
 
   // ── Auth ────────────────────────────────────────────────────────────────────
@@ -33,6 +34,12 @@ class ApiService {
       'email': email,
       'password': password,
     });
+    return res.data['access_token'];
+  }
+
+  static Future<String> refreshToken() async {
+    final dio = await _authDio();
+    final res = await dio.post('/auth/refresh');
     return res.data['access_token'];
   }
 
@@ -74,6 +81,11 @@ class ApiService {
   static Future<void> updateLanguage(String code) async {
     final dio = await _authDio();
     await dio.patch('/auth/me', data: {'language': code});
+  }
+
+  static Future<void> updateKnuckleSpan(double cm) async {
+    final dio = await _authDio();
+    await dio.patch('/auth/me', data: {'knuckle_span_cm': cm});
   }
 
   static Future<void> forgotPassword(String email) async {

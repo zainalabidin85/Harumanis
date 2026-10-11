@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
 import '../services/locale_service.dart';
+import '../services/session_service.dart';
 import '../widgets/language_toggle.dart';
 import '../services/push_notification_service.dart';
 import '../theme.dart';
@@ -14,7 +15,9 @@ import 'home_screen.dart';
 import '../l10n/l10n.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  /// True when the user was sent here because the server rejected their token.
+  final bool sessionExpired;
+  const LoginScreen({super.key, this.sessionExpired = false});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -27,6 +30,11 @@ class _LoginScreenState extends State<LoginScreen>
   bool _loading  = false;
   bool _obscure  = true;
   String? _error;
+  late bool _sessionExpired = widget.sessionExpired;
+
+  // Resolved at build time so the notice follows the language toggle.
+  String? get _shownError =>
+      _error ?? (_sessionExpired ? context.l10n.profileSessionExpired : null);
 
   late AnimationController _ctrl;
   late Animation<double>  _logoFade;
@@ -65,11 +73,11 @@ class _LoginScreenState extends State<LoginScreen>
 
   Future<void> _login() async {
     HapticFeedback.mediumImpact();
-    setState(() { _loading = true; _error = null; });
+    setState(() { _loading = true; _error = null; _sessionExpired = false; });
     try {
       final token = await ApiService.login(
           _emailCtrl.text.trim(), _passwordCtrl.text);
-      await AuthService.saveToken(token);
+      await SessionController.instance.saveToken(token);
       final me = await ApiService.getMe();
       final role = me['role'] as String?;
       if (role != 'farmer' && role != 'admin' && role != 'doa') {
@@ -262,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   AnimatedSize(
                                     duration: const Duration(milliseconds: 250),
                                     curve: Curves.easeOut,
-                                    child: _error != null
+                                    child: _shownError != null
                                         ? Padding(
                                             padding: const EdgeInsets.only(
                                                 bottom: 14),
@@ -284,11 +292,13 @@ class _LoginScreenState extends State<LoginScreen>
                                                       color: kRed,
                                                       size: 18),
                                                   const SizedBox(width: 8),
-                                                  Text(
-                                                    _error!,
-                                                    style: GoogleFonts.poppins(
-                                                        color: kRed,
-                                                        fontSize: 13),
+                                                  Expanded(
+                                                    child: Text(
+                                                      _shownError!,
+                                                      style: GoogleFonts.poppins(
+                                                          color: kRed,
+                                                          fontSize: 13),
+                                                    ),
                                                   ),
                                                 ],
                                               ),

@@ -180,7 +180,7 @@ class AppLocalizationsMs extends AppLocalizations {
   String get homeSignOutTooltip => 'Log keluar';
 
   @override
-  String get homePrompt => 'Apa yang anda ingin lakukan hari ini?';
+  String get homePrompt => 'Apa anda ingin lakukan hari ini?';
 
   @override
   String get homeMyTreesTitle => 'Pokok Saya';
@@ -1096,4 +1096,34 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get treeListTreeNumberHint => 'cth. T01';
+
+  @override
+  String get handSpanTitle => 'Ukuran Tangan';
+
+  @override
+  String get handSpanHow =>
+      'Ukur dari buku jari telunjuk ke buku jari kelingking.';
+
+  @override
+  String get handSpanFieldLabel => 'Lebar buku jari (cm)';
+
+  @override
+  String get handSpanFieldHint => 'cth. 6.5';
+
+  @override
+  String handSpanErrorRange(String min, String max) {
+    return 'Masukkan nilai antara $min hingga $max cm.';
+  }
+
+  @override
+  String get handSpanErrorSave =>
+      'Gagal menyimpan. Semak sambungan anda dan cuba lagi.';
+
+  @override
+  String get handSpanNotSet => 'Belum ditetapkan';
+
+  @override
+  String handSpanValue(String cm) {
+    return '$cm cm';
+  }
 }

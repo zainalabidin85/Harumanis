@@ -1963,6 +1963,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'e.g. T01'**
   String get treeListTreeNumberHint;
+
+  /// No description provided for @handSpanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hand Measurement'**
+  String get handSpanTitle;
+
+  /// No description provided for @handSpanHow.
+  ///
+  /// In en, this message translates to:
+  /// **'Measure from your index-finger knuckle to your little-finger knuckle.'**
+  String get handSpanHow;
+
+  /// No description provided for @handSpanFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Knuckle span (cm)'**
+  String get handSpanFieldLabel;
+
+  /// No description provided for @handSpanFieldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 6.5'**
+  String get handSpanFieldHint;
+
+  /// No description provided for @handSpanErrorRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a value between {min} and {max} cm.'**
+  String handSpanErrorRange(String min, String max);
+
+  /// No description provided for @handSpanErrorSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save. Check your connection and try again.'**
+  String get handSpanErrorSave;
+
+  /// No description provided for @handSpanNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get handSpanNotSet;
+
+  /// No description provided for @handSpanValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{cm} cm'**
+  String handSpanValue(String cm);
 }
 
 class _AppLocalizationsDelegate

@@ -11,6 +11,7 @@ import 'screens/home_screen.dart';
 import 'services/auth_service.dart';
 import 'services/locale_service.dart';
 import 'services/push_notification_service.dart';
+import 'services/session_service.dart';
 import 'services/version_service.dart';
 import 'theme.dart';
 
@@ -33,6 +34,12 @@ void main() async {
   await LocaleController.instance.load();
   final loggedIn = await AuthService.isLoggedIn();
   if (loggedIn) unawaited(LocaleController.instance.syncToAccount());
+  SessionController.instance.onExpired = () {
+    navigatorKey.currentState?.pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const LoginScreen(sessionExpired: true)),
+      (_) => false,
+    );
+  };
   runApp(AiHarumApp(loggedIn: loggedIn));
 }
 
@@ -72,7 +79,11 @@ class _VersionGateState extends State<VersionGate> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _checkVersion());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkVersion();
+      // After the first frame so an expired token can route to the login screen.
+      unawaited(SessionController.instance.renew());
+    });
   }
 
   Future<void> _checkVersion() async {

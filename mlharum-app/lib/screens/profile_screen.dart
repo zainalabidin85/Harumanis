@@ -6,8 +6,11 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../l10n/l10n.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
+import '../services/hand_span_service.dart';
 import '../services/locale_service.dart';
 import '../theme.dart';
+import '../widgets/page_route.dart';
+import 'hand_span_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -32,6 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _isPublic      = false;
   bool _toggleLoading = false;
   double? _pricePerKg;
+  double? _handSpanCm;
   bool _priceSaving   = false;
   int? _farmId;
   String? _error;
@@ -70,6 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _bankNameCtrl.text         = me['bank_name']           as String? ?? '';
       _bankAccountNumCtrl.text   = me['bank_account_number'] as String? ?? '';
       _bankAccountNameCtrl.text  = me['bank_account_name']   as String? ?? '';
+      _handSpanCm = (me['knuckle_span_cm'] as num?)?.toDouble();
       _farmId = me['farm_id'] as int?;
       if (_farmId != null) {
         await AuthService.saveFarmId(_farmId!);
@@ -92,6 +97,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  Future<void> _editHandSpan() async {
+    final saved = await Navigator.push<bool>(
+      context,
+      FadeSlideRoute(page: HandSpanScreen(initialCm: _handSpanCm)),
+    );
+    if (saved != true || !mounted) return;
+    final cm = await HandSpanController.instance.current();
+    if (mounted) setState(() => _handSpanCm = cm);
   }
 
   Future<void> _toggleVisibility(bool value) async {
@@ -354,6 +369,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           style: GoogleFonts.poppins(fontSize: 12, color: kText2)),
                       trailing: const Icon(Icons.chevron_right_rounded, color: kText3),
                       onTap: _chooseLanguage,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // ── Hand measurement ─────────────────────────────────────
+                  Container(
+                    decoration: BoxDecoration(
+                      color: kCard,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: kCardShadow,
+                    ),
+                    child: ListTile(
+                      leading: const Icon(Icons.straighten_rounded, color: kGreenPrimary),
+                      title: Text(context.l10n.handSpanTitle,
+                          style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: kText1)),
+                      subtitle: Text(
+                          _handSpanCm == null
+                              ? context.l10n.handSpanNotSet
+                              : context.l10n.handSpanValue(_handSpanCm!.toStringAsFixed(1)),
+                          style: GoogleFonts.poppins(fontSize: 12, color: kText2)),
+                      trailing: const Icon(Icons.chevron_right_rounded, color: kText3),
+                      onTap: _editHandSpan,
                     ),
                   ),
                   const SizedBox(height: 20),

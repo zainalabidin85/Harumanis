@@ -695,5 +695,30 @@
   },
   "qrStep4": "They can also place future orders directly from your farm page",
   "qrTip": "Tip: Take a screenshot and print this to display at your stall",
-  "treeListTreeNumberHint": "e.g. T01"
+  "treeListTreeNumberHint": "e.g. T01",
+  "handSpanTitle": "Hand Measurement",
+  "handSpanHow": "Measure from your index-finger knuckle to your little-finger knuckle.",
+  "handSpanFieldLabel": "Knuckle span (cm)",
+  "handSpanFieldHint": "e.g. 6.5",
+  "handSpanErrorRange": "Enter a value between {min} and {max} cm.",
+  "@handSpanErrorRange": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "handSpanErrorSave": "Could not save. Check your connection and try again.",
+  "handSpanNotSet": "Not set",
+  "handSpanValue": "{cm} cm",
+  "@handSpanValue": {
+    "placeholders": {
+      "cm": {
+        "type": "String"
+      }
+    }
+  }
 }

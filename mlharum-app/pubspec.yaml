@@ -1,6 +1,6 @@
 name: ai_harum
 description: Ai-Harumanis - AI-powered Harumanis Mango Management App
-version: 1.10.0+17
+version: 1.11.0+18
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

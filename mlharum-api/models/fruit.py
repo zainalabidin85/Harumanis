@@ -11,6 +11,7 @@ class Detection(Base):
     image_path       = Column(String(500))
     mango_count      = Column(Integer, default=0)
     knuckle_width_px = Column(Numeric(6, 2))
+    reference_span_cm = Column(Numeric(4, 2), nullable=True)
     detected_at      = Column(DateTime, server_default=func.now())
 
     tree   = relationship("Tree", back_populates="detections")

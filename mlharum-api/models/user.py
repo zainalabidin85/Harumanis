@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, func
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, Numeric, func
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -23,6 +23,7 @@ class User(Base):
     is_suspended        = Column(Boolean,     nullable=False, default=False, server_default='false')
     is_verified         = Column(Boolean,     nullable=False, default=False, server_default='false')
     language            = Column(String(5),   nullable=True)
+    knuckle_span_cm     = Column(Numeric(4, 2), nullable=True)
 
     farms  = relationship("Farm", back_populates="owner", cascade="all, delete-orphan")
     orders = relationship("Order", back_populates="buyer", cascade="all, delete-orphan")

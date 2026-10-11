@@ -1,6 +1,10 @@
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from datetime import date, datetime
 from typing import Literal, Optional
+
+# Plausible adult index-to-pinky knuckle span; outside this is a typo or wrong unit.
+MIN_KNUCKLE_SPAN_CM = 4.0
+MAX_KNUCKLE_SPAN_CM = 9.0
 
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
@@ -62,6 +66,7 @@ class UserProfileResponse(BaseModel):
     bank_account_number: Optional[str] = None
     bank_account_name: Optional[str] = None
     language: Optional[str] = None
+    knuckle_span_cm: Optional[float] = None
 
     class Config:
         from_attributes = True
@@ -76,6 +81,7 @@ class UserProfileUpdate(BaseModel):
     bank_account_number: Optional[str] = None
     bank_account_name: Optional[str] = None
     language: Optional[Literal["en", "ms"]] = None
+    knuckle_span_cm: Optional[float] = Field(default=None, ge=MIN_KNUCKLE_SPAN_CM, le=MAX_KNUCKLE_SPAN_CM)
 
 
 class DeviceTokenRegister(BaseModel):

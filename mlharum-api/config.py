@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     database_url: str
     secret_key: str
-    access_token_expire_minutes: int = 10080
+    access_token_expire_minutes: int = 129600  # 90 days; the app renews it on every open (POST /auth/refresh)
     image_storage_path: str = "./storage/images"
     farm_images_path: str = "./storage/images/farms"
     announcement_images_path: str = "./storage/images/announcements"

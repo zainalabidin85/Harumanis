@@ -29,6 +29,13 @@ def create_access_token(user_id: int, role: str = "farmer") -> str:
     return jwt.encode({"sub": str(user_id), "role": role, "exp": expire}, settings.secret_key, algorithm="HS256")
 
 
+def renew_access_token(user: User) -> str:
+    """A fresh full-length token for an already-authenticated user (sliding session)."""
+    if user.is_suspended:
+        raise HTTPException(status_code=403, detail="Account suspended. Contact support.")
+    return create_access_token(user.id, user.role)
+
+
 def generate_otp() -> str:
     return str(secrets.randbelow(900000) + 100000)
 

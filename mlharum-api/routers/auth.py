@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models.user import User
 from schemas import UserRegister, UserLogin, TokenResponse, ForgotPasswordRequest, ResetPasswordRequest, UserProfileResponse, UserProfileUpdate, DeviceTokenRegister
-from auth_utils import hash_password, verify_password, create_access_token, generate_otp, send_reset_email, get_current_user
+from auth_utils import hash_password, verify_password, create_access_token, renew_access_token, generate_otp, send_reset_email, get_current_user
 from models.device_token import DeviceToken
 from limiter import limiter
 
@@ -45,6 +45,12 @@ def login(request: Request, payload: UserLogin, db: Session = Depends(get_db)):
     return TokenResponse(access_token=create_access_token(user.id, user.role))
 
 
+@router.post("/refresh", response_model=TokenResponse)
+def refresh(current_user: User = Depends(get_current_user)):
+    # Called by the app on every open so an active user never hits the expiry.
+    return TokenResponse(access_token=renew_access_token(current_user))
+
+
 @router.post("/forgot-password", status_code=200)
 @limiter.limit("5/hour")
 def forgot_password(request: Request, payload: ForgotPasswordRequest, db: Session = Depends(get_db)):
@@ -78,6 +84,7 @@ def get_me(current_user: User = Depends(get_current_user)):
         bank_account_number=current_user.bank_account_number,
         bank_account_name=current_user.bank_account_name,
         language=current_user.language,
+        knuckle_span_cm=current_user.knuckle_span_cm,
     )
 
 

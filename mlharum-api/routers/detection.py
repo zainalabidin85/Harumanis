@@ -13,7 +13,7 @@ from schemas import DetectionResponse, FruitResult
 from auth_utils import get_current_user
 from services.mediapipe_service import detect_knuckle_width
 from services.yolo_service import detect_mangoes
-from services.size_estimator import estimate_size
+from services.size_estimator import estimate_size, resolve_hand_span_cm
 from services.harvest_predictor import predict_harvest
 from services.i18n import resolve_language, t
 from config import settings
@@ -64,13 +64,15 @@ async def run_detection(
     # One mango per photo — pick highest confidence detection
     best = max(mango_detections, key=lambda d: d.confidence)
 
-    size_cm = estimate_size(best, hand_marker.knuckle_width_px)
+    hand_span_cm = resolve_hand_span_cm(current_user.knuckle_span_cm)
+    size_cm = estimate_size(best, hand_marker.knuckle_width_px, hand_span_cm)
     harvest_date, days_to_harvest, resolved_stage = predict_harvest(size_cm, db)
 
     detection_record = Detection(
         tree_id=tree_id,
         mango_count=1,
         knuckle_width_px=hand_marker.knuckle_width_px,
+        reference_span_cm=hand_span_cm,
     )
     db.add(detection_record)
     db.flush()

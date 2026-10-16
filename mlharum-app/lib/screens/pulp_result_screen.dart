@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -61,6 +62,20 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
     try {
       final result = await ApiService.analyzePulp(widget.imagePath);
       setState(() => _result = result);
+    } on DioException catch (e) {
+      // 422 = photo isn't Harumanis pulp; the server sends a localized hint.
+      final detail = e.response?.statusCode == 422 && e.response?.data is Map
+          ? (e.response!.data as Map)['detail']?.toString()
+          : null;
+      final msg = e.toString();
+      setState(() {
+        _error = detail ??
+            (msg.contains('SocketException') ||
+                    msg.contains('Connection refused') ||
+                    e.type == DioExceptionType.connectionError
+                ? context.l10n.loginErrorNoConnection
+                : context.l10n.pulpErrorAnalysis);
+      });
     } catch (e) {
       final msg = e.toString();
       setState(() {
@@ -126,8 +141,10 @@ class _PulpResultScreenState extends State<PulpResultScreen> {
                                 color: kText2, fontSize: 14)),
                         const SizedBox(height: 20),
                         ElevatedButton.icon(
-                          onPressed: _analyze,
-                          icon: const Icon(Icons.refresh_rounded),
+                          // Back to the camera: resending the same photo
+                          // would just fail again.
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.camera_alt_rounded),
                           label: Text(context.l10n.commonRetry),
                           style: ElevatedButton.styleFrom(
                               backgroundColor: kOrange,

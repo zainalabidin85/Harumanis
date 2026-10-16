@@ -195,6 +195,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         }
       }
+      // The Beli card sits right above this button, so save a typed-in price too
+      final price = double.tryParse(_priceCtrl.text);
+      if (_isPublic && _farmId != null && price != null && price > 0 && price != _pricePerKg) {
+        await ApiService.updateFarm(_farmId!, pricePerKg: price);
+        if (mounted) setState(() => _pricePerKg = price);
+      }
       if (mounted) setState(() => _success = context.l10n.profileSaved);
     } on DioException catch (e) {
       final status = e.response?.statusCode;
@@ -348,56 +354,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // ── Language ─────────────────────────────────────────────
-                  Container(
-                    decoration: BoxDecoration(
-                      color: kCard,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: kCardShadow,
-                    ),
-                    child: ListTile(
-                      leading: const Icon(Icons.language_rounded, color: kGreenPrimary),
-                      title: Text(context.l10n.languageRowTitle,
-                          style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: kText1)),
-                      subtitle: Text(
-                          LocaleController.instance.code == 'ms'
-                              ? context.l10n.languageMalay
-                              : context.l10n.languageEnglish,
-                          style: GoogleFonts.poppins(fontSize: 12, color: kText2)),
-                      trailing: const Icon(Icons.chevron_right_rounded, color: kText3),
-                      onTap: _chooseLanguage,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // ── Hand measurement ─────────────────────────────────────
-                  Container(
-                    decoration: BoxDecoration(
-                      color: kCard,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: kCardShadow,
-                    ),
-                    child: ListTile(
-                      leading: const Icon(Icons.straighten_rounded, color: kGreenPrimary),
-                      title: Text(context.l10n.handSpanTitle,
-                          style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: kText1)),
-                      subtitle: Text(
-                          _handSpanCm == null
-                              ? context.l10n.handSpanNotSet
-                              : context.l10n.handSpanValue(_handSpanCm!.toStringAsFixed(1)),
-                          style: GoogleFonts.poppins(fontSize: 12, color: kText2)),
-                      trailing: const Icon(Icons.chevron_right_rounded, color: kText3),
-                      onTap: _editHandSpan,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
                   // ── Farm Info ────────────────────────────────────────────
                   Container(
                     padding: const EdgeInsets.all(20),
@@ -452,6 +408,115 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             hintText: context.l10n.profileLocationHint,
                           ),
                           textCapitalization: TextCapitalization.words,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (_) => _save(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // ── Hand measurement ─────────────────────────────────────
+                  Container(
+                    decoration: BoxDecoration(
+                      color: kCard,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: kCardShadow,
+                    ),
+                    child: ListTile(
+                      leading: const Icon(Icons.straighten_rounded, color: kGreenPrimary),
+                      title: Text(context.l10n.handSpanTitle,
+                          style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: kText1)),
+                      subtitle: Text(
+                          _handSpanCm == null
+                              ? context.l10n.handSpanNotSet
+                              : context.l10n.handSpanValue(_handSpanCm!.toStringAsFixed(1)),
+                          style: GoogleFonts.poppins(fontSize: 12, color: kText2)),
+                      trailing: const Icon(Icons.chevron_right_rounded, color: kText3),
+                      onTap: _editHandSpan,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // ── Language ─────────────────────────────────────────────
+                  Container(
+                    decoration: BoxDecoration(
+                      color: kCard,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: kCardShadow,
+                    ),
+                    child: ListTile(
+                      leading: const Icon(Icons.language_rounded, color: kGreenPrimary),
+                      title: Text(context.l10n.languageRowTitle,
+                          style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: kText1)),
+                      subtitle: Text(
+                          LocaleController.instance.code == 'ms'
+                              ? context.l10n.languageMalay
+                              : context.l10n.languageEnglish,
+                          style: GoogleFonts.poppins(fontSize: 12, color: kText2)),
+                      trailing: const Icon(Icons.chevron_right_rounded, color: kText3),
+                      onTap: _chooseLanguage,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // ── Bank Details ─────────────────────────────────────────
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: kCard,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: kCardShadow,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(context.l10n.profileBankDetails,
+                            style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: kText1)),
+                        const SizedBox(height: 4),
+                        Text(context.l10n.profileBankDetailsSubtitle,
+                            style: GoogleFonts.poppins(
+                                fontSize: 12, color: kText2)),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: _bankNameCtrl,
+                          decoration: InputDecoration(
+                            labelText: context.l10n.profileBankNameLabel,
+                            prefixIcon: Icon(Icons.account_balance_outlined),
+                            hintText: context.l10n.profileBankNameHint,
+                          ),
+                          textCapitalization: TextCapitalization.words,
+                          textInputAction: TextInputAction.next,
+                        ),
+                        const SizedBox(height: 14),
+                        TextField(
+                          controller: _bankAccountNumCtrl,
+                          decoration: InputDecoration(
+                            labelText: context.l10n.profileAccountNumberLabel,
+                            prefixIcon: Icon(Icons.numbers_rounded),
+                            hintText: context.l10n.profileAccountNumberHint,
+                          ),
+                          keyboardType: TextInputType.number,
+                          textInputAction: TextInputAction.next,
+                        ),
+                        const SizedBox(height: 14),
+                        TextField(
+                          controller: _bankAccountNameCtrl,
+                          decoration: InputDecoration(
+                            labelText: context.l10n.profileAccountHolderLabel,
+                            prefixIcon: Icon(Icons.badge_outlined),
+                            hintText: context.l10n.profileAccountHolderHint,
+                          ),
+                          textCapitalization: TextCapitalization.characters,
                           textInputAction: TextInputAction.done,
                           onSubmitted: (_) => _save(),
                         ),
@@ -573,65 +638,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 14),
                   ],
 
-                  const SizedBox(height: 20),
-
-                  // ── Bank Details ─────────────────────────────────────────
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: kCard,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: kCardShadow,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(context.l10n.profileBankDetails,
-                            style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: kText1)),
-                        const SizedBox(height: 4),
-                        Text(context.l10n.profileBankDetailsSubtitle,
-                            style: GoogleFonts.poppins(
-                                fontSize: 12, color: kText2)),
-                        const SizedBox(height: 16),
-                        TextField(
-                          controller: _bankNameCtrl,
-                          decoration: InputDecoration(
-                            labelText: context.l10n.profileBankNameLabel,
-                            prefixIcon: Icon(Icons.account_balance_outlined),
-                            hintText: context.l10n.profileBankNameHint,
-                          ),
-                          textCapitalization: TextCapitalization.words,
-                          textInputAction: TextInputAction.next,
-                        ),
-                        const SizedBox(height: 14),
-                        TextField(
-                          controller: _bankAccountNumCtrl,
-                          decoration: InputDecoration(
-                            labelText: context.l10n.profileAccountNumberLabel,
-                            prefixIcon: Icon(Icons.numbers_rounded),
-                            hintText: context.l10n.profileAccountNumberHint,
-                          ),
-                          keyboardType: TextInputType.number,
-                          textInputAction: TextInputAction.next,
-                        ),
-                        const SizedBox(height: 14),
-                        TextField(
-                          controller: _bankAccountNameCtrl,
-                          decoration: InputDecoration(
-                            labelText: context.l10n.profileAccountHolderLabel,
-                            prefixIcon: Icon(Icons.badge_outlined),
-                            hintText: context.l10n.profileAccountHolderHint,
-                          ),
-                          textCapitalization: TextCapitalization.characters,
-                          textInputAction: TextInputAction.done,
-                          onSubmitted: (_) => _save(),
-                        ),
-                      ],
-                    ),
-                  ),
                   const SizedBox(height: 20),
 
                   // ── Feedback messages ───────────────────────────────────

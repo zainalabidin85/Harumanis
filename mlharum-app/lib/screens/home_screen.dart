@@ -404,23 +404,6 @@ class _BuyerToolsSheet extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             _BuyerToolRow(
-              icon: Icons.receipt_long_rounded,
-              iconColor: const Color(0xFFB45309),
-              iconBg: const Color(0xFFFEF3C7),
-              label: context.l10n.homeIncomingOrdersTitle,
-              subtitle: context.l10n.homeIncomingOrdersSubtitle,
-              badge: pendingOrders > 0 ? context.l10n.homeNewBadge(pendingOrders) : null,
-              onTap: () async {
-                Navigator.pop(context);
-                await Navigator.push(
-                  context,
-                  FadeSlideRoute(page: const OrdersScreen()),
-                );
-                onOrdersViewed();
-              },
-            ),
-            const SizedBox(height: 10),
-            _BuyerToolRow(
               icon: Icons.colorize_rounded,
               iconColor: kOrange,
               iconBg: const Color(0xFFFFEDD5),
@@ -454,6 +437,23 @@ class _BuyerToolsSheet extends StatelessWidget {
                     ),
                   ),
                 );
+              },
+            ),
+            const SizedBox(height: 10),
+            _BuyerToolRow(
+              icon: Icons.receipt_long_rounded,
+              iconColor: const Color(0xFFB45309),
+              iconBg: const Color(0xFFFEF3C7),
+              label: context.l10n.homeIncomingOrdersTitle,
+              subtitle: context.l10n.homeIncomingOrdersSubtitle,
+              badge: pendingOrders > 0 ? context.l10n.homeNewBadge(pendingOrders) : null,
+              onTap: () async {
+                Navigator.pop(context);
+                await Navigator.push(
+                  context,
+                  FadeSlideRoute(page: const OrdersScreen()),
+                );
+                onOrdersViewed();
               },
             ),
             const SizedBox(height: 8),

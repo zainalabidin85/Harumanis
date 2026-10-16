@@ -32,6 +32,7 @@ PARAMS = {
     "detect.early": {"size": "3.2", "min_size": 4.0},
     "detect.late": {"size": "5.1", "label": "T01-003", "days": 49},
     "detect.ready": {"size": "4.2", "days": 56},
+    "pulp.not_detected": {},
     "reminder.title": {},
     "reminder.one": {"label": "T01-003"},
     "reminder.many": {"count": 3},

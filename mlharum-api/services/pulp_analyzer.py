@@ -17,6 +17,23 @@ _STAGES = [
 
 _READY_FROM_STAGE = 4
 
+# Pulp gate — a photo that isn't cut Harumanis pulp must be rejected, not forced
+# onto the nearest stage. The five references sit at hue 43–55° and saturation
+# 0.46–0.90; the bounds below leave room for field lighting and deep-orange
+# overripe pulp. Estimated from the references only — tune on real photos.
+_PULP_HUE_MIN = 30.0
+_PULP_HUE_MAX = 65.0
+_PULP_SAT_MIN = 0.30     # rejects white, grey and other washed-out surfaces
+_PULP_VAL_MIN = 0.25     # rejects shadow / too-dark captures
+_PULP_MIN_FRACTION = 0.6  # share of the sample box that must look like pulp
+# Real stages lie within ~0.21 of each other but each is within ~0.05 of its
+# nearest neighbour; anything further than this from every reference isn't pulp.
+_MAX_REFERENCE_DISTANCE = 0.10
+
+
+class PulpNotDetected(ValueError):
+    """The sample box doesn't contain enough Harumanis-pulp-coloured pixels."""
+
 
 def _normalize(r: float, g: float, b: float) -> tuple[float, float, float]:
     total = r + g + b
@@ -32,6 +49,29 @@ def _distance(r1: float, g1: float, b1: float, r2: float, g2: float, b2: float) 
     return math.sqrt((nr1 - nr2) ** 2 + (ng1 - ng2) ** 2 + (nb1 - nb2) ** 2)
 
 
+def _pulp_mask(arr: np.ndarray) -> np.ndarray:
+    """Per-pixel test: yellow-to-orange hue, clearly coloured, not too dark."""
+    rgb = arr / 255.0
+    r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+    mx = rgb.max(axis=-1)
+    mn = rgb.min(axis=-1)
+    delta = mx - mn
+    sat = np.where(mx > 0, delta / np.where(mx > 0, mx, 1), 0.0)
+
+    safe = np.where(delta > 0, delta, 1)
+    hue = np.where(
+        mx == r, ((g - b) / safe) % 6,
+        np.where(mx == g, (b - r) / safe + 2, (r - g) / safe + 4),
+    ) * 60.0
+    hue = np.where(delta > 0, hue, -1.0)
+
+    return (
+        (hue >= _PULP_HUE_MIN) & (hue <= _PULP_HUE_MAX)
+        & (sat >= _PULP_SAT_MIN)
+        & (mx >= _PULP_VAL_MIN)
+    )
+
+
 def analyze_pulp(image_bytes: bytes) -> dict:
     img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
     w, h = img.size
@@ -39,9 +79,16 @@ def analyze_pulp(image_bytes: bytes) -> dict:
     # Sample the center 20% where the cut pulp surface is expected
     region = img.crop((int(w * 0.4), int(h * 0.4), int(w * 0.6), int(h * 0.6)))
     arr = np.array(region, dtype=float)
-    avg_r = float(arr[:, :, 0].mean())
-    avg_g = float(arr[:, :, 1].mean())
-    avg_b = float(arr[:, :, 2].mean())
+
+    mask = _pulp_mask(arr)
+    if mask.mean() < _PULP_MIN_FRACTION:
+        raise PulpNotDetected()
+
+    # Average only the pulp-like pixels so stray skin/background can't skew it
+    pulp = arr[mask]
+    avg_r = float(pulp[:, 0].mean())
+    avg_g = float(pulp[:, 1].mean())
+    avg_b = float(pulp[:, 2].mean())
 
     ranked = sorted(
         [(_distance(avg_r, avg_g, avg_b, s["r"], s["g"], s["b"]), s) for s in _STAGES],
@@ -49,6 +96,8 @@ def analyze_pulp(image_bytes: bytes) -> dict:
     )
     best_dist, best = ranked[0]
     second_dist = ranked[1][0]
+    if best_dist > _MAX_REFERENCE_DISTANCE:
+        raise PulpNotDetected()
 
     # Confidence: ratio of nearest vs second-nearest distance
     ratio = best_dist / second_dist if second_dist > 0 else 0.0

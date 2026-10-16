@@ -1,7 +1,8 @@
 """Farmer-facing server text in English and Malay.
 
 Only text the farmer reads in the app or in a push notification lives here.
-HTTPException details stay English and are not routed through this module.
+HTTPException details stay English and are not routed through this module,
+except "pulp.not_detected", which the app shows to the farmer as-is.
 """
 from typing import Optional
 
@@ -19,6 +20,10 @@ _CATALOG: dict[str, dict[str, str]] = {
     "detect.ready": {
         "en": "Ready for bagging — {size} cm. Estimated harvest in {days} days.",
         "ms": "Sedia untuk dibalut — {size} cm. Anggaran tuai dalam {days} hari.",
+    },
+    "pulp.not_detected": {
+        "en": "Mango pulp not detected. Cut the mango in half, place the pulp inside the box and use natural daylight.",
+        "ms": "Isi mangga tidak dikesan. Belah mangga dua, letakkan isi di dalam kotak dan gunakan cahaya siang semula jadi.",
     },
     "reminder.title": {
         "en": "🥭 Harvest reminder",

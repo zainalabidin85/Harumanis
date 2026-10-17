@@ -12,8 +12,8 @@ class Order {
   final DateTime? targetHarvestDate;
   final String? notes;
   final String status;
-  final String? billplzBillId;
-  final bool billplzPaid;
+  final String? paymentBillCode;
+  final bool isPaid;
   final DateTime? paidAt;
   final DateTime? confirmedAt;
   final DateTime? harvestedAt;
@@ -35,8 +35,8 @@ class Order {
     this.targetHarvestDate,
     this.notes,
     required this.status,
-    this.billplzBillId,
-    required this.billplzPaid,
+    this.paymentBillCode,
+    required this.isPaid,
     this.paidAt,
     this.confirmedAt,
     this.harvestedAt,
@@ -61,8 +61,8 @@ class Order {
             : null,
         notes: j['notes'] as String?,
         status: j['status'] as String,
-        billplzBillId: j['billplz_bill_id'] as String?,
-        billplzPaid: j['billplz_paid'] as bool,
+        paymentBillCode: j['payment_bill_code'] as String?,
+        isPaid: j['is_paid'] as bool? ?? false,
         paidAt: j['paid_at'] != null ? DateTime.tryParse(j['paid_at'] as String) : null,
         confirmedAt: j['confirmed_at'] != null ? DateTime.tryParse(j['confirmed_at'] as String) : null,
         harvestedAt: j['harvested_at'] != null ? DateTime.tryParse(j['harvested_at'] as String) : null,

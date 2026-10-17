@@ -412,6 +412,9 @@ class OrderResponse(BaseModel):
     target_harvest_date: Optional[date]
     notes: Optional[str]
     status: str
+    payment_bill_code: Optional[str]
+    is_paid: bool
+    # Same values under the old names, for APKs built before the ToyyibPay move.
     billplz_bill_id: Optional[str]
     billplz_paid: bool
     paid_at: Optional[datetime]
@@ -440,7 +443,7 @@ class OrderStatusUpdate(BaseModel):
 class PaymentInitResponse(BaseModel):
     order_id: int
     payment_url: str
-    billplz_bill_id: str
+    bill_code: str
 
 
 # ── Admin ─────────────────────────────────────────────────────────────────────
@@ -526,7 +529,8 @@ class AdminOrderResponse(BaseModel):
     target_harvest_date: Optional[date]
     notes: Optional[str]
     status: str
-    billplz_paid: bool
+    is_paid: bool
+    billplz_paid: bool  # old name of is_paid, for admin APKs built before the ToyyibPay move
     paid_at: Optional[datetime]
     created_at: datetime
     payout_status: Optional[str]

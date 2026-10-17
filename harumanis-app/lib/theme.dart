@@ -19,7 +19,7 @@ const Color kDivider      = Color(0xFFE5E7EB);
 const kCardShadow = [
   BoxShadow(color: Color(0x0D000000), blurRadius: 20, offset: Offset(0, 4)),
 ];
-// Billplz 1% + Zainal maintenance 1% — charged to buyer on top of farmer's price
+// Payment gateway fee + Zainal maintenance 1% — charged to buyer on top of farmer's price
 const double kPlatformFeeRate = 0.02;
 
 const kElevatedShadow = [

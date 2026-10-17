@@ -136,7 +136,7 @@ class _OrderTile extends StatelessWidget {
             Text(fmt.format(order.createdAt),
                 style: GoogleFonts.poppins(fontSize: 11, color: kText3)),
           ]),
-          if (!order.billplzPaid && order.status == 'confirmed')
+          if (!order.isPaid && order.status == 'confirmed')
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Container(

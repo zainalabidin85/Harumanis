@@ -57,7 +57,7 @@ def create_review(
         Order.farm_id == farm_id,
         Order.buyer_id == current_user.id,
         Order.status == "delivered",
-        Order.billplz_paid == True,
+        Order.is_paid == True,
     ).first()
     if not eligible:
         raise HTTPException(

@@ -36,7 +36,8 @@ def _order_to_admin_response(order: Order) -> AdminOrderResponse:
         target_harvest_date=order.target_harvest_date,
         notes=order.notes,
         status=order.status,
-        billplz_paid=order.billplz_paid,
+        is_paid=order.is_paid,
+        billplz_paid=order.is_paid,
         paid_at=order.paid_at,
         created_at=order.created_at,
         payout_status=order.payout_status,
@@ -56,10 +57,10 @@ def get_stats(admin: User = Depends(require_admin), db: Session = Depends(get_db
     farms = db.query(Farm).all()
     orders = db.query(Order).all()
 
-    revenue = sum(float(o.total_price) for o in orders if o.billplz_paid)
+    revenue = sum(float(o.total_price) for o in orders if o.is_paid)
     payout_pending = [
         o for o in orders
-        if o.status == "delivered" and o.billplz_paid and o.payout_status != "paid"
+        if o.status == "delivered" and o.is_paid and o.payout_status != "paid"
     ]
 
     return AdminStatsResponse(
@@ -192,7 +193,7 @@ def list_orders(
     if status:
         q = q.filter(Order.status == status)
     if paid is not None:
-        q = q.filter(Order.billplz_paid == paid)
+        q = q.filter(Order.is_paid == paid)
     orders = q.order_by(Order.created_at.desc()).all()
     return [_order_to_admin_response(o) for o in orders]
 
@@ -205,7 +206,7 @@ def list_payouts(admin: User = Depends(require_admin), db: Session = Depends(get
         db.query(Order)
         .filter(
             Order.status == "delivered",
-            Order.billplz_paid == True,
+            Order.is_paid == True,
             Order.payout_status != "paid",
         )
         .order_by(Order.created_at.desc())
@@ -224,7 +225,7 @@ def record_payout(
     order = db.query(Order).filter(Order.id == order_id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    if not (order.status == "delivered" and order.billplz_paid):
+    if not (order.status == "delivered" and order.is_paid):
         raise HTTPException(status_code=400, detail="Order is not eligible for payout")
     if order.payout_status == "paid":
         raise HTTPException(status_code=400, detail="Payout already recorded")

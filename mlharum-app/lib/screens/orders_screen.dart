@@ -260,7 +260,7 @@ class _OrderTile extends StatelessWidget {
               style: GoogleFonts.poppins(fontSize: 13, color: kText2),
             ),
             const Spacer(),
-            if (order.billplzPaid)
+            if (order.isPaid)
               Row(children: [
                 const Icon(Icons.check_circle_rounded,
                     size: 14, color: kGreenMid),

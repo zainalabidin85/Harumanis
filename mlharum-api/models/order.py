@@ -18,8 +18,8 @@ class Order(Base):
     target_harvest_date  = Column(Date, nullable=True)
     notes                = Column(String(500), nullable=True)
     status               = Column(String(20), nullable=False, default="pending")
-    billplz_bill_id      = Column(String(100), nullable=True)
-    billplz_paid         = Column(Boolean, default=False, nullable=False)
+    payment_bill_code    = Column(String(100), nullable=True)  # ToyyibPay BillCode
+    is_paid              = Column(Boolean, default=False, nullable=False)
     paid_at              = Column(DateTime, nullable=True)
     created_at           = Column(DateTime, server_default=func.now())
     confirmed_at         = Column(DateTime, nullable=True)

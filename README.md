@@ -149,4 +149,4 @@ Ripeness is assessed using Euclidean distance in RGB colour space against refere
 | Hand Landmark | MediaPipe |
 | Mobile Apps | Flutter (Android) |
 | Authentication | JWT (HS256), OTP email reset |
-| Payments | Billplz |
+| Payments | ToyyibPay (FPX) |

@@ -117,7 +117,7 @@ class _OrderTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final status = order['status'] as String;
-    final paid = order['billplz_paid'] as bool? ?? false;
+    final paid = order['is_paid'] as bool? ?? false;
     final date = order['created_at'] != null
         ? DateFormat('dd MMM yyyy').format(DateTime.parse(order['created_at'] as String))
         : '—';
@@ -186,7 +186,7 @@ class _OrderSheet extends StatelessWidget {
           _row('Price/kg', 'RM ${(order['price_per_kg'] as num).toStringAsFixed(2)}'),
           _row('Total', 'RM ${(order['total_price'] as num).toStringAsFixed(2)}'),
           _row('Status', (order['status'] as String).toUpperCase()),
-          _row('Payment', (order['billplz_paid'] as bool? ?? false) ? 'Paid ✓' : 'Unpaid'),
+          _row('Payment', (order['is_paid'] as bool? ?? false) ? 'Paid ✓' : 'Unpaid'),
           if (order['notes'] != null) _row('Notes', order['notes'] as String),
           if (order['target_harvest_date'] != null) _row('Target harvest', order['target_harvest_date'] as String),
         ]),

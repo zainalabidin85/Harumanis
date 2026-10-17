@@ -22,11 +22,11 @@ class Settings(BaseSettings):
     smtp_password: str = ""
     smtp_from_name: str = "MLharum"
 
-    # Billplz payment gateway
-    billplz_api_key: str = ""
-    billplz_x_signature: str = ""
-    billplz_collection_id: str = ""
-    billplz_sandbox: bool = True
+    # ToyyibPay payment gateway
+    toyyibpay_secret_key: str = ""
+    toyyibpay_category_code: str = ""
+    toyyibpay_sandbox: bool = True
+    toyyibpay_payment_channel: str = "0"  # 0 = FPX, 1 = card, 2 = both
     api_base_url: str = "https://mlharum.unitani.com"
 
     # Firebase Cloud Messaging (push notifications)
@@ -34,6 +34,8 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
+        # Leftover keys (e.g. the old BILLPLZ_* lines) must not stop the API from starting.
+        extra = "ignore"
 
 
 settings = Settings()

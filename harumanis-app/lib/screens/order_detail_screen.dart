@@ -175,7 +175,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 value: 'RM ${_order.totalPrice.toStringAsFixed(2)}',
                 bold: true,
               ),
-              _Row(label: l10n.orderDetailPayment, value: _order.billplzPaid ? l10n.orderDetailPaidTick : l10n.orderDetailPaymentPending),
+              _Row(label: l10n.orderDetailPayment, value: _order.isPaid ? l10n.orderDetailPaidTick : l10n.orderDetailPaymentPending),
               if (_order.targetHarvestDate != null)
                 _Row(label: l10n.orderDetailTargetDate, value: fmt.format(_order.targetHarvestDate!)),
               _Row(label: l10n.orderDetailOrderedOn, value: fmt.format(_order.createdAt)),
@@ -192,7 +192,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           const SizedBox(height: 20),
 
           // ── Pay button (if confirmed but not paid) ────────────────────
-          if (_order.status == 'confirmed' && !_order.billplzPaid) ...[
+          if (_order.status == 'confirmed' && !_order.isPaid) ...[
             ElevatedButton.icon(
               icon: const Icon(Icons.payment_rounded),
               label: Text(l10n.orderDetailPayNow),
@@ -371,7 +371,7 @@ class _OrderTimeline extends StatelessWidget {
               icon: Icons.payment_rounded,
               label: l10n.orderTimelinePaid,
               timestamp: order.paidAt,
-              done: order.billplzPaid,
+              done: order.isPaid,
             ),
             _TimelineStep(
               icon: Icons.agriculture_rounded,

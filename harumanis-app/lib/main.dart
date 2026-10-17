@@ -53,11 +53,18 @@ class _HarumanisAppState extends State<HarumanisApp> {
   void _handleLink(Uri uri) {
     if (uri.scheme != 'harumanis') return;
     if (uri.host == 'payment') {
+      // Only harumanis://payment/success is sent, and only after the server has
+      // confirmed the payment with ToyyibPay.
       final orderId = int.tryParse(uri.queryParameters['order_id'] ?? '');
       navigatorKey.currentState?.push(
         MaterialPageRoute(
           builder: (_) => MyOrdersScreen(paymentOrderId: orderId),
         ),
+      );
+    } else if (uri.host == 'orders') {
+      // Payment pending or not completed: show the orders without a success banner.
+      navigatorKey.currentState?.push(
+        MaterialPageRoute(builder: (_) => const MyOrdersScreen()),
       );
     } else if (uri.host == 'farm') {
       final farmId = int.tryParse(uri.pathSegments.isNotEmpty ? uri.pathSegments.first : '');

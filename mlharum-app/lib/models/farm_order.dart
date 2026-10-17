@@ -8,7 +8,7 @@ class FarmOrder {
   final double pricePerKg;
   final double totalPrice;
   final String status;
-  final bool billplzPaid;
+  final bool isPaid;
   final String? notes;
   final DateTime? targetHarvestDate;
   final DateTime? paidAt;
@@ -24,7 +24,7 @@ class FarmOrder {
     required this.pricePerKg,
     required this.totalPrice,
     required this.status,
-    required this.billplzPaid,
+    required this.isPaid,
     required this.createdAt,
     this.notes,
     this.targetHarvestDate,
@@ -41,7 +41,7 @@ class FarmOrder {
         pricePerKg: (j['price_per_kg'] as num).toDouble(),
         totalPrice: (j['total_price'] as num).toDouble(),
         status: j['status'] as String,
-        billplzPaid: j['billplz_paid'] as bool? ?? false,
+        isPaid: j['is_paid'] as bool? ?? false,
         notes: j['notes'] as String?,
         targetHarvestDate: j['target_harvest_date'] != null
             ? DateTime.parse(j['target_harvest_date'] as String)
@@ -62,7 +62,7 @@ class FarmOrder {
         pricePerKg: pricePerKg,
         totalPrice: totalPrice,
         status: status ?? this.status,
-        billplzPaid: billplzPaid,
+        isPaid: isPaid,
         notes: notes,
         targetHarvestDate: targetHarvestDate,
         paidAt: paidAt,

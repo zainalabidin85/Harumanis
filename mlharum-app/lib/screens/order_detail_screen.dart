@@ -210,8 +210,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 ),
                 _Row(
                   label: context.l10n.orderDetailPayment,
-                  value: _order.billplzPaid ? context.l10n.orderDetailPaidTick : context.l10n.orderDetailAwaitingPayment,
-                  valueColor: _order.billplzPaid ? kGreenMid : kAmber,
+                  value: _order.isPaid ? context.l10n.orderDetailPaidTick : context.l10n.orderDetailAwaitingPayment,
+                  valueColor: _order.isPaid ? kGreenMid : kAmber,
                 ),
                 if (_order.paidAt != null)
                   _Row(

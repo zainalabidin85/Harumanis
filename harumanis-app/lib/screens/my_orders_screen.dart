@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import '../l10n/l10n.dart';
 import '../models/order.dart';
 import '../services/api_service.dart';
 import '../theme.dart';
@@ -40,7 +41,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Payment confirmed! Your order is now active.',
+                    context.l10n.ordersPaymentConfirmed,
                     style: GoogleFonts.poppins(fontSize: 13),
                   ),
                 ),
@@ -54,7 +55,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
         });
       }
     } catch (e) {
-      _error = 'Failed to load orders.';
+      if (mounted) _error = context.l10n.ordersErrorLoad;
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -65,7 +66,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
-        title: const Text('My Orders'),
+        title: Text(context.l10n.ordersTitle),
         backgroundColor: kAmberPrimary,
       ),
       body: _loading
@@ -75,7 +76,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                   child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Text(_error!, style: GoogleFonts.poppins(color: kText2)),
                     const SizedBox(height: 16),
-                    ElevatedButton(onPressed: _load, child: const Text('Retry')),
+                    ElevatedButton(onPressed: _load, child: Text(context.l10n.commonRetry)),
                   ]),
                 )
               : _orders.isEmpty
@@ -83,10 +84,10 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                         const Text('🛍️', style: TextStyle(fontSize: 48)),
                         const SizedBox(height: 16),
-                        Text('No orders yet',
+                        Text(context.l10n.ordersEmpty,
                             style: GoogleFonts.poppins(fontSize: 16, color: kText2)),
                         const SizedBox(height: 6),
-                        Text('Browse farms and place your first order!',
+                        Text(context.l10n.ordersEmptyBody,
                             style: GoogleFonts.poppins(fontSize: 13, color: kText3)),
                       ]),
                     )
@@ -110,7 +111,7 @@ class _OrderTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fmt = DateFormat('d MMM yyyy');
+    final fmt = DateFormat('d MMM yyyy', Localizations.localeOf(context).languageCode);
     return GestureDetector(
       onTap: () => Navigator.push(
           context, FadeSlideRoute(page: OrderDetailScreen(order: order))),
@@ -147,7 +148,7 @@ class _OrderTile extends StatelessWidget {
                 child: Row(children: [
                   const Icon(Icons.payment_rounded, color: kAmberPrimary, size: 14),
                   const SizedBox(width: 6),
-                  Text('Payment pending — tap to pay',
+                  Text(context.l10n.ordersPaymentPending,
                       style: GoogleFonts.poppins(
                           fontSize: 11, color: kAmberPrimary, fontWeight: FontWeight.w500)),
                 ]),

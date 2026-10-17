@@ -3,12 +3,14 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'l10n/l10n.dart';
 import 'screens/farm_detail_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/marketplace_screen.dart';
 import 'screens/my_orders_screen.dart';
 import 'screens/pulp_camera_screen.dart';
 import 'services/auth_service.dart';
+import 'services/locale_service.dart';
 import 'services/notification_service.dart';
 import 'services/version_service.dart';
 import 'theme.dart';
@@ -22,7 +24,9 @@ void main() async {
     statusBarIconBrightness: Brightness.light,
     statusBarBrightness: Brightness.dark,
   ));
+  await LocaleController.instance.load();
   final loggedIn = await AuthService.isLoggedIn();
+  if (loggedIn) unawaited(LocaleController.instance.syncToAccount());
   runApp(HarumanisApp(loggedIn: loggedIn));
 }
 
@@ -75,13 +79,19 @@ class _HarumanisAppState extends State<HarumanisApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: navigatorKey,
-      title: 'Beli Harumanis',
-      debugShowCheckedModeBanner: false,
-      theme: buildTheme(),
-      home: VersionGate(
-        child: widget.loggedIn ? const HomeShell() : const LoginScreen(),
+    return ListenableBuilder(
+      listenable: LocaleController.instance,
+      builder: (context, _) => MaterialApp(
+        navigatorKey: navigatorKey,
+        title: 'Beli Harumanis',
+        debugShowCheckedModeBanner: false,
+        theme: buildTheme(),
+        locale: LocaleController.instance.locale,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: VersionGate(
+          child: widget.loggedIn ? const HomeShell() : const LoginScreen(),
+        ),
       ),
     );
   }
@@ -176,6 +186,7 @@ class _VersionGateState extends State<VersionGate> {
   }
 
   void _showDialog({required bool force, required String latest}) {
+    final l10n = context.l10n;
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -184,23 +195,23 @@ class _VersionGateState extends State<VersionGate> {
         child: AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text(
-            force ? 'Update Required' : 'Update Available',
+            force ? l10n.updateRequiredTitle : l10n.updateAvailableTitle,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           content: Text(
             force
-                ? 'Beli Harumanis v$latest is required. Download the latest APK to continue.'
-                : 'Beli Harumanis v$latest is available with new features and fixes.',
+                ? l10n.updateRequiredBody(latest)
+                : l10n.updateAvailableBody(latest),
           ),
           actions: [
             if (!force)
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Later'),
+                child: Text(l10n.updateLater),
               ),
             TextButton(
               onPressed: force ? SystemNavigator.pop : () => Navigator.pop(context),
-              child: Text(force ? 'Exit' : 'OK'),
+              child: Text(force ? l10n.updateExit : l10n.updateOk),
             ),
             TextButton(
               onPressed: () => launchUrl(
@@ -208,7 +219,7 @@ class _VersionGateState extends State<VersionGate> {
                 mode: LaunchMode.externalApplication,
               ),
               style: TextButton.styleFrom(foregroundColor: kAmberPrimary),
-              child: const Text('Download'),
+              child: Text(l10n.updateDownload),
             ),
           ],
         ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import '../l10n/l10n.dart';
 import '../models/farm.dart';
 import '../models/farm_image.dart';
 import '../models/testimonial.dart';
@@ -44,7 +45,7 @@ class _FarmDetailScreenState extends State<FarmDetailScreen> {
       _farm = results[0] as FarmDetail;
       _reviews = results[1] as List<Testimonial>;
     } catch (e) {
-      _error = 'Failed to load farm details.';
+      if (mounted) _error = context.l10n.farmErrorLoad;
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -67,7 +68,7 @@ class _FarmDetailScreenState extends State<FarmDetailScreen> {
                   child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Text(_error!, style: GoogleFonts.poppins(color: kText2)),
                     const SizedBox(height: 16),
-                    ElevatedButton(onPressed: _load, child: const Text('Retry')),
+                    ElevatedButton(onPressed: _load, child: Text(context.l10n.commonRetry)),
                   ]),
                 )
               : CustomScrollView(
@@ -147,7 +148,7 @@ class _FarmDetailScreenState extends State<FarmDetailScreen> {
                                   ],
                                 ]),
                                 Text(
-                                  _farm!.farmerVerified ? 'Verified Farm Owner' : 'Farm Owner',
+                                  _farm!.farmerVerified ? context.l10n.farmOwnerVerified : context.l10n.farmOwner,
                                   style: GoogleFonts.poppins(fontSize: 12,
                                       color: _farm!.farmerVerified ? const Color(0xFF0EA5E9) : kText2),
                                 ),
@@ -159,20 +160,20 @@ class _FarmDetailScreenState extends State<FarmDetailScreen> {
                           // ── Fruit summary ──────────────────────────────────
                           _Section(
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text('Available Fruit',
+                              Text(context.l10n.farmAvailableFruit,
                                   style: GoogleFonts.poppins(
                                       fontSize: 14, fontWeight: FontWeight.w600, color: kText1)),
                               const SizedBox(height: 16),
                               Row(children: [
-                                _StatBox(value: '${_farm!.totalActiveFruits}', label: 'Total'),
+                                _StatBox(value: '${_farm!.totalActiveFruits}', label: context.l10n.commonTotal),
                                 const SizedBox(width: 10),
                                 _StatBox(value: '${_farm!.stage3Count}',
-                                    label: 'Near harvest', highlight: true),
+                                    label: context.l10n.farmNearHarvest, highlight: true),
                                 const SizedBox(width: 10),
                                 if (_farm!.earliestHarvestDate != null)
                                   _StatBox(
-                                      value: DateFormat('d MMM').format(_farm!.earliestHarvestDate!),
-                                      label: 'First harvest'),
+                                      value: DateFormat('d MMM', Localizations.localeOf(context).languageCode).format(_farm!.earliestHarvestDate!),
+                                      label: context.l10n.farmFirstHarvest),
                               ]),
                               const SizedBox(height: 16),
                               Row(children: [
@@ -189,7 +190,7 @@ class _FarmDetailScreenState extends State<FarmDetailScreen> {
                           // ── Trees ──────────────────────────────────────────
                           _Section(
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text('Tree Breakdown',
+                              Text(context.l10n.farmTreeBreakdown,
                                   style: GoogleFonts.poppins(
                                       fontSize: 14, fontWeight: FontWeight.w600, color: kText1)),
                               const SizedBox(height: 12),
@@ -208,23 +209,23 @@ class _FarmDetailScreenState extends State<FarmDetailScreen> {
                                       const SizedBox(width: 12),
                                       Expanded(
                                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                          Text('Tree ${tree.treeNumber}',
+                                          Text(context.l10n.farmTreeNumber(tree.treeNumber),
                                               style: GoogleFonts.poppins(
                                                   fontSize: 13, fontWeight: FontWeight.w500)),
                                           if (tree.earliestHarvestDate != null)
-                                            Text('Est. harvest: ${DateFormat('d MMM yyyy').format(tree.earliestHarvestDate!)}',
+                                            Text(context.l10n.farmEstHarvest(DateFormat('d MMM yyyy', Localizations.localeOf(context).languageCode).format(tree.earliestHarvestDate!)),
                                                 style: GoogleFonts.poppins(
                                                     fontSize: 11, color: kText2)),
                                         ]),
                                       ),
-                                      Text('${tree.fruitCount} fruits',
+                                      Text(context.l10n.farmFruitCount(tree.fruitCount),
                                           style: GoogleFonts.poppins(
                                               fontSize: 12, color: kAmberPrimary,
                                               fontWeight: FontWeight.w600)),
                                     ]),
                                   ))),
                               if (_farm!.trees.every((t) => t.fruitCount == 0))
-                                Text('No fruits detected yet.',
+                                Text(context.l10n.farmNoFruits,
                                     style: GoogleFonts.poppins(color: kText2, fontSize: 13)),
                             ]),
                           ),
@@ -247,7 +248,7 @@ class _FarmDetailScreenState extends State<FarmDetailScreen> {
                     Expanded(
                       child: OutlinedButton.icon(
                         icon: const Icon(Icons.alarm_add_rounded),
-                        label: const Text('Remind Me'),
+                        label: Text(context.l10n.farmRemindMe),
                         onPressed: () => showReminderSheet(
                           context,
                           farmId: widget.farmId,
@@ -268,7 +269,7 @@ class _FarmDetailScreenState extends State<FarmDetailScreen> {
                       flex: 2,
                       child: ElevatedButton.icon(
                         icon: const Icon(Icons.shopping_bag_outlined),
-                        label: const Text('Place an Order'),
+                        label: Text(context.l10n.farmPlaceOrder),
                         onPressed: _placeOrder,
                       ),
                     ),
@@ -445,7 +446,7 @@ class _ReviewsSection extends StatelessWidget {
           color: kCard, borderRadius: BorderRadius.circular(20), boxShadow: kCardShadow),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Text('Reviews',
+          Text(context.l10n.farmReviews,
               style: GoogleFonts.poppins(
                   fontSize: 14, fontWeight: FontWeight.w600, color: kText1)),
           const Spacer(),
@@ -457,12 +458,12 @@ class _ReviewsSection extends StatelessWidget {
               style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: kText1),
             ),
           ] else
-            Text('${reviews.length} reviews',
+            Text(context.l10n.farmReviewCount(reviews.length),
                 style: GoogleFonts.poppins(fontSize: 12, color: kText2)),
         ]),
         const SizedBox(height: 14),
         if (reviews.isEmpty)
-          Text('No reviews yet. Be the first to share your experience!',
+          Text(context.l10n.farmNoReviews,
               style: GoogleFonts.poppins(fontSize: 13, color: kText2))
         else
           ...reviews.map((r) => _ReviewCard(review: r)),
@@ -499,7 +500,7 @@ class _ReviewCard extends StatelessWidget {
               Text(review.buyerName,
                   style: GoogleFonts.poppins(
                       fontSize: 13, fontWeight: FontWeight.w600, color: kText1)),
-              Text(DateFormat('d MMM yyyy').format(review.createdAt),
+              Text(DateFormat('d MMM yyyy', Localizations.localeOf(context).languageCode).format(review.createdAt),
                   style: GoogleFonts.poppins(fontSize: 11, color: kText3)),
             ]),
           ),

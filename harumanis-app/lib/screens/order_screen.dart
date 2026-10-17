@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import '../l10n/l10n.dart';
 import '../models/farm.dart';
 import '../services/api_service.dart';
 import '../theme.dart';
@@ -53,11 +54,11 @@ class _OrderScreenState extends State<OrderScreen> {
 
   Future<void> _submit() async {
     if (_qty <= 0) {
-      setState(() => _error = 'Please enter a valid quantity.');
+      setState(() => _error = context.l10n.orderErrorQuantity);
       return;
     }
     if (_price <= 0) {
-      setState(() => _error = 'This farm has not set a price yet.');
+      setState(() => _error = context.l10n.orderErrorNoPrice);
       return;
     }
     HapticFeedback.mediumImpact();
@@ -76,7 +77,7 @@ class _OrderScreenState extends State<OrderScreen> {
     } catch (e) {
       setState(() {
         _loading = false;
-        _error = 'Failed to place order. Please try again.';
+        _error = context.l10n.orderErrorPlace;
       });
     }
   }
@@ -86,7 +87,7 @@ class _OrderScreenState extends State<OrderScreen> {
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
-        title: const Text('Place Order'),
+        title: Text(context.l10n.orderTitle),
         backgroundColor: kAmberPrimary,
       ),
       body: SingleChildScrollView(
@@ -112,7 +113,7 @@ class _OrderScreenState extends State<OrderScreen> {
                     Text(widget.farm.farmName,
                         style: GoogleFonts.poppins(
                             fontSize: 15, fontWeight: FontWeight.w600, color: kText1)),
-                    Text('${widget.farm.totalActiveFruits} fruits available · ${widget.farm.farmerName}',
+                    Text(context.l10n.orderFruitsAvailable(widget.farm.totalActiveFruits, widget.farm.farmerName),
                         style: GoogleFonts.poppins(fontSize: 12, color: kText2)),
                   ]),
                 ),
@@ -126,14 +127,14 @@ class _OrderScreenState extends State<OrderScreen> {
               decoration: BoxDecoration(
                   color: kCard, borderRadius: BorderRadius.circular(20), boxShadow: kCardShadow),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('Order Details',
+                Text(context.l10n.orderDetails,
                     style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600, color: kText1)),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _qtyCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Quantity (kg)',
-                    prefixIcon: Icon(Icons.scale_outlined),
+                  decoration: InputDecoration(
+                    labelText: context.l10n.orderQuantityLabel,
+                    prefixIcon: const Icon(Icons.scale_outlined),
                     suffixText: 'kg',
                   ),
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -151,14 +152,14 @@ class _OrderScreenState extends State<OrderScreen> {
                     const Icon(Icons.sell_rounded, color: kText2, size: 20),
                     const SizedBox(width: 12),
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text('Price per kg',
+                      Text(context.l10n.orderDetailPricePerKg,
                           style: GoogleFonts.poppins(fontSize: 14, color: kText2)),
-                      Text('incl. 2% platform fee',
+                      Text(context.l10n.orderPlatformFee,
                           style: GoogleFonts.poppins(fontSize: 11, color: kText3)),
                     ]),
                     const Spacer(),
                     Text(
-                      _price > 0 ? 'RM ${_price.toStringAsFixed(2)} / kg' : 'Not set',
+                      _price > 0 ? 'RM ${_price.toStringAsFixed(2)} / kg' : context.l10n.orderPriceNotSet,
                       style: GoogleFonts.poppins(
                           fontSize: 14, fontWeight: FontWeight.w600,
                           color: _price > 0 ? kText1 : kRed),
@@ -181,8 +182,8 @@ class _OrderScreenState extends State<OrderScreen> {
                       Expanded(
                         child: Text(
                           _targetDate != null
-                              ? 'Target harvest: ${DateFormat('d MMM yyyy').format(_targetDate!)}'
-                              : 'Target harvest date (optional)',
+                              ? context.l10n.orderTargetHarvest(DateFormat('d MMM yyyy', Localizations.localeOf(context).languageCode).format(_targetDate!))
+                              : context.l10n.orderTargetHarvestOptional,
                           style: GoogleFonts.poppins(
                               fontSize: 14, color: _targetDate != null ? kText1 : kText3),
                         ),
@@ -198,9 +199,9 @@ class _OrderScreenState extends State<OrderScreen> {
                 const SizedBox(height: 14),
                 TextField(
                   controller: _notesCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Notes to farmer (optional)',
-                    prefixIcon: Icon(Icons.notes_rounded),
+                  decoration: InputDecoration(
+                    labelText: context.l10n.orderNotesLabel,
+                    prefixIcon: const Icon(Icons.notes_rounded),
                   ),
                   maxLines: 2,
                 ),
@@ -219,7 +220,7 @@ class _OrderScreenState extends State<OrderScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Total Amount',
+                  Text(context.l10n.orderTotalAmount,
                       style: GoogleFonts.poppins(
                           fontSize: 15, fontWeight: FontWeight.w600, color: kText1)),
                   Text('RM ${_total.toStringAsFixed(2)}',
@@ -249,12 +250,12 @@ class _OrderScreenState extends State<OrderScreen> {
               child: _loading
                   ? const SizedBox(height: 20, width: 20,
                       child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5))
-                  : const Text('Confirm Order'),
+                  : Text(context.l10n.orderConfirm),
             ),
 
             const SizedBox(height: 12),
             Text(
-              'Order is sent to the farmer for confirmation. Payment is done after farmer confirms.',
+              context.l10n.orderFootnote,
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(fontSize: 11, color: kText3),
             ),

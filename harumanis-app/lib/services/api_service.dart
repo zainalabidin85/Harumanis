@@ -3,6 +3,7 @@ import '../models/farm.dart';
 import '../models/order.dart';
 import '../models/testimonial.dart';
 import 'auth_service.dart';
+import 'locale_service.dart';
 
 class PulpAnalysisResult {
   final int stage;
@@ -41,13 +42,19 @@ class PulpAnalysisResult {
 class ApiService {
   static const _baseUrl = 'https://mlharum.unitani.com';
 
-  static Dio _dio() => Dio(BaseOptions(baseUrl: _baseUrl));
+  static Dio _dio() => Dio(BaseOptions(
+        baseUrl: _baseUrl,
+        headers: {'Accept-Language': LocaleController.instance.code},
+      ));
 
   static Future<Dio> _authDio() async {
     final token = await AuthService.getToken();
     return Dio(BaseOptions(
       baseUrl: _baseUrl,
-      headers: {'Authorization': 'Bearer $token'},
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept-Language': LocaleController.instance.code,
+      },
     ));
   }
 
@@ -159,6 +166,11 @@ class ApiService {
       if (phone != null) 'phone': phone,
       if (whatsapp != null) 'whatsapp': whatsapp,
     });
+  }
+
+  static Future<void> updateLanguage(String code) async {
+    final dio = await _authDio();
+    await dio.patch('/auth/me', data: {'language': code});
   }
 
   // ── Reviews ───────────────────────────────────────────────────────────────

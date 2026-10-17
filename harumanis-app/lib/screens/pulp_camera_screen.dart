@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:camera/camera.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../widgets/page_route.dart';
+import '../l10n/l10n.dart';
 import '../theme.dart';
 import 'pulp_result_screen.dart';
 
@@ -43,7 +44,7 @@ class _PulpCameraScreenState extends State<PulpCameraScreen> {
     try {
       final cameras = await availableCameras();
       if (cameras.isEmpty) {
-        if (mounted) setState(() => _error = 'No camera found on this device.');
+        if (mounted) setState(() => _error = context.l10n.pulpErrorNoCamera);
         return;
       }
       final controller = CameraController(cameras.first, ResolutionPreset.high);
@@ -55,7 +56,7 @@ class _PulpCameraScreenState extends State<PulpCameraScreen> {
         controller.dispose();
       }
     } catch (e) {
-      if (mounted) setState(() => _error = 'Camera unavailable. Check permissions.');
+      if (mounted) setState(() => _error = context.l10n.pulpErrorCameraUnavailable);
     }
   }
 
@@ -78,7 +79,7 @@ class _PulpCameraScreenState extends State<PulpCameraScreen> {
         );
       }
     } catch (_) {
-      setState(() => _error = 'Failed to capture. Try again.');
+      if (mounted) setState(() => _error = context.l10n.pulpErrorCapture);
     } finally {
       if (mounted) setState(() => _capturing = false);
     }
@@ -144,7 +145,7 @@ class _PulpCameraScreenState extends State<PulpCameraScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          'Pulp Ripeness',
+                          context.l10n.pulpCameraTitle,
                           style: GoogleFonts.poppins(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
@@ -158,7 +159,7 @@ class _PulpCameraScreenState extends State<PulpCameraScreen> {
                             const Icon(Icons.chevron_left_rounded,
                                 color: Colors.white54, size: 16),
                             Text(
-                              'Swipe right to go back',
+                              context.l10n.pulpSwipeBack,
                               style: GoogleFonts.poppins(
                                   color: Colors.white54, fontSize: 11),
                             ),
@@ -201,7 +202,7 @@ class _PulpCameraScreenState extends State<PulpCameraScreen> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            'Cut mango in half · Place flat side up\nAlign pulp inside the box · Use natural daylight',
+                            context.l10n.pulpCameraInstruction,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.poppins(
                                 color: Colors.white, fontSize: 13),

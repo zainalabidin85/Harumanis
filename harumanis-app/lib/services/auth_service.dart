@@ -11,5 +11,6 @@ class AuthService {
 
   static Future<bool> isLoggedIn() async => (await getToken()) != null;
 
-  static Future<void> logout() => _storage.deleteAll();
+  // Not deleteAll(): the language choice is stored alongside and must survive logout.
+  static Future<void> logout() => _storage.delete(key: _tokenKey);
 }

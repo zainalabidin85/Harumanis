@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/l10n.dart';
 import '../theme.dart';
 
 class StageBadge extends StatelessWidget {
@@ -8,11 +9,13 @@ class StageBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (label, color, bg) = switch (stage) {
-      1 => ('Early', kText2, const Color(0xFFF3F4F6)),
-      2 => ('Bagging', const Color(0xFF0369A1), const Color(0xFFE0F2FE)),
-      3 => ('Pre-harvest', kGreen, const Color(0xFFDCFCE7)),
-      _ => ('Unknown', kText3, const Color(0xFFF3F4F6)),
+    final l10n = context.l10n;
+    final label = stageName(l10n, stage);
+    final (color, bg) = switch (stage) {
+      1 => (kText2, const Color(0xFFF3F4F6)),
+      2 => (const Color(0xFF0369A1), const Color(0xFFE0F2FE)),
+      3 => (kGreen, const Color(0xFFDCFCE7)),
+      _ => (kText3, const Color(0xFFF3F4F6)),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -21,7 +24,7 @@ class StageBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        'Stage $stage · $label',
+        l10n.stageBadge(stage, label),
         style: GoogleFonts.poppins(
           fontSize: 11,
           fontWeight: FontWeight.w600,
@@ -38,13 +41,14 @@ class StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (label, color, bg) = switch (status) {
-      'pending'   => ('Pending', kAmberPrimary, kAmberLight),
-      'confirmed' => ('Confirmed', const Color(0xFF0369A1), const Color(0xFFE0F2FE)),
-      'harvested' => ('Harvested', kGreen, const Color(0xFFDCFCE7)),
-      'delivered' => ('Delivered', const Color(0xFF7C3AED), const Color(0xFFEDE9FE)),
-      'cancelled' => ('Cancelled', kRed, const Color(0xFFFEE2E2)),
-      _           => (status, kText2, const Color(0xFFF3F4F6)),
+    final label = orderStatusLabel(context.l10n, status);
+    final (color, bg) = switch (status) {
+      'pending'   => (kAmberPrimary, kAmberLight),
+      'confirmed' => (const Color(0xFF0369A1), const Color(0xFFE0F2FE)),
+      'harvested' => (kGreen, const Color(0xFFDCFCE7)),
+      'delivered' => (const Color(0xFF7C3AED), const Color(0xFFEDE9FE)),
+      'cancelled' => (kRed, const Color(0xFFFEE2E2)),
+      _           => (kText2, const Color(0xFFF3F4F6)),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

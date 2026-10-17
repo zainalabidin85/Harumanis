@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import '../l10n/l10n.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
+import '../services/locale_service.dart';
 import '../theme.dart';
 import '../widgets/page_route.dart';
 import 'login_screen.dart';
@@ -57,11 +59,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _email = me['email'] as String?;
     } on DioException catch (e) {
       final status = e.response?.statusCode;
+      if (!mounted) return;
       _error = status == 401
-          ? 'Session expired. Please log out and sign in again.'
-          : 'Failed to load profile (error $status).';
+          ? context.l10n.profileSessionExpiredRelogin
+          : context.l10n.profileErrorLoadStatus('$status');
     } catch (e) {
-      _error = 'Failed to load profile: $e';
+      if (mounted) _error = context.l10n.profileErrorLoad(e.toString());
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -77,18 +80,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
         phone:    _phoneCtrl.text.trim().isEmpty    ? null : _phoneCtrl.text.trim(),
         whatsapp: _whatsappCtrl.text.trim().isEmpty ? null : _whatsappCtrl.text.trim(),
       );
-      if (mounted) setState(() => _success = 'Profile saved.');
+      if (mounted) setState(() => _success = context.l10n.profileSaved);
     } on DioException catch (e) {
       final status = e.response?.statusCode;
       final detail = e.response?.data is Map
           ? (e.response!.data as Map)['detail']?.toString()
           : null;
+      if (!mounted) return;
+      final l10n = context.l10n;
       final msg = status == 401
-          ? 'Session expired. Please log out and sign in again.'
-          : 'Failed to save (error $status${detail != null ? ': $detail' : ''}).';
-      if (mounted) setState(() => _error = msg);
+          ? l10n.profileSessionExpiredRelogin
+          : detail != null
+              ? l10n.profileErrorSaveStatusDetail('$status', detail)
+              : l10n.profileErrorSaveStatus('$status');
+      setState(() => _error = msg);
     } catch (e) {
-      if (mounted) setState(() => _error = 'Failed to save: $e');
+      if (mounted) setState(() => _error = context.l10n.profileErrorSave(e.toString()));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -105,12 +112,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void _chooseLanguage() {
+    final l10n = context.l10n;
+    final current = LocaleController.instance.code;
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final option in [
+              ('ms', l10n.languageMalay),
+              ('en', l10n.languageEnglish),
+            ])
+              ListTile(
+                title: Text(option.$2, style: GoogleFonts.poppins(fontSize: 14)),
+                trailing: current == option.$1
+                    ? const Icon(Icons.check_rounded, color: kAmberPrimary)
+                    : null,
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  LocaleController.instance.setLocale(option.$1);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
-        title: const Text('My Profile'),
+        title: Text(context.l10n.profileTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => Navigator.pop(context),
@@ -146,7 +184,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               fontSize: 13, color: kText2)),
                     ),
                   Center(
-                    child: Text('Buyer Account',
+                    child: Text(context.l10n.profileBuyerAccount,
                         style: GoogleFonts.poppins(
                             fontSize: 12, color: kText3)),
                   ),
@@ -163,7 +201,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Personal Info',
+                        Text(context.l10n.profilePersonalInfo,
                             style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -171,9 +209,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 16),
                         TextField(
                           controller: _nameCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Full Name',
-                            prefixIcon: Icon(Icons.person_outline),
+                          decoration: InputDecoration(
+                            labelText: context.l10n.commonFullName,
+                            prefixIcon: const Icon(Icons.person_outline),
                           ),
                           textCapitalization: TextCapitalization.words,
                           textInputAction: TextInputAction.next,
@@ -181,10 +219,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 14),
                         TextField(
                           controller: _addressCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Delivery Address',
-                            prefixIcon: Icon(Icons.location_on_outlined),
-                            hintText: 'Full address for mango delivery',
+                          decoration: InputDecoration(
+                            labelText: context.l10n.profileDeliveryAddressLabel,
+                            prefixIcon: const Icon(Icons.location_on_outlined),
+                            hintText: context.l10n.deliveryAddressHint,
                           ),
                           textCapitalization: TextCapitalization.sentences,
                           textInputAction: TextInputAction.next,
@@ -194,10 +232,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 14),
                         TextField(
                           controller: _phoneCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Phone number',
-                            prefixIcon: Icon(Icons.phone_outlined),
-                            hintText: 'e.g. 0123456789',
+                          decoration: InputDecoration(
+                            labelText: context.l10n.profilePhoneLabel,
+                            prefixIcon: const Icon(Icons.phone_outlined),
+                            hintText: context.l10n.profilePhoneHint,
                           ),
                           keyboardType: TextInputType.phone,
                           textInputAction: TextInputAction.next,
@@ -206,11 +244,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         TextField(
                           controller: _whatsappCtrl,
                           decoration: InputDecoration(
-                            labelText: 'WhatsApp number',
+                            labelText: context.l10n.profileWhatsappLabel,
                             prefixIcon: const Icon(Icons.chat_outlined),
-                            hintText: 'e.g. 60123456789',
-                            helperText:
-                                'Farmers may contact you here about your order',
+                            hintText: context.l10n.profileWhatsappHint,
+                            helperText: context.l10n.profileWhatsappHelper,
                             helperStyle:
                                 GoogleFonts.poppins(fontSize: 11, color: kText3),
                             suffixIcon: _whatsappCtrl.text.isNotEmpty
@@ -224,6 +261,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onSubmitted: (_) => _save(),
                         ),
                       ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // ── Language ──────────────────────────────────────────────
+                  Container(
+                    decoration: BoxDecoration(
+                      color: kCard,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: kCardShadow,
+                    ),
+                    child: ListTile(
+                      leading: const Icon(Icons.language_rounded, color: kAmberPrimary),
+                      title: Text(context.l10n.languageRowTitle,
+                          style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: kText1)),
+                      subtitle: Text(
+                          LocaleController.instance.code == 'ms'
+                              ? context.l10n.languageMalay
+                              : context.l10n.languageEnglish,
+                          style: GoogleFonts.poppins(fontSize: 12, color: kText2)),
+                      trailing: const Icon(Icons.chevron_right_rounded, color: kText3),
+                      onTap: _chooseLanguage,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -261,27 +323,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             width: 20,
                             child: CircularProgressIndicator(
                                 color: Colors.white, strokeWidth: 2.5))
-                        : const Text('Save Profile'),
+                        : Text(context.l10n.profileSaveButton),
                   ),
                   const SizedBox(height: 12),
 
                   // ── App info + Sign out ───────────────────────────────────
                   _InfoTile(
                     icon: Icons.info_outline_rounded,
-                    label: 'App Version',
+                    label: context.l10n.profileAppVersion,
                     value: _version,
                   ),
                   const SizedBox(height: 10),
                   _InfoTile(
                     icon: Icons.eco_rounded,
-                    label: 'Powered by',
+                    label: context.l10n.profilePoweredBy,
                     value: 'MLharum AI · UniMAP',
                   ),
                   const SizedBox(height: 24),
 
                   OutlinedButton.icon(
                     icon: const Icon(Icons.logout_rounded),
-                    label: const Text('Sign Out'),
+                    label: Text(context.l10n.profileSignOut),
                     onPressed: _logout,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: kRed,

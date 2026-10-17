@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/l10n.dart';
 import '../models/farm.dart';
 import '../services/api_service.dart';
 import '../theme.dart';
@@ -33,7 +34,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     try {
       _farms = await ApiService.getMarketplace();
     } catch (e) {
-      _error = 'Failed to load farms. Pull to refresh.';
+      if (mounted) _error = context.l10n.marketErrorLoad;
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -58,13 +59,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.receipt_long_rounded, color: Colors.white),
-                  tooltip: 'My Orders',
+                  tooltip: context.l10n.marketMyOrdersTooltip,
                   onPressed: () => Navigator.push(
                       context, FadeSlideRoute(page: const MyOrdersScreen())),
                 ),
                 IconButton(
                   icon: const Icon(Icons.person_outline_rounded, color: Colors.white),
-                  tooltip: 'Profile',
+                  tooltip: context.l10n.marketProfileTooltip,
                   onPressed: () => Navigator.push(
                       context, FadeSlideRoute(page: const ProfileScreen())),
                 ),
@@ -114,7 +115,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                         fontSize: 20,
                                         fontWeight: FontWeight.w800,
                                         color: Colors.white)),
-                                Text('Malaysia\'s finest mango',
+                                Text(context.l10n.marketHeroSubtitle,
                                     style: GoogleFonts.poppins(
                                         fontSize: 12,
                                         color: Colors.white.withValues(alpha: 0.7))),
@@ -123,9 +124,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                             const SizedBox(height: 16),
                             // value props row
                             Row(children: [
-                              _HeroPill(icon: Icons.agriculture_rounded, label: 'Direct from farm'),
+                              _HeroPill(icon: Icons.agriculture_rounded, label: context.l10n.marketPillDirect),
                               const SizedBox(width: 8),
-                              _HeroPill(icon: Icons.science_rounded, label: 'AI-tracked harvest'),
+                              _HeroPill(icon: Icons.science_rounded, label: context.l10n.marketPillAiTracked),
                             ]),
                           ],
                         ),
@@ -152,7 +153,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                       Text(_error!, textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(color: kText2)),
                       const SizedBox(height: 20),
-                      ElevatedButton(onPressed: _load, child: const Text('Retry')),
+                      ElevatedButton(onPressed: _load, child: Text(context.l10n.commonRetry)),
                     ]),
                   ),
                 ),
@@ -171,7 +172,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),
                           child: Text(
-                            '${_farms.length} farm${_farms.length > 1 ? 's' : ''} available',
+                            context.l10n.marketFarmsAvailable(_farms.length),
                             style: GoogleFonts.poppins(
                                 fontSize: 13, color: kText2, fontWeight: FontWeight.w500),
                           ),
@@ -330,7 +331,7 @@ class _FarmCard extends StatelessWidget {
                   Row(children: [
                     _StatChip(
                       icon: Icons.eco_rounded,
-                      label: '${farm.totalActiveFruits} mangoes',
+                      label: context.l10n.marketMangoCount(farm.totalActiveFruits),
                       color: kAmberPrimary,
                     ),
                     const SizedBox(width: 8),
@@ -371,7 +372,7 @@ class _FarmCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '(${farm.reviewCount} review${farm.reviewCount > 1 ? 's' : ''})',
+                        context.l10n.marketReviewCount(farm.reviewCount),
                         style: GoogleFonts.poppins(fontSize: 11, color: kText2),
                       ),
                     ]),
@@ -459,7 +460,9 @@ class _HarvestBadge extends StatelessWidget {
     final bg = isReady
         ? const Color(0xFFDCFCE7)
         : (isClose ? const Color(0xFFFEF3C7) : const Color(0xFFF3F4F6));
-    final label = isReady ? 'Ready to harvest!' : 'Harvest in ${daysLeft}d';
+    final label = isReady
+        ? context.l10n.marketReadyToHarvest
+        : context.l10n.marketHarvestIn(daysLeft);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -515,9 +518,10 @@ class _StageBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final total = farm.totalActiveFruits;
     if (total == 0) return const SizedBox.shrink();
+    final l10n = context.l10n;
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text('Growth stages',
+      Text(l10n.marketGrowthStages,
           style: GoogleFonts.poppins(fontSize: 11, color: kText3)),
       const SizedBox(height: 6),
       ClipRRect(
@@ -534,11 +538,11 @@ class _StageBar extends StatelessWidget {
       const SizedBox(height: 6),
       Wrap(spacing: 10, runSpacing: 4, children: [
         if (farm.stage1Count > 0)
-          _LegendDot(color: const Color(0xFFD1D5DB), label: 'Early ${farm.stage1Count}'),
+          _LegendDot(color: const Color(0xFFD1D5DB), label: l10n.marketLegendCount(l10n.stageEarly, farm.stage1Count)),
         if (farm.stage2Count > 0)
-          _LegendDot(color: const Color(0xFF38BDF8), label: 'Bagging ${farm.stage2Count}'),
+          _LegendDot(color: const Color(0xFF38BDF8), label: l10n.marketLegendCount(l10n.stageBagging, farm.stage2Count)),
         if (farm.stage3Count > 0)
-          _LegendDot(color: kGreen, label: 'Pre-harvest ${farm.stage3Count}'),
+          _LegendDot(color: kGreen, label: l10n.marketLegendCount(l10n.stagePreHarvest, farm.stage3Count)),
       ]),
     ]);
   }
@@ -594,12 +598,12 @@ class _EmptyState extends StatelessWidget {
             child: const Center(child: Text('🥭', style: TextStyle(fontSize: 52))),
           ),
           const SizedBox(height: 24),
-          Text('Coming Soon',
+          Text(context.l10n.marketComingSoon,
               style: GoogleFonts.poppins(
                   fontSize: 22, fontWeight: FontWeight.w700, color: kText1)),
           const SizedBox(height: 8),
           Text(
-            'Harumanis farms from Perlis & Kedah\nwill appear here once listed.',
+            context.l10n.marketComingSoonBody,
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(fontSize: 14, color: kText2, height: 1.5),
           ),
@@ -613,18 +617,18 @@ class _EmptyState extends StatelessWidget {
               boxShadow: kCardShadow,
             ),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('What is Harumanis?',
+              Text(context.l10n.marketWhatIsHarumanis,
                   style: GoogleFonts.poppins(
                       fontSize: 14, fontWeight: FontWeight.w700, color: kText1)),
               const SizedBox(height: 12),
               _FactRow(icon: '🏆',
-                  text: 'Malaysia\'s most prized mango variety — grown only in Perlis & Kedah'),
+                  text: context.l10n.marketFact1),
               _FactRow(icon: '🍯',
-                  text: 'Exceptionally sweet, fiberless flesh with a distinct honey aroma'),
+                  text: context.l10n.marketFact2),
               _FactRow(icon: '📅',
-                  text: 'Short season — harvested once a year, making it rare and highly sought after'),
+                  text: context.l10n.marketFact3),
               _FactRow(icon: '🤝',
-                  text: 'Order directly from the farm — fresh, traceable, no middlemen'),
+                  text: context.l10n.marketFact4),
             ]),
           ),
           const SizedBox(height: 20),
@@ -639,7 +643,7 @@ class _EmptyState extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Pull down to refresh once farms are listed.',
+                  context.l10n.marketPullToRefresh,
                   style: GoogleFonts.poppins(fontSize: 13, color: kAmberPrimary),
                 ),
               ),

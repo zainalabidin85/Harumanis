@@ -1,10 +1,14 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/l10n.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
+import '../services/locale_service.dart';
 import '../theme.dart';
+import '../widgets/language_toggle.dart';
 import '../widgets/page_route.dart';
 import 'marketplace_screen.dart';
 
@@ -58,9 +62,10 @@ class _LoginScreenState extends State<LoginScreen>
       final role = me['role'] as String?;
       if (role != 'buyer') {
         await AuthService.logout();
-        setState(() => _error = 'This account is registered as a farmer. Please use the Ai-Harumanis app.');
+        setState(() => _error = context.l10n.loginErrorFarmerAccount);
         return;
       }
+      unawaited(LocaleController.instance.syncToAccount());
       if (mounted) {
         Navigator.pushReplacement(context, FadeSlideRoute(page: const MarketplaceScreen()));
       }
@@ -69,12 +74,12 @@ class _LoginScreenState extends State<LoginScreen>
       final status = e.response?.statusCode;
       setState(() {
         if (status == 401) {
-          _error = 'Invalid email or password';
+          _error = context.l10n.loginErrorInvalidCredentials;
         } else if (e.type == DioExceptionType.connectionError ||
                    e.type == DioExceptionType.unknown) {
-          _error = 'Cannot reach server. Check your connection.';
+          _error = context.l10n.commonNoConnection;
         } else {
-          _error = 'Login failed. Please try again.';
+          _error = context.l10n.loginErrorFailed;
         }
       });
     } finally {
@@ -102,35 +107,42 @@ class _LoginScreenState extends State<LoginScreen>
               children: [
                 Expanded(
                   flex: 4,
-                  child: FadeTransition(
-                    opacity: _logoFade,
-                    child: ScaleTransition(
-                      scale: _logoScale,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 96,
-                            height: 96,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: 0.15),
-                              border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.3), width: 1.5),
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: FadeTransition(
+                          opacity: _logoFade,
+                          child: ScaleTransition(
+                            scale: _logoScale,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 96,
+                                  height: 96,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white.withValues(alpha: 0.15),
+                                    border: Border.all(
+                                        color: Colors.white.withValues(alpha: 0.3), width: 1.5),
+                                  ),
+                                  child: const Center(child: Text('🥭', style: TextStyle(fontSize: 46))),
+                                ),
+                                const SizedBox(height: 20),
+                                Text('Beli Harumanis',
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 34, fontWeight: FontWeight.bold, color: Colors.white)),
+                                const SizedBox(height: 6),
+                                Text(context.l10n.loginTagline,
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 13, color: Colors.white.withValues(alpha: 0.75))),
+                              ],
                             ),
-                            child: const Center(child: Text('🥭', style: TextStyle(fontSize: 46))),
                           ),
-                          const SizedBox(height: 20),
-                          Text('Beli Harumanis',
-                              style: GoogleFonts.poppins(
-                                  fontSize: 34, fontWeight: FontWeight.bold, color: Colors.white)),
-                          const SizedBox(height: 6),
-                          Text('Fresh from the farm, direct to you',
-                              style: GoogleFonts.poppins(
-                                  fontSize: 13, color: Colors.white.withValues(alpha: 0.75))),
-                        ],
+                        ),
                       ),
-                    ),
+                      const Positioned(top: 4, right: 8, child: LanguageToggle()),
+                    ],
                   ),
                 ),
                 Expanded(
@@ -150,17 +162,17 @@ class _LoginScreenState extends State<LoginScreen>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Text('Welcome back',
+                              Text(context.l10n.loginWelcomeBack,
                                   style: GoogleFonts.poppins(
                                       fontSize: 24, fontWeight: FontWeight.bold, color: kText1)),
                               const SizedBox(height: 4),
-                              Text('Sign in to your buyer account',
+                              Text(context.l10n.loginSubtitle,
                                   style: GoogleFonts.poppins(fontSize: 14, color: kText2)),
                               const SizedBox(height: 28),
                               TextField(
                                 controller: _emailCtrl,
-                                decoration: const InputDecoration(
-                                    labelText: 'Email', prefixIcon: Icon(Icons.email_outlined)),
+                                decoration: InputDecoration(
+                                    labelText: context.l10n.commonEmail, prefixIcon: const Icon(Icons.email_outlined)),
                                 keyboardType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.next,
                               ),
@@ -168,7 +180,7 @@ class _LoginScreenState extends State<LoginScreen>
                               TextField(
                                 controller: _passwordCtrl,
                                 decoration: InputDecoration(
-                                  labelText: 'Password',
+                                  labelText: context.l10n.commonPassword,
                                   prefixIcon: const Icon(Icons.lock_outline),
                                   suffixIcon: IconButton(
                                     icon: Icon(_obscure
@@ -187,7 +199,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 child: TextButton(
                                   onPressed: _loading ? null : _showForgotPassword,
                                   style: TextButton.styleFrom(foregroundColor: kAmberPrimary),
-                                  child: Text('Forgot Password?',
+                                  child: Text(context.l10n.loginForgotPasswordLink,
                                       style: GoogleFonts.poppins(fontSize: 13)),
                                 ),
                               ),
@@ -225,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen>
                                         height: 20, width: 20,
                                         child: CircularProgressIndicator(
                                             color: Colors.white, strokeWidth: 2.5))
-                                    : const Text('Sign In'),
+                                    : Text(context.l10n.loginSignInButton),
                               ),
                               const SizedBox(height: 16),
                               GestureDetector(
@@ -235,9 +247,9 @@ class _LoginScreenState extends State<LoginScreen>
                                     text: TextSpan(
                                       style: GoogleFonts.poppins(fontSize: 14, color: kText2),
                                       children: [
-                                        const TextSpan(text: "Don't have an account? "),
+                                        TextSpan(text: context.l10n.loginNoAccountPrompt),
                                         TextSpan(
-                                          text: 'Register',
+                                          text: context.l10n.loginRegister,
                                           style: GoogleFonts.poppins(
                                               color: kAmberPrimary, fontWeight: FontWeight.w600),
                                         ),
@@ -269,13 +281,14 @@ class _LoginScreenState extends State<LoginScreen>
     String? dialogError;
     bool dialogLoading = false;
 
+    final l10n = context.l10n;
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setSt) {
           Future<void> sendCode() async {
             if (emailCtrl.text.trim().isEmpty) {
-              setSt(() => dialogError = 'Please enter your email.');
+              setSt(() => dialogError = l10n.loginErrorEnterEmail);
               return;
             }
             setSt(() { dialogLoading = true; dialogError = null; });
@@ -283,7 +296,7 @@ class _LoginScreenState extends State<LoginScreen>
               await ApiService.forgotPassword(emailCtrl.text.trim());
               setSt(() { dialogLoading = false; step2 = true; });
             } catch (_) {
-              setSt(() { dialogLoading = false; dialogError = 'Failed to send code.'; });
+              setSt(() { dialogLoading = false; dialogError = l10n.loginErrorSendCodeFailed; });
             }
           }
 
@@ -296,39 +309,39 @@ class _LoginScreenState extends State<LoginScreen>
               if (ctx.mounted) {
                 Navigator.pop(ctx);
                 messenger.showSnackBar(
-                    const SnackBar(content: Text('Password reset! Please log in.')));
+                    SnackBar(content: Text(l10n.loginPasswordResetDone)));
               }
             } catch (_) {
-              setSt(() { dialogLoading = false; dialogError = 'Invalid or expired code.'; });
+              setSt(() { dialogLoading = false; dialogError = l10n.loginErrorInvalidCode; });
             }
           }
 
           return AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: Text(step2 ? 'Enter Reset Code' : 'Forgot Password',
+            title: Text(step2 ? l10n.loginEnterResetCodeTitle : l10n.loginForgotPasswordTitle,
                 style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
             content: SingleChildScrollView(
               child: Column(mainAxisSize: MainAxisSize.min, children: [
                 if (!step2) ...[
-                  Text('Enter your email to receive a reset code.',
+                  Text(l10n.loginForgotPasswordBody,
                       style: GoogleFonts.poppins(color: kText2, fontSize: 13)),
                   const SizedBox(height: 16),
                   TextField(controller: emailCtrl,
-                      decoration: const InputDecoration(
-                          labelText: 'Email', prefixIcon: Icon(Icons.email_outlined)),
+                      decoration: InputDecoration(
+                          labelText: l10n.commonEmail, prefixIcon: const Icon(Icons.email_outlined)),
                       keyboardType: TextInputType.emailAddress),
                 ] else ...[
-                  Text('Code sent to ${emailCtrl.text.trim()}.',
+                  Text(l10n.loginCodeSentTo(emailCtrl.text.trim()),
                       style: GoogleFonts.poppins(color: kText2, fontSize: 13)),
                   const SizedBox(height: 16),
                   TextField(controller: otpCtrl,
-                      decoration: const InputDecoration(
-                          labelText: '6-digit Code', prefixIcon: Icon(Icons.pin_outlined)),
+                      decoration: InputDecoration(
+                          labelText: l10n.loginSixDigitCodeLabel, prefixIcon: const Icon(Icons.pin_outlined)),
                       keyboardType: TextInputType.number, maxLength: 6),
                   const SizedBox(height: 8),
                   TextField(controller: newPassCtrl,
-                      decoration: const InputDecoration(
-                          labelText: 'New Password', prefixIcon: Icon(Icons.lock_outline)),
+                      decoration: InputDecoration(
+                          labelText: l10n.loginNewPasswordLabel, prefixIcon: const Icon(Icons.lock_outline)),
                       obscureText: true),
                 ],
                 if (dialogError != null) ...[
@@ -340,13 +353,13 @@ class _LoginScreenState extends State<LoginScreen>
             actions: [
               TextButton(
                   onPressed: dialogLoading ? null : () => Navigator.pop(ctx),
-                  child: Text('Cancel', style: GoogleFonts.poppins(color: kText2))),
+                  child: Text(l10n.commonCancel, style: GoogleFonts.poppins(color: kText2))),
               ElevatedButton(
                 onPressed: dialogLoading ? null : (step2 ? submitReset : sendCode),
                 child: dialogLoading
                     ? const SizedBox(width: 18, height: 18,
                         child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                    : Text(step2 ? 'Reset Password' : 'Send Code',
+                    : Text(step2 ? l10n.loginResetPasswordButton : l10n.loginSendCodeButton,
                         style: GoogleFonts.poppins()),
               ),
             ],
@@ -365,49 +378,50 @@ class _LoginScreenState extends State<LoginScreen>
     final passCtrl      = TextEditingController();
     String? dialogError;
     bool dialogLoading = false;
+    final l10n = context.l10n;
 
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setSt) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text('Create Buyer Account',
+          title: Text(l10n.loginCreateAccountTitle,
               style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
           content: SingleChildScrollView(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               TextField(controller: nameCtrl,
-                  decoration: const InputDecoration(
-                      labelText: 'Full Name', prefixIcon: Icon(Icons.person_outline)),
+                  decoration: InputDecoration(
+                      labelText: l10n.commonFullName, prefixIcon: const Icon(Icons.person_outline)),
                   textCapitalization: TextCapitalization.words),
               const SizedBox(height: 12),
               TextField(controller: emailCtrl,
-                  decoration: const InputDecoration(
-                      labelText: 'Email', prefixIcon: Icon(Icons.email_outlined)),
+                  decoration: InputDecoration(
+                      labelText: l10n.commonEmail, prefixIcon: const Icon(Icons.email_outlined)),
                   keyboardType: TextInputType.emailAddress),
               const SizedBox(height: 12),
               TextField(controller: addressCtrl,
-                  decoration: const InputDecoration(
-                      labelText: 'Delivery Address *',
-                      prefixIcon: Icon(Icons.location_on_outlined),
-                      hintText: 'Full address for mango delivery'),
+                  decoration: InputDecoration(
+                      labelText: l10n.loginDeliveryAddressRequiredLabel,
+                      prefixIcon: const Icon(Icons.location_on_outlined),
+                      hintText: l10n.deliveryAddressHint),
                   textCapitalization: TextCapitalization.sentences,
                   maxLines: 2,
                   minLines: 1),
               const SizedBox(height: 12),
               TextField(controller: phoneCtrl,
-                  decoration: const InputDecoration(
-                      labelText: 'Phone (optional)', prefixIcon: Icon(Icons.phone_outlined)),
+                  decoration: InputDecoration(
+                      labelText: l10n.loginPhoneOptionalLabel, prefixIcon: const Icon(Icons.phone_outlined)),
                   keyboardType: TextInputType.phone),
               const SizedBox(height: 12),
               TextField(controller: waCtrl,
-                  decoration: const InputDecoration(
-                      labelText: 'WhatsApp number (optional)',
-                      prefixIcon: Icon(Icons.chat_outlined)),
+                  decoration: InputDecoration(
+                      labelText: l10n.loginWhatsappOptionalLabel,
+                      prefixIcon: const Icon(Icons.chat_outlined)),
                   keyboardType: TextInputType.phone),
               const SizedBox(height: 12),
               TextField(controller: passCtrl,
-                  decoration: const InputDecoration(
-                      labelText: 'Password', prefixIcon: Icon(Icons.lock_outline)),
+                  decoration: InputDecoration(
+                      labelText: l10n.commonPassword, prefixIcon: const Icon(Icons.lock_outline)),
                   obscureText: true),
               if (dialogError != null) ...[
                 const SizedBox(height: 10),
@@ -418,7 +432,7 @@ class _LoginScreenState extends State<LoginScreen>
           actions: [
             TextButton(
                 onPressed: dialogLoading ? null : () => Navigator.pop(ctx),
-                child: Text('Cancel', style: GoogleFonts.poppins(color: kText2))),
+                child: Text(l10n.commonCancel, style: GoogleFonts.poppins(color: kText2))),
             ElevatedButton(
               onPressed: dialogLoading
                   ? null
@@ -427,7 +441,7 @@ class _LoginScreenState extends State<LoginScreen>
                           emailCtrl.text.trim().isEmpty ||
                           addressCtrl.text.trim().isEmpty ||
                           passCtrl.text.isEmpty) {
-                        setSt(() => dialogError = 'Name, email, address and password are required.');
+                        setSt(() => dialogError = l10n.loginErrorRegisterRequired);
                         return;
                       }
                       setSt(() { dialogLoading = true; dialogError = null; });
@@ -445,17 +459,17 @@ class _LoginScreenState extends State<LoginScreen>
                         if (ctx.mounted) {
                           Navigator.pop(ctx);
                           messenger.showSnackBar(
-                              const SnackBar(content: Text('Account created! Please log in.')));
+                              SnackBar(content: Text(l10n.loginAccountCreated)));
                           _emailCtrl.text = emailText;
                         }
                       } catch (e) {
-                        setSt(() { dialogLoading = false; dialogError = 'Registration failed: $e'; });
+                        setSt(() { dialogLoading = false; dialogError = l10n.loginErrorRegisterFailed(e.toString()); });
                       }
                     },
               child: dialogLoading
                   ? const SizedBox(width: 18, height: 18,
                       child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                  : Text('Register', style: GoogleFonts.poppins()),
+                  : Text(l10n.loginRegister, style: GoogleFonts.poppins()),
             ),
           ],
         ),

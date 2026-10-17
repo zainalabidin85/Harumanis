@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
+import '../l10n/l10n.dart';
 
 class NotificationService {
   static final _plugin = FlutterLocalNotificationsPlugin();
@@ -36,10 +38,15 @@ class NotificationService {
     return await android?.requestNotificationsPermission() ?? false;
   }
 
+  /// Text is passed in already translated: the notification fires later,
+  /// outside any widget, in the language chosen when it was scheduled.
   static Future<void> scheduleRipenessReminder({
     required int farmId,
-    required String farmName,
     required DateTime purchaseDate,
+    required String title,
+    required String body,
+    required String channelName,
+    required String channelDescription,
     int ripeDays = 4,
   }) async {
     await init();
@@ -60,16 +67,14 @@ class NotificationService {
 
     await _plugin.zonedSchedule(
       id: farmId,
-      title: '🥭 Your Harumanis is ready to eat!',
-      body:
-          'The Harumanis from $farmName you bought is now at its sweetest. Enjoy!',
+      title: title,
+      body: body,
       scheduledDate: notifyTime,
-      notificationDetails: const NotificationDetails(
+      notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
           'ripeness_reminders',
-          'Ripeness Reminders',
-          channelDescription:
-              'Notifies you when your Harumanis is ready to eat',
+          channelName,
+          channelDescription: channelDescription,
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
@@ -92,9 +97,7 @@ Future<void> showReminderSheet(
   final granted = await NotificationService.requestPermission();
   if (!granted && context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-          content:
-              Text('Please allow notifications to set a reminder.')),
+      SnackBar(content: Text(context.l10n.reminderAllowNotifications)),
     );
     return;
   }
@@ -141,13 +144,8 @@ class _ReminderSheetState extends State<_ReminderSheet> {
     _purchaseDate = widget.initialDate;
   }
 
-  String _formatDate(DateTime d) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-    return '${d.day} ${months[d.month - 1]} ${d.year}';
-  }
+  String _formatDate(DateTime d) =>
+      DateFormat('d MMM yyyy', Localizations.localeOf(context).languageCode).format(d);
 
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
@@ -155,27 +153,32 @@ class _ReminderSheetState extends State<_ReminderSheet> {
       initialDate: _purchaseDate,
       firstDate: DateTime.now().subtract(const Duration(days: 3)),
       lastDate: DateTime.now(),
-      helpText: 'When did you buy the fruit?',
+      helpText: context.l10n.reminderPickerHelp,
     );
     if (picked != null) setState(() => _purchaseDate = picked);
   }
 
   Future<void> _confirm() async {
     setState(() => _saving = true);
+    final l10n = context.l10n;
     try {
       await NotificationService.scheduleRipenessReminder(
         farmId: widget.farmId,
-        farmName: widget.farmName,
         purchaseDate: _purchaseDate,
+        title: l10n.reminderNotificationTitle,
+        body: l10n.reminderNotificationBody(widget.farmName),
+        channelName: l10n.reminderChannelName,
+        channelDescription: l10n.reminderChannelDescription,
         ripeDays: widget.ripeDays,
       );
       if (mounted) {
-        Navigator.pop(context);
         final readyDate = _purchaseDate.add(Duration(days: widget.ripeDays));
-        ScaffoldMessenger.of(context).showSnackBar(
+        final readyText = _formatDate(readyDate);
+        final messenger = ScaffoldMessenger.of(context);
+        Navigator.pop(context);
+        messenger.showSnackBar(
           SnackBar(
-            content: Text(
-                'Reminder set! We\'ll notify you on ${_formatDate(readyDate)} at 9am.'),
+            content: Text(l10n.reminderSet(readyText)),
             backgroundColor: const Color(0xFF166534),
             duration: const Duration(seconds: 4),
           ),
@@ -185,7 +188,7 @@ class _ReminderSheetState extends State<_ReminderSheet> {
       if (mounted) {
         setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not set reminder: $e')),
+          SnackBar(content: Text(l10n.reminderErrorSet(e.toString()))),
         );
       }
     }
@@ -217,8 +220,8 @@ class _ReminderSheetState extends State<_ReminderSheet> {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Set Ripeness Reminder',
-                          style: TextStyle(
+                      Text(context.l10n.reminderSheetTitle,
+                          style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: Color(0xFF111827),
@@ -233,8 +236,8 @@ class _ReminderSheetState extends State<_ReminderSheet> {
             ]),
             const SizedBox(height: 24),
 
-            const Text('When did you buy this fruit?',
-                style: TextStyle(
+            Text(context.l10n.reminderPurchaseQuestion,
+                style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF374151),
@@ -262,8 +265,8 @@ class _ReminderSheetState extends State<_ReminderSheet> {
                           color: Color(0xFF78350F),
                           fontFamily: 'Poppins')),
                   const Spacer(),
-                  const Text('Change',
-                      style: TextStyle(
+                  Text(context.l10n.reminderChange,
+                      style: const TextStyle(
                           fontSize: 12,
                           color: Color(0xFFB45309),
                           fontFamily: 'Poppins')),
@@ -283,7 +286,7 @@ class _ReminderSheetState extends State<_ReminderSheet> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'We\'ll remind you on ${_formatDate(readyDate)} at 9am — ${widget.ripeDays} days after purchase when Harumanis is sweetest.',
+                    context.l10n.reminderExplanation(_formatDate(readyDate), widget.ripeDays),
                     style: const TextStyle(
                         fontSize: 12,
                         color: Color(0xFF166534),
@@ -303,7 +306,7 @@ class _ReminderSheetState extends State<_ReminderSheet> {
                         child: CircularProgressIndicator(
                             strokeWidth: 2, color: Colors.white))
                     : const Icon(Icons.alarm_add_rounded),
-                label: Text(_saving ? 'Setting...' : 'Set Reminder'),
+                label: Text(_saving ? context.l10n.reminderSetting : context.l10n.reminderSetButton),
                 onPressed: _saving ? null : _confirm,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF166634),

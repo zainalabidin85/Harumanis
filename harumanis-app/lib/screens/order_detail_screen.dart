@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../l10n/l10n.dart';
 import '../models/order.dart';
 import '../models/testimonial.dart';
 import '../services/api_service.dart';
@@ -62,7 +63,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Payment failed: $e',
+            SnackBar(content: Text(context.l10n.orderDetailPaymentFailed(e.toString()),
                 style: GoogleFonts.poppins(fontSize: 13))));
       }
     } finally {
@@ -87,8 +88,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
   Future<void> _openWhatsApp(String number) async {
     final cleaned = number.replaceAll(RegExp(r'[^\d+]'), '');
-    final msg = Uri.encodeComponent(
-        'Hi, I placed Order #${_order.id} for ${_order.quantityKg} kg of Harumanis from ${_order.farmName}.');
+    final msg = Uri.encodeComponent(context.l10n.orderDetailWhatsappMessage(
+        _order.id, '${_order.quantityKg}', _order.farmName));
     final uri = Uri.parse('https://wa.me/$cleaned?text=$msg');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -97,11 +98,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final fmt = DateFormat('d MMM yyyy');
+    final l10n = context.l10n;
+    final fmt = DateFormat('d MMM yyyy', Localizations.localeOf(context).languageCode);
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
-        title: Text('Order #${_order.id}'),
+        title: Text(l10n.orderDetailTitle(_order.id)),
         backgroundColor: kAmberPrimary,
       ),
       body: RefreshIndicator(
@@ -126,10 +128,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text('Order placed!',
+                    Text(l10n.orderDetailPlaced,
                         style: GoogleFonts.poppins(
                             fontSize: 14, fontWeight: FontWeight.w600, color: kGreen)),
-                    Text('Waiting for farmer to confirm your order.',
+                    Text(l10n.orderDetailWaitingConfirm,
                         style: GoogleFonts.poppins(fontSize: 12, color: kText2)),
                   ]),
                 ),
@@ -140,7 +142,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           // ── Status ────────────────────────────────────────────────────
           _Card(
             child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text('Status', style: GoogleFonts.poppins(fontSize: 14, color: kText2)),
+              Text(l10n.orderDetailStatus, style: GoogleFonts.poppins(fontSize: 14, color: kText2)),
               StatusBadge(status: _order.status),
             ]),
           ),
@@ -153,7 +155,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           // ── Farm & farmer ─────────────────────────────────────────────
           _Card(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Farm', style: GoogleFonts.poppins(fontSize: 13, color: kText3)),
+              Text(l10n.orderDetailFarm, style: GoogleFonts.poppins(fontSize: 13, color: kText3)),
               const SizedBox(height: 4),
               Text(_order.farmName,
                   style: GoogleFonts.poppins(
@@ -165,23 +167,23 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           // ── Order details ─────────────────────────────────────────────
           _Card(
             child: Column(children: [
-              _Row(label: 'Quantity', value: '${_order.quantityKg} kg'),
-              _Row(label: 'Price per kg', value: 'RM ${_order.pricePerKg.toStringAsFixed(2)}'),
+              _Row(label: l10n.orderDetailQuantity, value: '${_order.quantityKg} kg'),
+              _Row(label: l10n.orderDetailPricePerKg, value: 'RM ${_order.pricePerKg.toStringAsFixed(2)}'),
               const Divider(height: 20),
               _Row(
-                label: 'Total',
+                label: l10n.commonTotal,
                 value: 'RM ${_order.totalPrice.toStringAsFixed(2)}',
                 bold: true,
               ),
-              _Row(label: 'Payment', value: _order.billplzPaid ? 'Paid ✓' : 'Pending'),
+              _Row(label: l10n.orderDetailPayment, value: _order.billplzPaid ? l10n.orderDetailPaidTick : l10n.orderDetailPaymentPending),
               if (_order.targetHarvestDate != null)
-                _Row(label: 'Target date', value: fmt.format(_order.targetHarvestDate!)),
-              _Row(label: 'Ordered on', value: fmt.format(_order.createdAt)),
+                _Row(label: l10n.orderDetailTargetDate, value: fmt.format(_order.targetHarvestDate!)),
+              _Row(label: l10n.orderDetailOrderedOn, value: fmt.format(_order.createdAt)),
               if (_order.notes != null && _order.notes!.isNotEmpty) ...[
                 const Divider(height: 20),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('Notes: ${_order.notes}',
+                  child: Text(l10n.orderDetailNotes(_order.notes!),
                       style: GoogleFonts.poppins(fontSize: 13, color: kText2)),
                 ),
               ],
@@ -193,7 +195,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           if (_order.status == 'confirmed' && !_order.billplzPaid) ...[
             ElevatedButton.icon(
               icon: const Icon(Icons.payment_rounded),
-              label: const Text('Pay Now'),
+              label: Text(l10n.orderDetailPayNow),
               onPressed: _payLoading ? null : _pay,
               style: ElevatedButton.styleFrom(backgroundColor: kGreen),
             ),
@@ -208,7 +210,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 color: kAmberPrimary,
               ),
               label: Text(
-                _myReview != null ? 'Edit Your Review' : 'Leave a Review',
+                _myReview != null ? l10n.orderDetailEditReview : l10n.orderDetailLeaveReview,
                 style: GoogleFonts.poppins(
                     fontSize: 14, fontWeight: FontWeight.w600, color: kAmberPrimary),
               ),
@@ -233,7 +235,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      _myReview!.comment ?? 'No comment',
+                      _myReview!.comment ?? l10n.orderDetailNoComment,
                       style: GoogleFonts.poppins(fontSize: 13, color: kText2),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -250,7 +252,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 _order.farmerWhatsapp!.isNotEmpty)
               OutlinedButton.icon(
                 icon: const Icon(Icons.chat_rounded),
-                label: const Text('Contact Farmer via WhatsApp'),
+                label: Text(l10n.orderDetailContactWhatsapp),
                 onPressed: () => _openWhatsApp(_order.farmerWhatsapp!),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: kGreen,
@@ -272,7 +274,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'Farmer has not added a WhatsApp number yet.',
+                      l10n.orderDetailNoWhatsapp,
                       style: GoogleFonts.poppins(fontSize: 13, color: kText2),
                     ),
                   ),
@@ -333,18 +335,19 @@ class _OrderTimeline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isCancelled = order.status == 'cancelled';
+    final l10n = context.l10n;
 
     final steps = isCancelled
         ? [
             _TimelineStep(
               icon: Icons.receipt_long_rounded,
-              label: 'Order Placed',
+              label: l10n.orderTimelinePlaced,
               timestamp: order.createdAt,
               done: true,
             ),
             _TimelineStep(
               icon: Icons.cancel_rounded,
-              label: 'Cancelled',
+              label: l10n.orderTimelineCancelled,
               timestamp: order.cancelledAt,
               done: true,
               color: const Color(0xFFEF4444),
@@ -353,33 +356,33 @@ class _OrderTimeline extends StatelessWidget {
         : [
             _TimelineStep(
               icon: Icons.receipt_long_rounded,
-              label: 'Order Placed',
+              label: l10n.orderTimelinePlaced,
               timestamp: order.createdAt,
               done: true,
             ),
             _TimelineStep(
               icon: Icons.check_circle_rounded,
-              label: 'Confirmed by Farmer',
+              label: l10n.orderTimelineConfirmed,
               timestamp: order.confirmedAt,
               done: order.confirmedAt != null ||
                   ['confirmed', 'harvested', 'delivered'].contains(order.status),
             ),
             _TimelineStep(
               icon: Icons.payment_rounded,
-              label: 'Payment Received',
+              label: l10n.orderTimelinePaid,
               timestamp: order.paidAt,
               done: order.billplzPaid,
             ),
             _TimelineStep(
               icon: Icons.agriculture_rounded,
-              label: 'Harvested',
+              label: l10n.orderTimelineHarvested,
               timestamp: order.harvestedAt,
               done: order.harvestedAt != null ||
                   ['harvested', 'delivered'].contains(order.status),
             ),
             _TimelineStep(
               icon: Icons.local_shipping_rounded,
-              label: 'Delivered',
+              label: l10n.orderTimelineDelivered,
               timestamp: order.deliveredAt,
               done: order.deliveredAt != null || order.status == 'delivered',
             ),
@@ -393,7 +396,7 @@ class _OrderTimeline extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Order Progress',
+          Text(l10n.orderTimelineTitle,
               style: GoogleFonts.poppins(
                   fontSize: 13, fontWeight: FontWeight.w600, color: kText1)),
           const SizedBox(height: 14),
@@ -459,7 +462,7 @@ class _ReviewSheetState extends State<_ReviewSheet> {
   Future<void> _submit() async {
     if (_rating == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select a star rating.',
+        SnackBar(content: Text(context.l10n.reviewErrorNoRating,
             style: GoogleFonts.poppins(fontSize: 13))),
       );
       return;
@@ -478,7 +481,7 @@ class _ReviewSheetState extends State<_ReviewSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to submit review. Please try again.',
+          SnackBar(content: Text(context.l10n.reviewErrorSubmit,
               style: GoogleFonts.poppins(fontSize: 13))),
         );
       }
@@ -506,11 +509,11 @@ class _ReviewSheetState extends State<_ReviewSheet> {
         ),
         const SizedBox(height: 20),
         Text(
-          widget.existing != null ? 'Edit Your Review' : 'Leave a Review',
+          widget.existing != null ? context.l10n.orderDetailEditReview : context.l10n.orderDetailLeaveReview,
           style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w700, color: kText1),
         ),
         const SizedBox(height: 6),
-        Text('How was your experience with this farm?',
+        Text(context.l10n.reviewPrompt,
             style: GoogleFonts.poppins(fontSize: 13, color: kText2)),
         const SizedBox(height: 20),
         Row(
@@ -533,7 +536,7 @@ class _ReviewSheetState extends State<_ReviewSheet> {
           maxLines: 3,
           maxLength: 300,
           decoration: InputDecoration(
-            hintText: 'Share your experience (optional)',
+            hintText: context.l10n.reviewCommentHint,
             hintStyle: GoogleFonts.poppins(color: kText3, fontSize: 13),
           ),
           style: GoogleFonts.poppins(fontSize: 14),
@@ -548,7 +551,7 @@ class _ReviewSheetState extends State<_ReviewSheet> {
                 ? const SizedBox(
                     width: 22, height: 22,
                     child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                : Text(widget.existing != null ? 'Update Review' : 'Submit Review',
+                : Text(widget.existing != null ? context.l10n.reviewUpdate : context.l10n.reviewSubmit,
                     style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600)),
           ),
         ),
@@ -564,7 +567,7 @@ class _TimelineRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final timeFmt = DateFormat('d MMM yyyy, h:mm a');
+    final timeFmt = DateFormat('d MMM yyyy, h:mm a', Localizations.localeOf(context).languageCode);
     final activeColor = step.color ?? kAmberPrimary;
     final pendingColor = const Color(0xFFD1D5DB);
 

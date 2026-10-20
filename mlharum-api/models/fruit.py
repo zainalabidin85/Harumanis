@@ -10,8 +10,9 @@ class Detection(Base):
     tree_id          = Column(Integer, ForeignKey("trees.id", ondelete="CASCADE"), nullable=False)
     image_path       = Column(String(500))
     mango_count      = Column(Integer, default=0)
-    knuckle_width_px = Column(Numeric(6, 2))
+    knuckle_width_px = Column(Numeric(6, 2))  # width in px of whichever reference was used (hand or sticker)
     reference_span_cm = Column(Numeric(4, 2), nullable=True)
+    reference_type   = Column(String(10), nullable=True)  # circle | square | hand; NULL = hand scan before 025
     detected_at      = Column(DateTime, server_default=func.now())
 
     tree   = relationship("Tree", back_populates="detections")

@@ -214,6 +214,7 @@ class DetectionResponse(BaseModel):
     hand_index_y: Optional[float] = None
     hand_pinky_x: Optional[float] = None
     hand_pinky_y: Optional[float] = None
+    reference_type: Optional[str] = None  # "circle" | "square" | "hand"
 
 
 # ── Dashboard ─────────────────────────────────────────────────────────────────

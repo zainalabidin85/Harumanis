@@ -12,8 +12,9 @@ from models.fruit import Detection, Fruit
 from schemas import DetectionResponse, FruitResult
 from auth_utils import get_current_user
 from services.mediapipe_service import detect_knuckle_width
+from services.marker_service import detect_sticker
 from services.yolo_service import detect_mangoes
-from services.size_estimator import estimate_size, resolve_hand_span_cm
+from services.size_estimator import NO_REFERENCE_DETAIL, choose_reference, estimate_size, sticker_fits_mango
 from services.harvest_predictor import predict_harvest
 from services.i18n import resolve_language, t
 from config import settings
@@ -53,9 +54,7 @@ async def run_detection(
         raise HTTPException(status_code=422, detail="Invalid image file")
 
     loop = asyncio.get_event_loop()
-    hand_marker = await loop.run_in_executor(None, detect_knuckle_width, image_bgr)
-    if hand_marker is None:
-        raise HTTPException(status_code=422, detail="No hand detected. Hold your open palm beside the fruit.")
+    sticker = await loop.run_in_executor(None, detect_sticker, image_bgr)
 
     mango_detections = await loop.run_in_executor(None, detect_mangoes, image_bgr)
     if not mango_detections:
@@ -63,16 +62,25 @@ async def run_detection(
 
     # One mango per photo — pick highest confidence detection
     best = max(mango_detections, key=lambda d: d.confidence)
+    mango_px = min(best.bbox_w, best.bbox_h)
 
-    hand_span_cm = resolve_hand_span_cm(current_user.knuckle_span_cm)
-    size_cm = estimate_size(best, hand_marker.knuckle_width_px, hand_span_cm)
+    # The sticker wins over the hand; MediaPipe only runs when there is no usable sticker.
+    hand_marker = None
+    if sticker is None or not sticker_fits_mango(sticker.width_px, mango_px):
+        hand_marker = await loop.run_in_executor(None, detect_knuckle_width, image_bgr)
+    ref = choose_reference(sticker, hand_marker, mango_px, current_user.knuckle_span_cm)
+    if ref is None:
+        raise HTTPException(status_code=422, detail=NO_REFERENCE_DETAIL)
+
+    size_cm = estimate_size(best, ref.width_px, ref.span_cm)
     harvest_date, days_to_harvest, resolved_stage = predict_harvest(size_cm, db)
 
     detection_record = Detection(
         tree_id=tree_id,
         mango_count=1,
-        knuckle_width_px=hand_marker.knuckle_width_px,
-        reference_span_cm=hand_span_cm,
+        knuckle_width_px=ref.width_px,
+        reference_span_cm=ref.span_cm,
+        reference_type=ref.type,
     )
     db.add(detection_record)
     db.flush()
@@ -81,6 +89,14 @@ async def run_detection(
     max_size = settings.bagging_max_size_cm
     lang = resolve_language(accept_language)
     size_text = f"{size_cm:.1f}"
+    reference_fields = {"reference_type": ref.type}
+    if ref.type == "hand":
+        reference_fields.update(
+            hand_index_x=hand_marker.index_x,
+            hand_index_y=hand_marker.index_y,
+            hand_pinky_x=hand_marker.pinky_x,
+            hand_pinky_y=hand_marker.pinky_y,
+        )
 
     if size_cm < min_size:
         db.commit()
@@ -92,10 +108,7 @@ async def run_detection(
             ready_for_bagging=False,
             message=t("detect.early", lang, size=size_text, min_size=min_size),
             fruits=[],
-            hand_index_x=hand_marker.index_x,
-            hand_index_y=hand_marker.index_y,
-            hand_pinky_x=hand_marker.pinky_x,
-            hand_pinky_y=hand_marker.pinky_y,
+            **reference_fields,
         )
 
     current_season = datetime.now().year
@@ -145,10 +158,7 @@ async def run_detection(
             ready_for_bagging=False,
             message=t("detect.late", lang, size=size_text, label=label, days=days_to_harvest),
             fruits=[fruit_result],
-            hand_index_x=hand_marker.index_x,
-            hand_index_y=hand_marker.index_y,
-            hand_pinky_x=hand_marker.pinky_x,
-            hand_pinky_y=hand_marker.pinky_y,
+            **reference_fields,
         )
 
     return DetectionResponse(
@@ -159,10 +169,7 @@ async def run_detection(
         ready_for_bagging=True,
         message=t("detect.ready", lang, size=size_text, days=days_to_harvest),
         fruits=[fruit_result],
-        hand_index_x=hand_marker.index_x,
-        hand_index_y=hand_marker.index_y,
-        hand_pinky_x=hand_marker.pinky_x,
-        hand_pinky_y=hand_marker.pinky_y,
+        **reference_fields,
     )
 
 

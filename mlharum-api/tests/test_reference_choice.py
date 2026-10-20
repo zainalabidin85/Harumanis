@@ -57,3 +57,17 @@ def test_neither_returns_none():
 def test_size_from_sticker():
     # 160 px mango / 60 px sticker × 1.5 cm = 4.0 cm (Bagging lower bound)
     assert estimate_size(_mango(160, 200), 60, 1.5) == pytest.approx(4.0)
+
+
+def test_no_reference_detail_keeps_old_app_match():
+    # Old APKs show their localized no-hand message when the detail contains "No hand".
+    from services.size_estimator import NO_REFERENCE_DETAIL
+    assert "No hand" in NO_REFERENCE_DETAIL
+
+
+def test_detection_response_reference_type_optional():
+    from datetime import datetime
+    from schemas import DetectionResponse
+    r = DetectionResponse(tree_id=1, tree_number="T01", detection_date=datetime.now(),
+                          mango_count=1, ready_for_bagging=True, message="x")
+    assert r.reference_type is None and r.hand_index_x is None

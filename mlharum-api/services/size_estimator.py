@@ -15,6 +15,9 @@ DEFAULT_HAND_SPAN_CM = settings.avg_knuckle_width_cm * 3  # ~5.4 cm for 3-knuckl
 _STICKER_TO_MANGO_MIN = 0.1
 _STICKER_TO_MANGO_MAX = 2.0
 
+# Must keep "No hand": old APKs match on it to show their localized message.
+NO_REFERENCE_DETAIL = "No hand or reference sticker detected. Hold your open palm or the sticker beside the fruit."
+
 
 @dataclass
 class Reference:

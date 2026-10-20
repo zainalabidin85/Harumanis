@@ -1083,7 +1083,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String qrStep3(int days) {
-    return 'Mereka tekan \"Remind Me\" → aplikasi memaklumkan mereka dalam $days hari apabila buah sedia dimakan';
+    return 'Mereka tekan \"Ingatkan Saya\" → aplikasi memaklumkan mereka dalam $days hari apabila buah sedia dimakan';
   }
 
   @override

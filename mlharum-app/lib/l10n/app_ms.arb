@@ -307,7 +307,7 @@
   "qrHowItWorks": "Cara ia berfungsi",
   "qrStep1": "Pembeli mengimbas QR ini dengan kamera telefon",
   "qrStep2": "Satu halaman dibuka — mereka tekan \"Open in Beli Harumanis\" atau muat turun aplikasi dahulu",
-  "qrStep3": "Mereka tekan \"Remind Me\" → aplikasi memaklumkan mereka dalam {days} hari apabila buah sedia dimakan",
+  "qrStep3": "Mereka tekan \"Ingatkan Saya\" → aplikasi memaklumkan mereka dalam {days} hari apabila buah sedia dimakan",
   "qrStep4": "Mereka juga boleh membuat pesanan akan datang terus dari halaman ladang anda",
   "qrTip": "Petua: Ambil tangkapan skrin dan cetak untuk dipamerkan di gerai anda",
   "treeListTreeNumberHint": "cth. T01",

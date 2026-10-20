@@ -7,7 +7,11 @@ from services.marker_service import detect_sticker
 LEAF_GREEN = (40, 120, 40)
 MAGENTA = (126, 0, 230)  # BGR of print magenta #E6007E
 WHITE = (255, 255, 255)
-RING = 8
+
+
+def _ring(size):
+    # The printed sticker's white ring is 3 mm on a 15 mm sticker: 0.2 of its size.
+    return max(3, round(0.2 * size))
 
 
 def _canvas():
@@ -17,7 +21,7 @@ def _canvas():
 def _circle(img, center, diameter, ring=True):
     r = diameter // 2
     if ring:
-        cv2.circle(img, center, r + RING, WHITE, -1)
+        cv2.circle(img, center, r + _ring(diameter), WHITE, -1)
     cv2.circle(img, center, r, MAGENTA, -1)
     return img
 
@@ -26,7 +30,7 @@ def _square(img, center, side, angle=0, ring=True):
     def box(s):
         return cv2.boxPoints((center, (s, s), angle)).astype(np.int32)
     if ring:
-        cv2.fillPoly(img, [box(side + 2 * RING)], WHITE)
+        cv2.fillPoly(img, [box(side + 2 * _ring(side))], WHITE)
     cv2.fillPoly(img, [box(side)], MAGENTA)
     return img
 
@@ -48,7 +52,7 @@ def test_finds_square_sticker():
 def test_tilted_circle_uses_long_axis():
     # A circle seen at an angle is an ellipse; its long axis is the true diameter.
     img = _canvas()
-    cv2.ellipse(img, (640, 360), (50 + RING, 30 + RING), 0, 0, 360, WHITE, -1)
+    cv2.ellipse(img, (640, 360), (50 + _ring(100), 30 + _ring(60)), 0, 0, 360, WHITE, -1)
     cv2.ellipse(img, (640, 360), (50, 30), 0, 0, 360, MAGENTA, -1)
     m = detect_sticker(img)
     assert m.kind == "circle"
@@ -99,7 +103,7 @@ def _camera_disc(diameter, scale=8):
     # Drawn at 8x and averaged down, like a camera sampling a disc of exactly this diameter.
     big = cv2.resize(_canvas(), None, fx=scale, fy=scale, interpolation=cv2.INTER_NEAREST)
     c, r = (640 * scale, 360 * scale), diameter * scale / 2
-    cv2.circle(big, c, round(r + RING * scale), WHITE, -1)
+    cv2.circle(big, c, round(r + _ring(diameter) * scale), WHITE, -1)
     cv2.circle(big, c, round(r), MAGENTA, -1)
     return cv2.resize(big, (1280, 720), interpolation=cv2.INTER_AREA)
 
@@ -113,6 +117,36 @@ def test_circle_width_has_no_edge_bias(diameter):
 @pytest.mark.parametrize("side", [31, 51, 101])
 def test_square_width_has_no_edge_bias(side):
     img = _canvas()
-    cv2.rectangle(img, (600 - RING, 300 - RING), (600 + side - 1 + RING, 300 + side - 1 + RING), WHITE, -1)
+    g = _ring(side)
+    cv2.rectangle(img, (600 - g, 300 - g), (600 + side - 1 + g, 300 + side - 1 + g), WHITE, -1)
     cv2.rectangle(img, (600, 300), (600 + side - 1, 300 + side - 1), MAGENTA, -1)
     assert detect_sticker(img).width_px == pytest.approx(side, abs=0.6)
+
+
+@pytest.mark.parametrize("cut", [0.1, 0.2, 0.3])
+def test_circle_cut_by_straight_edge_ignored(cut):
+    # A leaf edge across one side leaves a convex, squashed disc that would read long.
+    img = _circle(_canvas(), (640, 360), 120)
+    x = 640 + 60 - round(cut * 120)
+    cv2.rectangle(img, (x, 200), (900, 520), LEAF_GREEN, -1)
+    assert detect_sticker(img) is None
+
+
+@pytest.mark.parametrize("clip", [0.1, 0.2, 0.3])
+def test_sticker_touching_image_border_ignored(clip):
+    img = _circle(_canvas(), (60 - round(clip * 120), 360), 120)
+    assert detect_sticker(img) is None
+
+
+@pytest.mark.parametrize("diameter", [36, 43])
+def test_small_sticker_found(diameter):
+    # 15 mm is only ~36–43 px in the app's 720 px-wide photo.
+    m = detect_sticker(_camera_disc(diameter))
+    assert m.kind == "circle"
+    assert m.width_px == pytest.approx(diameter, abs=0.8)
+
+
+@pytest.mark.parametrize("exposure", [0.6, 0.75])
+def test_sticker_found_in_shade(exposure):
+    img = (_circle(_canvas(), (640, 360), 100).astype(np.float32) * exposure).astype(np.uint8)
+    assert detect_sticker(img).kind == "circle"

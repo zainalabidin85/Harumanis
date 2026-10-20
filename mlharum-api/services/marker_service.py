@@ -16,14 +16,31 @@ class StickerMarker:
     center_y: float
 
 
-def _has_white_ring(hsv: np.ndarray, inner: np.ndarray) -> bool:
-    near = cv2.dilate(inner, np.ones((7, 7), np.uint8))
-    far = cv2.dilate(inner, np.ones((17, 17), np.uint8))
-    band = cv2.subtract(far, near) > 0  # 3–8 px outside the edge
-    if not band.any():
+_RING_SECTORS = 12
+
+
+def _disc(radius: int) -> np.ndarray:
+    return cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * radius + 1, 2 * radius + 1))
+
+
+def _has_white_ring(hsv: np.ndarray, inner: np.ndarray, near: int, far: int) -> bool:
+    """White all the way round: a leaf or finger over one side fails its sector instead of
+    leaving a squashed shape that reads long. "White" is relative to the sticker's own
+    magenta, which shares its lighting, so shade and dim exposure still pass."""
+    band = cv2.subtract(cv2.dilate(inner, _disc(far)), cv2.dilate(inner, _disc(near))) > 0
+    ys, xs = np.nonzero(band)
+    if len(xs) == 0:
         return False
-    s, v = hsv[..., 1][band], hsv[..., 2][band]
-    return np.mean((s < 60) & (v > 170)) >= 0.6
+    ink_v = np.median(hsv[..., 2][inner > 0])
+    s, v = hsv[ys, xs, 1], hsv[ys, xs, 2]
+    white = (s < 60) & (v >= 0.7 * ink_v)
+    cy, cx = np.nonzero(inner)
+    sector = ((np.arctan2(ys - cy.mean(), xs - cx.mean()) + np.pi) / (2 * np.pi) * _RING_SECTORS).astype(int) % _RING_SECTORS
+    for k in range(_RING_SECTORS):
+        in_k = sector == k
+        if not in_k.any() or white[in_k].mean() < 0.8:
+            return False
+    return True
 
 
 # Widths come from the filled pixel count, not the contour: contour points sit on the
@@ -73,9 +90,17 @@ def detect_sticker(image_bgr: np.ndarray) -> StickerMarker | None:
             continue
         region = np.zeros(mask.shape, np.uint8)
         cv2.drawContours(region, [c], -1, 255, -1)
-        if not _has_white_ring(hsv, region):
-            continue
         pixel_area = cv2.countNonZero(region)
+        # Ring band scales with the sticker (ring = 0.2 of its size): ~1–5 px at 15 mm in a 720 px photo.
+        size = 2 * np.sqrt(pixel_area / np.pi)
+        near = max(1, round(0.04 * size))
+        far = max(near + 2, round(0.14 * size))
+        x, y, w, h = cv2.boundingRect(c)
+        img_h, img_w = mask.shape
+        if x - far < 0 or y - far < 0 or x + w + far > img_w or y + h + far > img_h:
+            continue  # ring runs off the frame: the sticker may be cut by the edge
+        if not _has_white_ring(hsv, region, near, far):
+            continue
         width = _as_square(c, area, pixel_area)
         if width is not None:
             kind, span = "square", settings.sticker_square_side_cm

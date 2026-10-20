@@ -93,3 +93,26 @@ def test_largest_sticker_wins():
 
 def test_plain_image_returns_none():
     assert detect_sticker(_canvas()) is None
+
+
+def _camera_disc(diameter, scale=8):
+    # Drawn at 8x and averaged down, like a camera sampling a disc of exactly this diameter.
+    big = cv2.resize(_canvas(), None, fx=scale, fy=scale, interpolation=cv2.INTER_NEAREST)
+    c, r = (640 * scale, 360 * scale), diameter * scale / 2
+    cv2.circle(big, c, round(r + RING * scale), WHITE, -1)
+    cv2.circle(big, c, round(r), MAGENTA, -1)
+    return cv2.resize(big, (1280, 720), interpolation=cv2.INTER_AREA)
+
+
+@pytest.mark.parametrize("diameter", [30, 50, 100])
+def test_circle_width_has_no_edge_bias(diameter):
+    # A 15 mm sticker is only ~50 px wide; a 2 px edge bias would overstate the mango by ~4%.
+    assert detect_sticker(_camera_disc(diameter)).width_px == pytest.approx(diameter, abs=0.6)
+
+
+@pytest.mark.parametrize("side", [31, 51, 101])
+def test_square_width_has_no_edge_bias(side):
+    img = _canvas()
+    cv2.rectangle(img, (600 - RING, 300 - RING), (600 + side - 1 + RING, 300 + side - 1 + RING), WHITE, -1)
+    cv2.rectangle(img, (600, 300), (600 + side - 1, 300 + side - 1), MAGENTA, -1)
+    assert detect_sticker(img).width_px == pytest.approx(side, abs=0.6)

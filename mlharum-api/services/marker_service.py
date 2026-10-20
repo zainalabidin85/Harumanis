@@ -10,15 +10,13 @@ _KERNEL = np.ones((5, 5), np.uint8)
 @dataclass
 class StickerMarker:
     kind: str          # "circle" | "square"
-    width_px: float    # ellipse major axis, or long side of the min-area rect
+    width_px: float    # true diameter / long side, from pixel area and fitted aspect ratio
     span_cm: float
     center_x: float
     center_y: float
 
 
-def _has_white_ring(hsv: np.ndarray, contour: np.ndarray) -> bool:
-    inner = np.zeros(hsv.shape[:2], np.uint8)
-    cv2.drawContours(inner, [contour], -1, 255, -1)
+def _has_white_ring(hsv: np.ndarray, inner: np.ndarray) -> bool:
     near = cv2.dilate(inner, np.ones((7, 7), np.uint8))
     far = cv2.dilate(inner, np.ones((17, 17), np.uint8))
     band = cv2.subtract(far, near) > 0  # 3–8 px outside the edge
@@ -28,7 +26,10 @@ def _has_white_ring(hsv: np.ndarray, contour: np.ndarray) -> bool:
     return np.mean((s < 60) & (v > 170)) >= 0.6
 
 
-def _as_square(contour: np.ndarray, area: float) -> float | None:
+# Widths come from the filled pixel count, not the contour: contour points sit on the
+# edge pixels' centres, which reads 1–2 px short — ~4% on a 15 mm sticker.
+
+def _as_square(contour: np.ndarray, area: float, pixel_area: int) -> float | None:
     approx = cv2.approxPolyDP(contour, 0.04 * cv2.arcLength(contour, True), True)
     if len(approx) != 4 or not cv2.isContourConvex(approx):
         return None
@@ -36,10 +37,10 @@ def _as_square(contour: np.ndarray, area: float) -> float | None:
     long_side, short_side = max(w, h), min(w, h)
     if short_side == 0 or long_side / short_side > 1.6 or area / (w * h) < 0.85:
         return None
-    return float(long_side)
+    return float(np.sqrt(pixel_area * long_side / short_side))
 
 
-def _as_circle(contour: np.ndarray, area: float) -> float | None:
+def _as_circle(contour: np.ndarray, area: float, pixel_area: int) -> float | None:
     if len(contour) < 5:
         return None
     hull_area = cv2.contourArea(cv2.convexHull(contour))
@@ -51,7 +52,7 @@ def _as_circle(contour: np.ndarray, area: float) -> float | None:
         return None
     if not 0.92 <= area / (np.pi * a * b / 4) <= 1.08:
         return None
-    return float(major)
+    return float(np.sqrt(4 * pixel_area / np.pi * major / minor))
 
 
 def detect_sticker(image_bgr: np.ndarray) -> StickerMarker | None:
@@ -68,13 +69,18 @@ def detect_sticker(image_bgr: np.ndarray) -> StickerMarker | None:
     best = None
     for c in contours:
         area = cv2.contourArea(c)
-        if area < settings.sticker_min_area_px or not _has_white_ring(hsv, c):
+        if area < settings.sticker_min_area_px:
             continue
-        width = _as_square(c, area)
+        region = np.zeros(mask.shape, np.uint8)
+        cv2.drawContours(region, [c], -1, 255, -1)
+        if not _has_white_ring(hsv, region):
+            continue
+        pixel_area = cv2.countNonZero(region)
+        width = _as_square(c, area, pixel_area)
         if width is not None:
             kind, span = "square", settings.sticker_square_side_cm
         else:
-            width = _as_circle(c, area)
+            width = _as_circle(c, area, pixel_area)
             if width is None:
                 continue
             kind, span = "circle", settings.sticker_circle_diameter_cm

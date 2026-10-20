@@ -995,7 +995,7 @@ abstract class AppLocalizations {
   /// No description provided for @cameraErrorNoHand.
   ///
   /// In en, this message translates to:
-  /// **'No hand detected. Hold your open palm beside the fruit.'**
+  /// **'No hand or sticker detected. Place the reference sticker on or beside the fruit, or hold your open palm beside it.'**
   String get cameraErrorNoHand;
 
   /// No description provided for @cameraErrorNoMango.
@@ -1019,7 +1019,7 @@ abstract class AppLocalizations {
   /// No description provided for @cameraInstruction.
   ///
   /// In en, this message translates to:
-  /// **'Point at ONE mango. Hold your open palm beside it, then tap Capture.'**
+  /// **'Point at ONE mango. Place the reference sticker on or beside it, or hold your open palm beside it, then tap Capture.'**
   String get cameraInstruction;
 
   /// No description provided for @resultReadyForBagging.

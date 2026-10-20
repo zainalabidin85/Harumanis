@@ -532,7 +532,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cameraErrorNoHand =>
-      'No hand detected. Hold your open palm beside the fruit.';
+      'No hand or sticker detected. Place the reference sticker on or beside the fruit, or hold your open palm beside it.';
 
   @override
   String get cameraErrorNoMango =>
@@ -548,7 +548,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cameraInstruction =>
-      'Point at ONE mango. Hold your open palm beside it, then tap Capture.';
+      'Point at ONE mango. Place the reference sticker on or beside it, or hold your open palm beside it, then tap Capture.';
 
   @override
   String get resultReadyForBagging => 'Ready for bagging';

@@ -534,7 +534,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get cameraErrorNoHand =>
-      'Tangan tidak dikesan. Buka tapak tangan anda di sebelah buah.';
+      'Tangan atau pelekat tidak dikesan. Letakkan pelekat rujukan pada atau di sebelah buah, atau buka tapak tangan anda di sebelah buah.';
 
   @override
   String get cameraErrorNoMango =>
@@ -550,7 +550,7 @@ class AppLocalizationsMs extends AppLocalizations {
 
   @override
   String get cameraInstruction =>
-      'Hala ke SATU mangga. Buka tapak tangan di sebelahnya, kemudian tekan butang tangkap.';
+      'Hala ke SATU mangga. Letakkan pelekat rujukan pada atau di sebelahnya, atau buka tapak tangan di sebelahnya, kemudian tekan butang tangkap.';
 
   @override
   String get resultReadyForBagging => 'Sedia untuk dibalut';

@@ -357,11 +357,11 @@
       }
     }
   },
-  "cameraErrorNoHand": "No hand detected. Hold your open palm beside the fruit.",
+  "cameraErrorNoHand": "No hand or sticker detected. Place the reference sticker on or beside the fruit, or hold your open palm beside it.",
   "cameraErrorNoMango": "No mangoes detected. Try again with better lighting.",
   "cameraErrorTimeout": "Connection timed out. Check your internet and try again.",
   "cameraErrorNoConnection": "Cannot reach server. Check your internet connection.",
-  "cameraInstruction": "Point at ONE mango. Hold your open palm beside it, then tap Capture.",
+  "cameraInstruction": "Point at ONE mango. Place the reference sticker on or beside it, or hold your open palm beside it, then tap Capture.",
   "resultReadyForBagging": "Ready for bagging",
   "resultAttachLabel": "Attach label {label} to this fruit",
   "@resultAttachLabel": {

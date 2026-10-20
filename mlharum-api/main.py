@@ -118,8 +118,6 @@ def farm_landing(farm_id: int, db: Session = Depends(get_db)):
     from models.farm_image import FarmImage
     farm = db.query(Farm).filter(Farm.id == farm_id).first()
     farm_name = farm.name if farm else "Harumanis Farm"
-    deep_link = f"harumanis://farm/{farm_id}"
-    apk_url = "https://pub-09d17b214a8449658a27e1cbecccb5ab.r2.dev/BeliHarumanis.apk"
     base_url = "https://mlharum.unitani.com"
 
     thumb = None
@@ -283,6 +281,12 @@ def farm_landing(farm_id: int, db: Session = Depends(get_db)):
       color: var(--amber-dark);
     }}
     .btn-secondary:hover {{ background: var(--amber-light); }}
+    /* Beli Harumanis is paused: buttons greyed out and not tappable */
+    .btn-disabled {{
+      background: #CBD5E1; color: #64748B; border-color: #CBD5E1;
+      box-shadow: none; cursor: not-allowed; pointer-events: none;
+    }}
+    .btn-disabled + .btn-disabled {{ margin-top: 10px; }}
 
     .cta-note {{
       text-align: center;
@@ -368,24 +372,24 @@ def farm_landing(farm_id: int, db: Session = Depends(get_db)):
   <!-- CTA -->
   <div class="cta-section">
     <div class="cta-card">
-      <a class="btn btn-primary" href="{deep_link}">
+      <span class="btn btn-disabled" aria-disabled="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
           <line x1="12" y1="18" x2="12.01" y2="18"/>
         </svg>
         Open in Beli Harumanis App
-      </a>
-      <a class="btn btn-secondary" href="{apk_url}">
+      </span>
+      <span class="btn btn-disabled" aria-disabled="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
           <polyline points="7 10 12 15 17 10"/>
           <line x1="12" y1="15" x2="12" y2="3"/>
         </svg>
         Download Beli Harumanis
-      </a>
+      </span>
       <p class="cta-note">
-        Already installed? Tap "Open in App" above.<br/>
-        First time? Download, install, then tap "Open in App".
+        Beli Harumanis akan datang tidak lama lagi.<br/>
+        The Beli Harumanis app is coming soon.
       </p>
     </div>
   </div>

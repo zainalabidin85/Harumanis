@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     smtp_password: str = ""
     smtp_from_name: str = "MLharum"
 
+    # Beli Harumanis marketplace: false refuses new orders and Pay Now (paused 2026-10 pending legal/ToyyibPay checks)
+    marketplace_open: bool = False
+
     # ToyyibPay payment gateway
     toyyibpay_secret_key: str = ""
     toyyibpay_category_code: str = ""

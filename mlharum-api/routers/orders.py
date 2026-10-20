@@ -10,11 +10,23 @@ from models.user import User
 from auth_utils import get_current_user, require_buyer, require_farmer
 from schemas import OrderCreate, OrderResponse, OrderStatusUpdate, PaymentInitResponse
 from services import toyyibpay_service
+from config import settings
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
 PLATFORM_FEE_RATE = 0.02  # payment gateway fee + Zainal maintenance 1%
+
+# Shown by Beli 1.10+; 1.9.5 shows its own generic "failed" text but is still refused.
+MARKETPLACE_PAUSED_DETAIL = (
+    "Beli Harumanis ditutup buat sementara. Pesanan dan bayaran baharu tidak diterima. / "
+    "Beli Harumanis is paused for now. New orders and payments are not accepted."
+)
+
+
+def _require_marketplace_open() -> None:
+    if not settings.marketplace_open:
+        raise HTTPException(status_code=503, detail=MARKETPLACE_PAUSED_DETAIL)
 
 
 def _order_to_response(order: Order) -> OrderResponse:
@@ -49,6 +61,7 @@ def _order_to_response(order: Order) -> OrderResponse:
 
 @router.post("", response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
 def create_order(payload: OrderCreate, buyer: User = Depends(require_buyer), db: Session = Depends(get_db)):
+    _require_marketplace_open()
     farm = db.query(Farm).filter(Farm.id == payload.farm_id, Farm.is_public == True).first()
     if not farm:
         raise HTTPException(status_code=404, detail="Farm not found or not publicly listed")
@@ -102,6 +115,7 @@ def _mark_paid(order: Order) -> None:
 
 @router.post("/{order_id}/pay", response_model=PaymentInitResponse)
 def initiate_payment(order_id: int, buyer: User = Depends(require_buyer), db: Session = Depends(get_db)):
+    _require_marketplace_open()
     order = db.query(Order).filter(Order.id == order_id, Order.buyer_id == buyer.id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")

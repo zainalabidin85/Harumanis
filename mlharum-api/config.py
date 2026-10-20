@@ -15,6 +15,15 @@ class Settings(BaseSettings):
     bagging_min_size_cm: float = 4.0   # DOA Bagging stage lower bound (40mm) — start of bagging window
     bagging_max_size_cm: float = 4.5   # DOA Bagging stage upper bound (45mm) — end of bagging window
 
+    # Printed reference sticker: magenta circle or square on a white ring. Wins over the hand when both are in frame.
+    sticker_circle_diameter_cm: float = 1.5
+    sticker_square_side_cm: float = 1.5
+    sticker_hue_min: int = 140         # OpenCV hue scale 0–180; print magenta #E6007E ≈ 163
+    sticker_hue_max: int = 175
+    sticker_sat_min: int = 120
+    sticker_val_min: int = 90
+    sticker_min_area_px: int = 400
+
     # SMTP for password reset emails
     smtp_host: str = "smtp.gmail.com"
     smtp_port: int = 587

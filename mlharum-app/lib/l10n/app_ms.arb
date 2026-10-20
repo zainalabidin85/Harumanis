@@ -71,6 +71,7 @@
   "homeReminderQrTitle": "QR Peringatan",
   "homeReminderQrSubtitle": "Pembeli boleh tetapkan peringatan masak",
   "commonMyFarm": "Ladang Saya",
+  "commonComingSoon": "Akan datang",
   "profileSessionExpiredRelogin": "Sesi tamat. Sila log keluar dan log masuk semula.",
   "profileErrorLoadStatus": "Gagal memuatkan profil (ralat {status}).",
   "profileErrorLoad": "Gagal memuatkan profil: {detail}",

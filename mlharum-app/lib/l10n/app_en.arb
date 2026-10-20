@@ -120,6 +120,7 @@
   "homeReminderQrTitle": "Reminder QR",
   "homeReminderQrSubtitle": "Let street buyers set a ripeness reminder",
   "commonMyFarm": "My Farm",
+  "commonComingSoon": "Coming soon",
   "profileSessionExpiredRelogin": "Session expired. Please log out and log in again.",
   "profileErrorLoadStatus": "Failed to load profile (error {status}).",
   "@profileErrorLoadStatus": {

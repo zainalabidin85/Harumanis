@@ -242,6 +242,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonMyFarm => 'My Farm';
 
   @override
+  String get commonComingSoon => 'Coming soon';
+
+  @override
   String get profileSessionExpiredRelogin =>
       'Session expired. Please log out and log in again.';
 

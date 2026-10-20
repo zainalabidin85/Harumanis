@@ -244,6 +244,9 @@ class AppLocalizationsMs extends AppLocalizations {
   String get commonMyFarm => 'Ladang Saya';
 
   @override
+  String get commonComingSoon => 'Akan datang';
+
+  @override
   String get profileSessionExpiredRelogin =>
       'Sesi tamat. Sila log keluar dan log masuk semula.';
 

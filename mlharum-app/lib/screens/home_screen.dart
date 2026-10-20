@@ -18,6 +18,10 @@ import 'doa_report_screen.dart';
 import 'announcements_screen.dart';
 import '../l10n/l10n.dart';
 
+// Beli Harumanis marketplace is paused (2026-10): incoming orders and the reminder QR
+// are greyed out. Set to true to switch them back on.
+const bool kMarketplaceOpen = false;
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -49,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen>
       );
     });
     _ctrl.forward();
-    _loadPendingOrders();
+    if (kMarketplaceOpen) _loadPendingOrders();
     _loadFarmName();
     _loadRole();
     PushNotificationService.registerToken();
@@ -274,7 +278,7 @@ class _HomeScreenState extends State<HomeScreen>
                       iconBg: const Color(0xFFEDE9FE),
                       label: 'Jual Harumanis',
                       subtitle: context.l10n.homeSellSubtitle,
-                      badge: _pendingOrders > 0 ? context.l10n.homeNewBadge(_pendingOrders) : null,
+                      badge: kMarketplaceOpen && _pendingOrders > 0 ? context.l10n.homeNewBadge(_pendingOrders) : null,
                       onTap: _openBuyerTools,
                     ),
                   ),
@@ -423,8 +427,8 @@ class _BuyerToolsSheet extends StatelessWidget {
               iconColor: const Color(0xFF0369A1),
               iconBg: const Color(0xFFE0F2FE),
               label: context.l10n.homeReminderQrTitle,
-              subtitle: context.l10n.homeReminderQrSubtitle,
-              onTap: () {
+              subtitle: kMarketplaceOpen ? context.l10n.homeReminderQrSubtitle : context.l10n.commonComingSoon,
+              onTap: !kMarketplaceOpen ? null : () {
                 if (farmId == null) return;
                 Navigator.pop(context);
                 Navigator.push(
@@ -445,9 +449,9 @@ class _BuyerToolsSheet extends StatelessWidget {
               iconColor: const Color(0xFFB45309),
               iconBg: const Color(0xFFFEF3C7),
               label: context.l10n.homeIncomingOrdersTitle,
-              subtitle: context.l10n.homeIncomingOrdersSubtitle,
-              badge: pendingOrders > 0 ? context.l10n.homeNewBadge(pendingOrders) : null,
-              onTap: () async {
+              subtitle: kMarketplaceOpen ? context.l10n.homeIncomingOrdersSubtitle : context.l10n.commonComingSoon,
+              badge: kMarketplaceOpen && pendingOrders > 0 ? context.l10n.homeNewBadge(pendingOrders) : null,
+              onTap: !kMarketplaceOpen ? null : () async {
                 Navigator.pop(context);
                 await Navigator.push(
                   context,
@@ -471,7 +475,7 @@ class _BuyerToolRow extends StatelessWidget {
   final String label;
   final String subtitle;
   final String? badge;
-  final VoidCallback onTap;
+  final VoidCallback? onTap; // null = unavailable: greyed out, not tappable
 
   const _BuyerToolRow({
     required this.icon,
@@ -485,12 +489,7 @@ class _BuyerToolRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Pressable(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        onTap();
-      },
-      child: Container(
+    final row = Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
           children: [
@@ -542,10 +541,17 @@ class _BuyerToolRow extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right_rounded, color: kText3, size: 20),
+            if (onTap != null) Icon(Icons.chevron_right_rounded, color: kText3, size: 20),
           ],
         ),
-      ),
+      );
+    if (onTap == null) return Opacity(opacity: 0.45, child: row);
+    return Pressable(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap!();
+      },
+      child: row,
     );
   }
 }

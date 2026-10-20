@@ -524,6 +524,12 @@ abstract class AppLocalizations {
   /// **'My Farm'**
   String get commonMyFarm;
 
+  /// No description provided for @commonComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get commonComingSoon;
+
   /// No description provided for @profileSessionExpiredRelogin.
   ///
   /// In en, this message translates to:

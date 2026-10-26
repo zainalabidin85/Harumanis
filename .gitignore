@@ -64,6 +64,7 @@ CLAUDE.md
 *.png
 *.jpg
 !mlharum-app/assets/images/
+!mlharum-app/assets/images/*.png
 .DS_Store
 Thumbs.db
 *.log

@@ -184,15 +184,19 @@ class _HomeScreenState extends State<HomeScreen>
                               Container(
                                 width: 44,
                                 height: 44,
+                                padding: const EdgeInsets.all(2),
                                 decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color:
-                                      Colors.white.withValues(alpha: 0.15),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: 0.25),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
                                 ),
-                                child: const Center(
-                                  child: Text('🥭',
-                                      style: TextStyle(fontSize: 22)),
-                                ),
+                                child: Image.asset('assets/images/app_logo.png'),
                               ),
                               const SizedBox(width: 12),
                               Text(

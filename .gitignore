@@ -57,6 +57,7 @@ CLAUDE.md
 # ── Release artifacts ─────────────────────────────────────────────────────────
 *.apk
 *.pdf
+!mlharum-api/storage/stickers/*.pdf
 *.pptx
 
 # ── General ───────────────────────────────────────────────────────────────────
